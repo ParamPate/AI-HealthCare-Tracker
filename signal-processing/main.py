@@ -1,0 +1,1 @@
+"""Signal processing entry point."""
