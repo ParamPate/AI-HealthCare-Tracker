@@ -28,14 +28,15 @@ const pending = new Map();
 const $ = id => document.getElementById(id);
 
 $("arm").onclick = async () => {
+  if (navigator.audioSession) navigator.audioSession.type = "playback";
   ctx = new (window.AudioContext || window.webkitAudioContext)();
   await ctx.resume();
   armed = true;
   $("status").textContent = "Armed - waiting for alerts";
   $("arm").style.display = "none";
-  try { await navigator.wakeLock.request("screen"); } catch (e) {}
   if (current !== null) startAlarm();
   else beep(0.15);
+  try { await navigator.wakeLock.request("screen"); } catch (e) {}
 };
 
 function beep(len) {
