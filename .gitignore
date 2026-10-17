@@ -12,6 +12,8 @@ __pycache__/
 recordings/*
 !recordings/20261017-013311_hold.parquet
 !recordings/20261017-013311_hold.txt
+# Labels (backend/label.py sidecars) hold time ranges and notes, no raw CSI.
+!recordings/*.labels.json
 esp-csi/
 
 # Local databases
