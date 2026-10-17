@@ -2,10 +2,12 @@
 
 import argparse
 from collections import Counter
+from contextlib import ExitStack
 import csv
 from dataclasses import dataclass
 import json
 import logging
+from pathlib import Path
 import re
 import sys
 import time
@@ -37,6 +39,46 @@ class CSISample:
     csi: tuple
     valid_mask: tuple
     raw_line: bytes
+
+
+class CaptureStats:
+    def __init__(self, rejected):
+        self.rejected = rejected
+        self.accepted = 0
+        self.missing_ids = 0
+        self.sequence_discontinuities = 0
+        self.previous_ids = {}
+        self.last_valid = None
+        self.last_report = time.monotonic()
+        self.last_count = 0
+
+    def accept(self, sample):
+        self.accepted += 1
+        self.last_valid = sample.received_monotonic
+        previous = self.previous_ids.get(sample.mac)
+        if previous is not None and previous[1] == sample.time_segment:
+            delta = (sample.packet_id - previous[0]) & 0xFFFFFFFF
+            if 0 < delta < 2**31:
+                self.missing_ids += delta - 1
+            elif delta >= 2**31:
+                self.sequence_discontinuities += 1
+        self.previous_ids[sample.mac] = (sample.packet_id, sample.time_segment)
+
+    def report(self, now):
+        elapsed = now - self.last_report
+        if elapsed < 5:
+            return
+        rate = (self.accepted - self.last_count) / elapsed
+        age = "never" if self.last_valid is None else f"{now - self.last_valid:.1f}s ago"
+        print(
+            f"CSI: {rate:.1f} packets/s | accepted={self.accepted} | "
+            f"rejected={sum(self.rejected.values())} | missing_ids={self.missing_ids} | "
+            f"sequence_discontinuities={self.sequence_discontinuities} | "
+            f"last_valid={age} | rejection_reasons={dict(self.rejected)}",
+            file=sys.stderr,
+        )
+        self.last_report = now
+        self.last_count = self.accepted
 
 
 def parse_line(line):
@@ -86,12 +128,14 @@ def parse_line(line):
     return packet
 
 
-def read_lines(connection):
+def read_lines(connection, poll=None, rejected=None):
     """Yield newline-terminated bytes, retaining fragments across read timeouts."""
     pending = bytearray()
     discarding = False
     while True:
         chunk = connection.read(min(connection.in_waiting or 1, 4096))
+        if poll is not None:
+            poll()
         # An empty read is a timeout, not the end of a live serial stream.
         if not chunk:
             continue
@@ -101,7 +145,10 @@ def read_lines(connection):
             if not discarding:
                 pending.extend(piece)
                 if len(pending) > MAX_LINE_BYTES:
-                    LOGGER.warning("Discarding serial line exceeding %d bytes", MAX_LINE_BYTES)
+                    if rejected is not None:
+                        rejected["oversized serial line"] += 1
+                    if rejected is None or rejected["oversized serial line"] == 1:
+                        LOGGER.warning("Discarding serial line exceeding %d bytes", MAX_LINE_BYTES)
                     pending.clear()
                     discarding = True
             if complete:
@@ -111,19 +158,39 @@ def read_lines(connection):
                 discarding = False
 
 
-def read_samples(connection, rejected=None):
+def read_samples(connection, rejected=None, recording=None, diagnostics=False):
     """Yield CSI samples from an open serial connection owned by the caller.
 
     A new iterator starts a new capture session. Device time is continuous only
     within the same transmitter and time_segment. Calls block on serial input;
-    run acquisition outside the server's async event loop.
+    run acquisition outside the server's async event loop. Optional recording
+    is a text file owned by the caller; diagnostics are written to stderr.
     """
     if rejected is None:
         rejected = Counter()
+    stats = CaptureStats(rejected)
+    last_flush = time.monotonic()
+
+    def poll():
+        nonlocal last_flush
+        now = time.monotonic()
+        if diagnostics:
+            stats.report(now)
+        if recording is not None and now - last_flush >= 1:
+            recording.flush()
+            last_flush = now
+
     clocks = {}
-    for line in read_lines(connection):
+    for line in read_lines(connection, poll=poll, rejected=rejected):
         received_at = time.time()
         received_monotonic = time.monotonic()
+        if recording is not None:
+            # Latin-1 round-trips every byte, including malformed serial output.
+            recording.write(json.dumps({
+                "received_at": received_at,
+                "received_monotonic": received_monotonic,
+                "raw_line": line.decode("latin-1"),
+            }) + "\n")
         try:
             packet = parse_line(line)
         except ValueError as error:
@@ -150,7 +217,7 @@ def read_samples(connection, rejected=None):
         raw_iq = tuple(packet["data"])
         csi = tuple(complex(raw_iq[i + 1], raw_iq[i]) for i in range(0, len(raw_iq), 2))
         valid_mask = tuple(not (packet["first_word"] and i < 2) for i in range(len(csi)))
-        yield CSISample(
+        sample = CSISample(
             packet_id=packet["id"] & 0xFFFFFFFF,
             mac=packet["mac"],
             rssi=packet["rssi"],
@@ -166,6 +233,8 @@ def read_samples(connection, rejected=None):
             valid_mask=valid_mask,
             raw_line=line,
         )
+        stats.accept(sample)
+        yield sample
 
 
 def positive_int(value):
@@ -179,6 +248,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", required=True, help="Receiver port, e.g. /dev/cu.usbserial-0001")
     parser.add_argument("--baud", type=positive_int, default=921600, help="Baud rate (default: 921600)")
+    parser.add_argument("--record", type=Path, help="Create a new raw JSONL recording (never overwrite)")
     args = parser.parse_args(argv)
     try:
         import serial
@@ -188,9 +258,16 @@ def main(argv=None):
 
     rejected = Counter()
     try:
-        with serial.Serial(args.port, baudrate=args.baud, timeout=1) as connection:
+        with ExitStack() as resources:
+            recording = None
+            if args.record is not None:
+                args.record.parent.mkdir(parents=True, exist_ok=True)
+                recording = resources.enter_context(args.record.open("x", encoding="utf-8"))
+            connection = resources.enter_context(serial.Serial(args.port, baudrate=args.baud, timeout=1))
             print(f"Reading {args.port} at {args.baud} baud. Press Ctrl-C to stop.", file=sys.stderr)
-            for sample in read_samples(connection, rejected):
+            if args.record is not None:
+                print(f"Recording to {args.record}", file=sys.stderr)
+            for sample in read_samples(connection, rejected, recording=recording, diagnostics=True):
                 sys.stdout.buffer.write(sample.raw_line)
                 sys.stdout.buffer.flush()
     except KeyboardInterrupt:
@@ -199,7 +276,8 @@ def main(argv=None):
     except (serial.SerialException, OSError) as error:
         print(
             f"Serial reader failed: {error}\n"
-            "Check the USB connection and port, close other serial monitors, then restart.",
+            "Check the USB connection and port, close other serial monitors, "
+            "and check the recording path if provided, then restart.",
             file=sys.stderr,
         )
         return 1

@@ -1,11 +1,15 @@
 import csv
+from collections import Counter
+from dataclasses import replace
 import io
 import json
+from pathlib import Path
+import tempfile
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
-from serial_reader import MAX_LINE_BYTES, main, parse_line, read_lines, read_samples
+from serial_reader import CaptureStats, MAX_LINE_BYTES, main, parse_line, read_lines, read_samples
 
 
 def packet_line(data=None, overrides=None):
@@ -160,6 +164,111 @@ class ReadSamplesTests(unittest.TestCase):
         self.assertEqual([s.time_segment for s in samples], [0] * 4)
         self.assertEqual(samples[0].packet_id, 4294967295)
         self.assertEqual(samples[0].metadata["id"], -1)
+
+
+class RecordingAndStatsTests(unittest.TestCase):
+    def test_recording_preserves_logs_malformed_bytes_and_valid_packets(self):
+        lines = [b"boot\xff\n", b"CSI_DATA,bad\n", packet_line()]
+        recording = io.StringIO()
+        with self.assertLogs("serial_reader", level="WARNING"):
+            sample = next(read_samples(FakeSerial(lines), recording=recording))
+        records = [json.loads(line) for line in recording.getvalue().splitlines()]
+        self.assertEqual([r["raw_line"].encode("latin-1") for r in records], lines)
+        self.assertEqual(records[-1]["received_at"], sample.received_at)
+        self.assertEqual(records[-1]["received_monotonic"], sample.received_monotonic)
+        self.assertEqual(parse_line(records[-1]["raw_line"].encode("latin-1"))["data"], list(sample.raw_iq))
+
+    def test_missing_ids_rollover_duplicates_and_discontinuities(self):
+        base = next(read_samples(FakeSerial([packet_line()])))
+        stats = CaptureStats(Counter())
+        for seq in (4294967294, 4294967295, 0, 3, 3, 0, 1):
+            stats.accept(replace(base, packet_id=seq))
+        self.assertEqual(stats.missing_ids, 2)
+        self.assertEqual(stats.sequence_discontinuities, 1)
+        stats.accept(replace(base, packet_id=500, time_segment=1))
+        self.assertEqual(stats.missing_ids, 2)
+
+    def test_sequence_counts_are_per_transmitter(self):
+        base = next(read_samples(FakeSerial([packet_line()])))
+        stats = CaptureStats(Counter())
+        for mac, seq in (("a", 100), ("b", 500), ("a", 102), ("b", 501)):
+            stats.accept(replace(base, mac=mac, packet_id=seq))
+        self.assertEqual(stats.missing_ids, 1)
+
+    def test_diagnostics_and_flush_continue_during_silence(self):
+        now = [0.0]
+        chunks = iter([b""] * 5 + [packet_line()] + [b""] * 5)
+        connection = MagicMock()
+        connection.in_waiting = 4096
+
+        def read(size):
+            now[0] += 1
+            try:
+                return next(chunks)
+            except StopIteration:
+                raise KeyboardInterrupt()
+
+        connection.read.side_effect = read
+        recording = MagicMock(wraps=io.StringIO())
+        errors = io.StringIO()
+        with patch("serial_reader.time.monotonic", side_effect=lambda: now[0]), \
+                patch("sys.stderr", errors):
+            reader = read_samples(connection, recording=recording, diagnostics=True)
+            next(reader)
+            with self.assertRaises(KeyboardInterrupt):
+                next(reader)
+        self.assertIn("0.0 packets/s | accepted=0", errors.getvalue())
+        self.assertIn("last_valid=never", errors.getvalue())
+        self.assertIn("0.2 packets/s | accepted=1", errors.getvalue())
+        self.assertIn("last_valid=4.0s ago", errors.getvalue())
+        self.assertGreaterEqual(recording.flush.call_count, 10)
+
+    def test_oversized_lines_are_counted(self):
+        rejected = Counter()
+        reader = read_samples(FakeSerial([b"x" * (MAX_LINE_BYTES + 1), b"\n", packet_line()]), rejected)
+        with self.assertLogs("serial_reader", level="WARNING"):
+            next(reader)
+        self.assertEqual(rejected["oversized serial line"], 1)
+
+    def test_cli_creates_recording_and_refuses_overwrite(self):
+        connection = MagicMock()
+        connection.__enter__.return_value = connection
+        connection.in_waiting = 4096
+        line = packet_line()
+        connection.read.side_effect = [line, KeyboardInterrupt()]
+        serial_factory = MagicMock(return_value=connection)
+        serial_module = SimpleNamespace(Serial=serial_factory, SerialException=OSError)
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "captures" / "sample.jsonl"
+            with patch.dict("sys.modules", {"serial": serial_module}), \
+                    patch("sys.stdout", SimpleNamespace(buffer=io.BytesIO())), \
+                    patch("sys.stderr", io.StringIO()):
+                self.assertEqual(main(["--port", "fake", "--record", str(path)]), 0)
+                original = path.read_bytes()
+                self.assertEqual(json.loads(original)["raw_line"].encode("latin-1"), line)
+                self.assertEqual(main(["--port", "fake", "--record", str(path)]), 1)
+            self.assertEqual(path.read_bytes(), original)
+        serial_factory.assert_called_once()
+        connection.__exit__.assert_called_once()
+
+    def test_recording_failure_closes_serial_and_reports_error(self):
+        connection = MagicMock()
+        connection.__enter__.return_value = connection
+        connection.in_waiting = 4096
+        connection.read.return_value = packet_line()
+        serial_module = SimpleNamespace(Serial=lambda *a, **kw: connection, SerialException=OSError)
+        recording = MagicMock()
+        recording.__enter__.return_value = recording
+        recording.write.side_effect = OSError("disk full")
+        errors = io.StringIO()
+        with tempfile.TemporaryDirectory() as folder, \
+                patch.dict("sys.modules", {"serial": serial_module}), \
+                patch("serial_reader.Path.open", return_value=recording), \
+                patch("sys.stderr", errors):
+            self.assertEqual(main(["--port", "fake", "--record", str(Path(folder) / "sample.jsonl")]), 1)
+        self.assertIn("disk full", errors.getvalue())
+        connection.__exit__.assert_called_once()
+        recording.__exit__.assert_called_once()
 
 
 class ReadLinesTests(unittest.TestCase):
