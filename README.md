@@ -228,13 +228,29 @@ throughput, placement, and breathing detection still need hardware trials.
 The first training step is collecting observed examples. Labels come from a human
 observer, breath count, or independent reference, rather than the CSI prediction.
 The filename's `--label` is only a session name; it does not label the whole file.
-The shared `20261017-013311_hold` recording now has two observed `breath_hold`
-intervals (60.3–80.3 s and 110.0–130.4 s), totaling 40.4 labeled seconds. Its
-sidecar assigns anonymous participant P01, session S01, and split `train`; retain
-P01 for this participant's later recordings. The remaining time has no independent
-breath-rate reference and stays unlabeled. Separate validation/test recordings
-and examples of the other classes are still needed. This recording was already
-used for detector tuning and must not be treated as held-out evaluation data.
+The shared `20261017-013311_hold` recording is now fully labeled for the first
+binary task, `breathing` versus `breath_hold`. The participant confirmed continuous
+breathing outside the two marked holds. There are 137.115 seconds of breathing
+and 40.4 seconds of breath holds:
+
+| Start (s) | End (s) | Label |
+|---|---|---|
+| 0 | 60.3 | breathing |
+| 60.3 | 80.3 | breath_hold |
+| 80.3 | 110.0 | breathing |
+| 110.0 | 130.4 | breath_hold |
+| 130.4 | 177.515118 | breathing |
+
+The sidecar assigns anonymous participant P01, session S01, and split `train`;
+retain P01 for this participant's later recordings. A `breathing` activity label
+needs no measured rate. The more specific normal/slow/fast rate labels still need
+an independent rate measurement. The intervals above are observer/participant
+labels, not predictions from a trained model. Use windows wholly within each
+interval and leave a margin around the marked transitions when training.
+
+Separate validation/test recordings are still needed to assess a trained model.
+This recording was already used for detector tuning and must not be treated as
+held-out evaluation data.
 
 Use anonymous participant IDs (`P01`, `P02`) and session IDs (`S01`, `S02`). Keep
 one participant entirely in one split, including all their sessions and paired
@@ -296,10 +312,19 @@ uv run python -m backend.label add recordings/SESSION.parquet \
 ```
 
 Only use example time ranges when they match what actually happened in your file.
-`--reference-rr` must be an independent measurement, not the model's estimate.
+For the initial two-class task, label an observed breathing range without a rate:
+
+```bash
+uv run python -m backend.label add recordings/SESSION.parquet \
+  --start 5 --end 35 --label breathing --note "Participant confirmed continuous breathing"
+```
+
+`--reference-rr` is optional for `breathing`, and required for normal/slow/fast
+breathing labels. It must be an independent measurement, not the model's estimate.
 
 | Label | Required observation |
 |---|---|
+| breathing | observed continuous breathing; no rate measurement required |
 | normal_breathing | measured rate 10–22/min; supply `--reference-rr` |
 | slow_breathing | measured rate greater than 0 and below 10/min; supply `--reference-rr` |
 | fast_breathing | measured rate above 22/min; supply `--reference-rr` |

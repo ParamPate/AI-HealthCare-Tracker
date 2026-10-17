@@ -8,6 +8,13 @@
   "duration_s": 177.515118,
   "annotations": [
     {
+      "start_s": 0.0,
+      "end_s": 60.3,
+      "label": "breathing",
+      "reference_rr_bpm": null,
+      "note": "Participant confirmed in this chat that breathing was continuous outside the two documented holds. Rate was not independently counted."
+    },
+    {
       "start_s": 60.3,
       "end_s": 80.3,
       "label": "breath_hold",
@@ -15,11 +22,25 @@
       "note": "Observed hold interval documented in shared recording commit 63f81ed, bounded by Enter marks 1 and 2 in 20261017-013311_hold.txt. P01 identifies the participant in this recording; retain this ID for their later sessions. This recording was previously used for detector tuning."
     },
     {
+      "start_s": 80.3,
+      "end_s": 110.0,
+      "label": "breathing",
+      "reference_rr_bpm": null,
+      "note": "Participant confirmed continuous breathing between the documented holds; no independent rate measurement."
+    },
+    {
       "start_s": 110.0,
       "end_s": 130.4,
       "label": "breath_hold",
       "reference_rr_bpm": null,
       "note": "Observed hold interval documented in shared recording commit 63f81ed, bounded by Enter marks 3 and 4 in 20261017-013311_hold.txt."
+    },
+    {
+      "start_s": 130.4,
+      "end_s": 177.515118,
+      "label": "breathing",
+      "reference_rr_bpm": null,
+      "note": "Participant confirmed continuous breathing after the second documented hold through the end of the recording; no independent rate measurement."
     }
   ]
 }
