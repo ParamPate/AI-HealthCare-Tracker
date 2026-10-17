@@ -50,7 +50,11 @@ After a 5 s countdown (`--countdown`), packets are saved to
 continuous device time, `segment`, transmitter MAC, sequence number, RSSI, noise
 floor, channel, and the raw CSI array (int8, imaginary first, then real). Rows are
 written every 10 s, so Ctrl+C or a crash keeps what was recorded. `recordings/` is
-gitignored: raw CSI stays on the machine that recorded it.
+gitignored: raw CSI stays on the machine that recorded it. The one exception is the
+shared breath-hold test, `recordings/20261017-013311_hold.parquet` (two marked holds,
+60.3 to 80.3 s and 110.0 to 130.4 s; marks in the `.txt`), for tuning the
+classification rules: `uv run python -m backend.main --source replay --file
+recordings/20261017-013311_hold.parquet`.
 
 Add `--raw-log` to also save every serial line, including boot logs and damaged
 lines, to `<same name>.raw.jsonl`. Each row has `received_at` (Unix seconds),
@@ -216,7 +220,8 @@ throughput, placement, and breathing detection still need hardware trials.
 5. As a connection check, unplug the RX board during a recording and confirm a
    clear error. Reconnect and start a new recording.
 6. Send the recordings and their printed summaries back for analysis.
-   `recordings/` is gitignored, so pushing code does not transfer captures.
+   `recordings/` is gitignored (except the shared breath-hold test), so pushing code
+   does not transfer captures.
 
 ## Label recordings for a classification model
 

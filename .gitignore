@@ -7,8 +7,11 @@ __pycache__/
 *.pyc
 .pytest_cache/
 
-# Raw CSI recordings stay on the recording machine (privacy)
-recordings/
+# Raw CSI recordings stay on the recording machine (privacy), except the shared
+# breath-hold test (Enter marks in the .txt) used to tune the classification rules.
+recordings/*
+!recordings/20261017-013311_hold.parquet
+!recordings/20261017-013311_hold.txt
 esp-csi/
 
 # Local databases
