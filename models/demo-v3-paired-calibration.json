@@ -1,5 +1,5 @@
 {
-  "evaluation": "calibration_fit_only; live confirmation pending",
+  "evaluation": "calibration_fit_only; fresh live normal-breathing check failed",
   "note": "Chat-marked transitions have two-second uncertain ranges. Overlapping windows and fitting-data results are not independent validation.",
   "model_sha256": "28f4b0027640dcaf5c8344285084f0b41a1ed8ba0b1868bbc8e42aee6813738d",
   "recording": "20261017-155933_P01_S04_calibration.parquet",
@@ -995,12 +995,25 @@
   ],
   "fresh_live_observation": {
     "duration_s": 30,
-    "ground_truth": "awaiting user confirmation of seated normal breathing",
+    "ground_truth": "User explicitly confirmed P01 remained seated in the same position and breathed normally during this observation.",
     "label_counts": {
       "checking": 22,
       "breath_hold": 76,
       "breathing": 12
     },
-    "conclusion": "Labels still switch; not accepted as reliable live recovery."
+    "conclusion": "False holds during confirmed normal breathing; candidate is not a successful live calibration."
+  },
+  "live_path_replay": {
+    "note": "Same raw calibration capture replayed through LiveClassifier at quarter-second batch cadence; fitting data only.",
+    "normal_interior_snapshots": {
+      "breathing": 195,
+      "checking": 18,
+      "breath_hold": 0,
+      "no_signal": 1
+    },
+    "hold_interior_snapshots": {
+      "breath_hold": 38
+    },
+    "conclusion": "The false holds recur on fresh live input, not on this calibration replay; no mismatch reproduced."
   }
 }

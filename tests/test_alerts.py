@@ -1,4 +1,5 @@
 import asyncio
+from functools import partial
 
 import pytest
 from fastapi.testclient import TestClient
@@ -27,6 +28,17 @@ def isolated_db(tmp_path, monkeypatch):
 ])
 def test_classification_requires_usable_breathing(status, rr, gap, expected):
     assert classify(status, rr, gap) == expected
+
+
+@pytest.mark.parametrize("ml_label,expected", [
+    ("breath_hold", ("breath_hold", "critical")),
+    ("breathing", ("normal", "normal")),
+    ("checking", ("checking", "unknown")),
+    ("motion", ("motion", "unknown")),
+    ("no_signal", ("no_signal", "unknown")),
+])
+def test_model_labels_override_dsp_values(ml_label, expected):
+    assert classify("pause", 7, 15, ml_label=ml_label) == expected
 
 
 def test_confirmation_is_elapsed_time_and_requires_continuous_updates():
@@ -58,15 +70,18 @@ def test_motion_loss_and_low_confidence_interrupt_pending_alert():
     asyncio.run(scenario())
 
 
-def test_phone_event_ack_reconnect_recovery_and_restart():
+@pytest.mark.parametrize("use_ml", [False, True])
+def test_phone_event_ack_reconnect_recovery_and_restart(use_ml):
     app = create_app()
     with TestClient(app) as client:
         service = app.state.alerts
 
         def publish(status, t):
-            return client.portal.call(service.publish, "A", status,
-                                      15 if status == "breathing" else None,
-                                      12 if status == "pause" else None, "serial", t)
+            ml_label = {"pause": "breath_hold", "breathing": "breathing", "motion": "motion"}[status] if use_ml else None
+            return client.portal.call(partial(service.publish, "A", status,
+                                              15 if status == "breathing" else None,
+                                              12 if status == "pause" else None, "serial", t,
+                                              ml_label=ml_label))
 
         with client.websocket_connect("/ws/dashboard") as phone:
             assert phone.receive_json() == {"type": "snapshot", "alerts": []}
@@ -75,7 +90,8 @@ def test_phone_event_ack_reconnect_recovery_and_restart():
                 assert phone.receive_json()["type"] == "vitals"
             alert = phone.receive_json()
             assert alert == result["alert"]
-            assert alert["pattern"] == "breathing_pause" and alert["max_gap_s"] == 12
+            assert alert["pattern"] == ("breath_hold" if use_ml else "breathing_pause")
+            assert alert["max_gap_s"] == (None if use_ml else 12)
             assert alert["source"] == "serial"
         with client.websocket_connect("/ws/dashboard") as phone:
             assert phone.receive_json()["alerts"] == [alert]
