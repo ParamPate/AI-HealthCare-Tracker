@@ -26,7 +26,7 @@ from scipy import ndimage, signal
 FS = 20.0                 # Hz, uniform grid
 BAND = (0.05, 0.5)        # Hz, 3 to 30 breaths/min
 MOTION_BAND = (1.0, 5.0)  # Hz, breathing has almost no energy here
-MOTION_THRESHOLD = 2.0    # motion score above this counts as movement (calm is 0.4 to 1.2)
+MOTION_THRESHOLD = 3.0    # motion score above this counts as movement (calm 0.4 to 1.2; deep breaths can reach ~2.5)
 MOTION_PAD_S = 1.5        # also ignore this long before and after movement
 MIN_CALM_S = 3.0          # calm gaps shorter than this between movements count as movement
 DETREND_S = 30.0          # rolling-median window, longer than the slowest breath (20 s)
