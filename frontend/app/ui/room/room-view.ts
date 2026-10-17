@@ -5,7 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js'
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js'
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
-import { ANTENNA_TOP, buildRoom, CHEST, LINK_Z, pickable, RX_AT, RX_COLOR, TX_AT, TX_COLOR, ZONE_FOCUS } from './models'
+import { ANTENNA_TOP, buildRoom, CHEST, link, LINK_Z, pickable, RX_AT, RX_COLOR, TX_AT, TX_COLOR, ZONE_FOCUS } from './models'
 import { paper, type Piece, type Theme } from './sketch'
 
 export type Mode = 'room' | 'zone' | 'object'
@@ -29,8 +29,8 @@ const FOV = 30
 const FADED = 0.13
 const ROOM_DIR = new THREE.Vector3(0.62, 0.86, 1).normalize()
 const ZONE_DIR = new THREE.Vector3(0.5, 0.62, 1).normalize()
-// looking down at about 62 degrees, so the gap between the boards' line and the chest shows
-const FOCUS_DIR = new THREE.Vector3(0.42, 1.95, 1).normalize()
+// from the TX side, a little in front of the person and looking down, with RX and the seats behind
+const FOCUS_DIR = new THREE.Vector3(-1, 0.72, 0.25).normalize()
 const OBJECT_DIR = new THREE.Vector3(0.42, 0.3, 1).normalize()
 
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
@@ -196,6 +196,8 @@ export class RoomView {
   state: ViewState
   /** Called when a click picks a corner or an object. */
   onPick?: () => void
+  /** Called when a click in its corner picks a piece that opens a page. */
+  onLink?: (href: string) => void
 
   constructor(
     private canvas: HTMLCanvasElement,
@@ -412,7 +414,10 @@ export class RoomView {
     if (!d || Math.hypot(e.clientX - d.x, e.clientY - d.y) > 5 || this.state.mode === 'object') return
     const hit = this.pick(e)
     if (!hit) return
-    if (this.state.mode === 'zone' && hit.zone === this.state.zone) this.focus(hit.id)
+    const here = this.state.mode === 'zone' && hit.zone === this.state.zone
+    const href = link(hit)
+    if (here && href) this.onLink?.(href)
+    else if (here) this.focus(hit.id)
     else this.showZone(hit.zone)
     this.onPick?.()
   }

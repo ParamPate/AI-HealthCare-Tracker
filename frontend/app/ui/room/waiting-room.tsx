@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { useStream, type StreamFrame } from '../use-stream'
 import { ZONES } from './models'
@@ -26,6 +27,8 @@ function tick() {
   osc.stop(t + 0.1)
 }
 
+const MONITORS = ZONES.indexOf('Monitors')
+
 const HELP = ['drag to look around', 'click a corner to step in', 'click anything to pick it up', 'pinch to look closer', 'esc to step back']
 
 /** The landing page: the waiting room in 3D, with the person in chair 1 breathing live when the backend runs. */
@@ -42,6 +45,7 @@ export default function WaitingRoom() {
   const soundRef = useRef(sound)
   const lastRate = useRef(SIMULATED_RATE)
   const { frame, connected } = useStream()
+  const router = useRouter()
 
   useEffect(() => {
     soundRef.current = sound
@@ -96,6 +100,10 @@ export default function WaitingRoom() {
   useEffect(() => {
     view.current?.setTheme(theme)
   }, [theme])
+
+  useEffect(() => {
+    if (view.current) view.current.onLink = (href) => router.push(href)
+  }, [router])
 
   const dark = theme === 'dark'
   const mode = state?.mode ?? 'room'
@@ -194,6 +202,12 @@ export default function WaitingRoom() {
             </div>
           </div>
         </>
+      )}
+
+      {mode === 'zone' && state?.zone === MONITORS && (
+        <div className={`pointer-events-none absolute bottom-[68px] left-0 w-full text-center font-hand text-[16.5px] ${fg}`}>
+          click a screen to check on chair 1
+        </div>
       )}
 
       {!object && (

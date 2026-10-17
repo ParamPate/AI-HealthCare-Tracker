@@ -1,7 +1,7 @@
 // The waiting room, drawn in lines. Units are meters; y is up; each piece's front is local +z.
 import { INK, Piece, type Pen, type V } from './sketch'
 
-export const ZONES = ['Seats', 'Desk', 'Coffee', 'Exam', 'Lab'] as const
+export const ZONES = ['Seats', 'Desk', 'Coffee', 'Exam', 'Monitors'] as const
 
 const RED = '#d8344f'
 const ORANGE = '#ee7a2c'
@@ -23,6 +23,8 @@ type Spec = {
   at: V
   ry?: number
   pick?: boolean
+  /** Page that clicking this piece opens, from its corner. */
+  href?: string
   draw: (p: Pen) => void
   /** Extra parts and motion, after drawing. */
   setup?: (piece: Piece) => void
@@ -214,6 +216,15 @@ function chair(p: Pen) {
   }
 }
 
+/** A desk monitor on a stand; `screen` draws the picture, centered on the glass. */
+function monitor(p: Pen, screen: () => void) {
+  p.box([0, 0.008, 0], [0.24, 0.016, 0.17])
+  p.box([0, 0.14, -0.04], [0.04, 0.25, 0.025])
+  p.box([0, 0.38, 0], [0.62, 0.38, 0.03])
+  p.rect([0, 0.38, 0.016], 0.57, 0.33)
+  p.with({ at: [0, 0.38, 0.017] }, screen)
+}
+
 const SPECS: Spec[] = [
   // Seats
   { id: 'patient', name: 'chair 1', zone: 0, color: RED, at: [CHAIR.x, 0, CHAIR.z], draw: chair, setup: person },
@@ -238,39 +249,6 @@ const SPECS: Spec[] = [
         p.seg([x, 0.32, -0.06], [x, 0.02, -0.06], true)
         p.seg([x, 0.01, -0.32], [x, 0.01, 0.24], true)
       }
-    },
-  },
-  {
-    id: 'rug', name: 'rug', zone: 0, color: INK, at: [0.55, 0, -2.75], pick: false,
-    draw: (p) => {
-      p.rect([0, 0.005, 0], 2.3, 1.3, 'xz', true)
-      p.rect([0, 0.006, 0], 2.12, 1.12, 'xz')
-    },
-  },
-  {
-    id: 'table', name: 'coffee table', zone: 0, color: INK, at: [0.9, 0, -2.6],
-    draw: (p) => {
-      p.cyl([0, 0.4, 0], 0.34, 0.04)
-      for (const a of [0.5, 2.6, 4.7]) p.seg([Math.cos(a) * 0.2, 0.4, Math.sin(a) * 0.2], [Math.cos(a) * 0.27, 0.01, Math.sin(a) * 0.27], true)
-      p.ink(PURPLE, () => {
-        p.with({ at: [-0.08, 0.455, 0.02], ry: 0.4 }, () => p.box([0, 0, 0], [0.26, 0.015, 0.34]))
-        p.with({ at: [-0.06, 0.472, 0.04], ry: 0.15 }, () => p.box([0, 0, 0], [0.24, 0.015, 0.32]))
-      })
-      p.ink(BLUE, () => p.cyl([0.17, 0.44, -0.08], 0.04, 0.1, { r1: 0.045 }))
-    },
-  },
-  {
-    id: 'lamp', name: 'floor lamp', zone: 0, color: GOLD, at: [-2.3, 0, -2.85], ry: Math.PI / 4,
-    draw: (p) => {
-      p.box([0, 0.03, 0], [0.32, 0.05, 0.32])
-      const pts: V[] = [[0, 0.06, 0], [0, 1.55, 0]]
-      for (let k = 1; k <= 10; k++) {
-        const a = (k / 10) * Math.PI * 0.62
-        pts.push([Math.sin(a) * 0.7, 1.55 + Math.sin(a * 1.2) * 0.28, Math.sin(a) * 0.55])
-      }
-      p.poly(pts, false, true)
-      const tip = pts[pts.length - 1]
-      p.cyl([tip[0], tip[1] - 0.22, tip[2]], 0.17, 0.2, { r1: 0.05 })
     },
   },
   {
@@ -506,95 +484,60 @@ const SPECS: Spec[] = [
     },
   },
 
-  // Lab
+  // Monitors: the nurses' station. Any screen opens the live monitor page.
   {
-    id: 'bench', name: 'workbench', zone: 4, color: INK, at: [-3.4, 0, 2.45],
+    id: 'station', name: 'monitor desk', zone: 4, color: INK, at: [-3.6, 0, 2.4],
     draw: (p) => {
-      p.box([0, 0.75, 0], [2.2, 0.05, 0.72])
-      for (const x of [-1.05, 1.05]) for (const z of [-0.31, 0.31]) p.box([x, 0.36, z], [0.05, 0.72, 0.05])
-      p.box([-0.35, 0.18, 0], [1.4, 0.03, 0.62])
-      p.box([0.72, 0.55, 0], [0.56, 0.35, 0.66])
-      for (const y of [0.63, 0.47]) {
-        p.rect([0.72, y, 0.331], 0.5, 0.13)
-        p.seg([0.66, y, 0.332], [0.78, y, 0.332])
-      }
+      p.box([0, 0.75, 0], [2.1, 0.05, 0.75])
+      for (const x of [-1.02, 1.02]) p.box([x, 0.36, 0], [0.04, 0.72, 0.72])
+      p.box([0, 0.42, -0.33], [2.0, 0.5, 0.02])
+      // keyboard and mouse
+      p.box([0, 0.785, 0.2], [0.46, 0.02, 0.15])
+      for (const z of [0.16, 0.2, 0.24]) p.seg([-0.21, 0.796, z], [0.21, 0.796, z])
+      p.ball([0.33, 0.79, 0.21], [0.03, 0.016, 0.045])
     },
   },
   {
-    id: 'laptop', name: 'laptop', zone: 4, color: BLUE, at: [-3.75, 0.78, 2.4],
-    draw: (p) => {
-      p.box([0, 0.01, 0], [0.4, 0.02, 0.28])
-      p.rect([0, 0.021, 0.02], 0.34, 0.14, 'xz')
-      p.rect([0, 0.021, 0.11], 0.12, 0.05, 'xz')
-      p.with({ at: [0, 0.02, -0.14], rx: -0.28 }, () => {
-        p.box([0, 0.135, 0], [0.4, 0.27, 0.012])
-        p.rect([0, 0.14, 0.007], 0.36, 0.23)
-        p.ink(GREEN, () => p.poly(wave(-0.15, 0.15, 0.12, 0.008, 0.035, 2.5, 30)))
-        p.ink(GREEN, () => p.label('14.2 /min', [-0.08, 0.215, 0.008], 0.16, 0.035, { size: 0.8, align: 'left' }))
-      })
-    },
+    id: 'screen-live', name: 'chair 1, live', zone: 4, color: TEAL, at: [-3.6, 0.775, 2.22], href: '/monitor',
+    draw: (p) =>
+      monitor(p, () =>
+        p.ink(GREEN, () => {
+          p.label('chair 1', [-0.13, 0.11, 0], 0.26, 0.08, { size: 0.9, align: 'left' })
+          p.label('14 /min', [0.13, 0.11, 0], 0.26, 0.08, { size: 0.9, align: 'right' })
+          p.poly(wave(-0.25, 0.25, -0.05, 0, 0.06, 3, 48))
+        }),
+      ),
   },
   {
-    id: 'router', name: 'wifi router', zone: 4, color: INK, at: [-2.75, 0.78, 2.35],
-    draw: (p) => {
-      p.box([0, 0.03, 0], [0.32, 0.05, 0.2])
-      for (const x of [-0.12, 0, 0.12]) p.seg([x, 0.055, -0.08], [x * 1.4, 0.3, -0.12], true)
-      p.ink(GREEN, () => {
-        for (const x of [-0.08, -0.04, 0]) p.circle([x, 0.03, 0.101], 0.006, 'xy', 6)
-      })
-      p.ink(GOLD, () => {
-        for (const r of [0.08, 0.14, 0.2]) p.poly(arc([0, 0.38, -0.1], r, Math.PI * 0.25, Math.PI * 0.75, 8))
-      })
-    },
+    id: 'screen-trend', name: 'breathing trend', zone: 4, color: TEAL, at: [-4.27, 0.775, 2.3], ry: 0.35, href: '/monitor',
+    draw: (p) =>
+      monitor(p, () => {
+        p.ink(BLUE, () => {
+          p.label('last hour', [-0.09, 0.11, 0], 0.34, 0.08, { size: 0.9, align: 'left' })
+          const pts = [[-0.25, -0.05], [-0.18, -0.01], [-0.11, -0.06], [-0.04, 0], [0.03, -0.03], [0.1, 0.02], [0.17, -0.02], [0.25, 0.01]]
+          p.poly(pts.map(([x, y]): V => [x, y, 0]))
+        })
+        p.ink(INK, () => p.seg([-0.25, -0.12, 0], [0.25, -0.12, 0]))
+      }),
   },
   {
-    id: 'phone', name: 'phone', zone: 4, color: RED, at: [-3.15, 0.78, 2.55], ry: -0.15,
-    draw: (p) => {
-      p.ink(INK, () => {
-        p.box([0, 0.01, 0], [0.12, 0.02, 0.1])
-        p.seg([0, 0.02, -0.03], [0, 0.07, -0.05])
-      })
-      p.with({ at: [0, 0.02, -0.02], rx: -0.3 }, () => {
-        p.box([0, 0.09, 0], [0.085, 0.17, 0.01])
-        p.rrect([0, 0.09, 0.0055], 0.075, 0.16, 0.01)
-        p.rect([0, 0.13, 0.006], 0.06, 0.03)
-        p.label('pause', [0, 0.13, 0.007], 0.06, 0.02, { size: 0.9 })
-        p.label('12 s', [0, 0.08, 0.007], 0.06, 0.03, { size: 0.9 })
-      })
-    },
+    id: 'screen-alerts', name: 'alerts', zone: 4, color: TEAL, at: [-2.93, 0.775, 2.3], ry: -0.35, href: '/monitor',
+    draw: (p) =>
+      monitor(p, () => {
+        p.ink(INK, () => p.label('alerts', [-0.13, 0.11, 0], 0.26, 0.08, { size: 0.9, align: 'left' }))
+        p.ink(GREEN, () => {
+          p.circle([-0.22, -0.03, 0], 0.035, 'xy', 14)
+          p.label('no pauses', [0.06, -0.03, 0], 0.44, 0.09, { size: 0.9, align: 'left' })
+        })
+      }),
   },
   {
-    id: 'whiteboard', name: 'whiteboard', zone: 4, color: INK, at: [-5.1, 0, 1.35], ry: 0.75,
+    id: 'desk-chair', name: 'desk chair', zone: 4, color: INK, at: [-2.6, 0, 3.15], ry: -2.5,
     draw: (p) => {
-      p.box([0, 1.35, 0], [1.3, 0.85, 0.03])
-      p.rect([0, 1.35, 0.016], 1.2, 0.75)
-      for (const x of [-0.6, 0.6]) {
-        p.seg([x, 0.92, 0], [x, 0.05, 0], true)
-        p.seg([x, 0.03, -0.25], [x, 0.03, 0.25], true)
-      }
-      p.ink(ORANGE, () => {
-        p.rect([-0.42, 1.38, 0.017], 0.14, 0.1)
-        p.label('tx', [-0.42, 1.22, 0.017], 0.12, 0.07, { size: 0.9 })
-      })
-      p.ink(BLUE, () => {
-        p.rect([0.42, 1.38, 0.017], 0.14, 0.1)
-        p.label('rx', [0.42, 1.22, 0.017], 0.12, 0.07, { size: 0.9 })
-      })
-      p.ink(GOLD, () => p.poly(wave(-0.33, 0.33, 1.42, 0.017, 0.03, 3, 30)))
-      p.ink(RED, () => {
-        p.circle([0, 1.62, 0.017], 0.05, 'xy', 14)
-        p.poly([[0, 1.57, 0.017], [0, 1.45, 0.017], [0.08, 1.45, 0.017], [0.08, 1.38, 0.017]])
-      })
-      p.ink(GREEN, () => p.poly(wave(-0.45, 0.45, 1.06, 0.017, 0.025, 4, 36)))
-    },
-  },
-  {
-    id: 'toolbox', name: 'toolbox', zone: 4, color: ORANGE, at: [-2.25, 0, 3.05], ry: -0.4,
-    draw: (p) => {
-      p.box([0, 0.13, 0], [0.5, 0.24, 0.26])
-      p.seg([-0.25, 0.2, 0.131], [0.25, 0.2, 0.131])
-      p.box([0, 0.03, 0.135], [0.06, 0.04, 0.01])
-      p.poly([[-0.14, 0.25, 0], [-0.12, 0.33, 0], [0.12, 0.33, 0], [0.14, 0.25, 0]], false, true)
+      star(p, 0.08, 0.26)
+      p.cyl([0, 0.08, 0], 0.025, 0.36)
+      p.box([0, 0.47, 0], [0.48, 0.07, 0.46])
+      p.with({ at: [0, 0.5, -0.21], rx: -0.12 }, () => p.box([0, 0.3, 0], [0.44, 0.5, 0.05]))
     },
   },
 ]
@@ -605,7 +548,7 @@ function shell(p: Pen) {
   p.box([(x0 + x1) / 2 - t / 2, -0.05, (z0 + z1) / 2], [x1 - x0 + t, 0.1, z1 - z0], { bold: true })
   p.box([(x0 + x1) / 2 - t / 2, h / 2, z0 - t / 2], [x1 - x0 + t, h, t], { bold: true })
   p.box([x0 - t / 2, h / 2, (z0 + z1) / 2], [t, h, z1 - z0], { bold: true })
-  // window on the left wall, over the lab
+  // window on the left wall, over the monitors
   p.rect([x0 + 0.002, 1.55, 2.9], 1.5, 1.0, 'yz')
   p.rect([x0 + 0.003, 1.55, 2.9], 1.4, 0.9, 'yz')
   p.seg([x0 + 0.003, 1.1, 2.9], [x0 + 0.003, 2.0, 2.9])
@@ -623,6 +566,7 @@ export function buildRoom(widths: { main: number; sketch: number; bold: number }
     piece.group.rotation.y = s.ry ?? 0
     piece.front = s.ry ?? 0
     piece.group.userData.pick = s.pick !== false
+    piece.group.userData.href = s.href
     s.draw(piece.pen())
     s.setup?.(piece)
     piece.build(widths, theme)
@@ -636,4 +580,8 @@ export function buildRoom(widths: { main: number; sketch: number; bold: number }
 
 export function pickable(piece: Piece) {
   return piece.group.userData.pick !== false
+}
+
+export function link(piece: Piece): string | undefined {
+  return piece.group.userData.href
 }
