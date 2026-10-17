@@ -18,3 +18,8 @@ esp-csi/
 
 # Local databases
 *.db
+
+# Local documentation and generated reports
+/CLASSIFIER_HANDOFF.md
+/models/*.training.json
+/models/validation-*.json

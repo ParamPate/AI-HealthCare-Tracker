@@ -364,8 +364,6 @@ gate; it is not a breath-hold label.
 
 ## Trained binary prototype
 
-Hardware-machine setup and remaining work: [CLASSIFIER_HANDOFF.md](CLASSIFIER_HANDOFF.md).
-
 `backend/classifier.py` trains a breathing-versus-breath-hold logistic regression
 using NumPy/SciPy. It operates on raw CSI packets in trailing 10 s windows, once
 per second. Training windows stay one second inside a single observed label.
