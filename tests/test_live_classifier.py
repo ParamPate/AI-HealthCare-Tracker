@@ -118,7 +118,14 @@ def test_replay_preserves_raw_metadata_and_resets_at_loop_boundary(raw_window, m
     assert pending[2].packet is samples[0].packet
 
 
-def test_websocket_model_hold_triggers_phone_alerts_over_normal_dsp(tmp_path, monkeypatch):
+@pytest.mark.parametrize("ml_label,dsp_status,expect_alert", [
+    ("breath_hold", "breathing", True),
+    ("breathing", "pause", False),
+    ("checking", "pause", False),
+    ("no_signal", "pause", False),
+    (None, "pause", False),
+])
+def test_websocket_model_label_controls_phone_alerts(tmp_path, monkeypatch, ml_label, dsp_status, expect_alert):
     monkeypatch.setattr(db, "DB_PATH", tmp_path / "alerts.db")
 
     class Source:
@@ -128,8 +135,10 @@ def test_websocket_model_hold_triggers_phone_alerts_over_normal_dsp(tmp_path, mo
         def stop(self): pass
         def get_latest(self):
             self.tick += 1
-            return {**empty_frame("serial", None, self.tick), "status": "breathing", "rate_bpm": 15,
-                    "ml_label": "breath_hold", "ml_hold_score": 0.99, "ml_model_version": "prototype"}
+            return {**empty_frame("serial", None, self.tick), "status": dsp_status,
+                    "rate_bpm": 15 if dsp_status == "breathing" else None,
+                    "pause_s": 12 if dsp_status == "pause" else None,
+                    "ml_label": ml_label, "ml_hold_score": 0.99, "ml_model_version": "prototype"}
 
     source = Source()
     monkeypatch.setattr(main, "time", SimpleNamespace(time=time.time, monotonic=lambda: source.tick))
@@ -140,8 +149,9 @@ def test_websocket_model_hold_triggers_phone_alerts_over_normal_dsp(tmp_path, mo
         assert source.tick >= 6
         with client.websocket_connect("/ws") as ws:
             frame = ws.receive_json()
-            assert frame["ml_label"] == "breath_hold" and frame["ml_hold_score"] == 0.99
+            assert frame["ml_label"] == ml_label and frame["ml_hold_score"] == 0.99
         alerts = client.get("/api/alerts/active").json()
-        assert len(alerts) == 1
-        assert alerts[0]["pattern"] == "breath_hold"
-        assert alerts[0]["rr"] is None and alerts[0]["max_gap_s"] is None
+        assert len(alerts) == int(expect_alert)
+        if expect_alert:
+            assert alerts[0]["pattern"] == "breath_hold"
+            assert alerts[0]["rr"] is None and alerts[0]["max_gap_s"] is None

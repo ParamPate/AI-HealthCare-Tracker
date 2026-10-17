@@ -447,8 +447,9 @@ retains all seven recordings and gives the newest capture ten times the window
 weight. On that fitting capture it has no confirmed holds in 107 normal-breathing
 interior windows and holds in all 19 hold-interior windows. These overlapping
 windows are not an independent check. A fresh 30 s live observation still switched
-between breathing and hold; the participant's activity during it has not yet been
-confirmed. Reliable live recovery remains unresolved. See
+between breathing and hold while the user confirmed P01 remained seated and breathed
+normally. The exact live classifier replay does not reproduce those false holds on
+the fitting capture. This calibration has not fixed live false holds. See
 `models/demo-v3-paired-calibration.json`. Plain CLI training uses equal window
 weights and therefore does not reproduce this weighted calibration candidate.
 
