@@ -147,7 +147,7 @@ cd frontend
 npm run dev
 ```
 
-Open http://localhost:3000. The page shows the chair, whether the data is live, a
+Open http://localhost:3000/monitor (http://localhost:3000 is the project's landing page). The page shows the chair, whether the data is live, a
 replay, or simulated, the status (starting, measuring, breathing, movement, pause), the
 level, the rate or the seconds without a breath, a 30 s breathing wave (about 4 s
 behind real time), and signal quality. It turns red during a pause or a critical

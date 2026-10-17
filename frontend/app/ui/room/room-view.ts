@@ -47,7 +47,10 @@ export class RoomView {
   private down: { x: number; y: number } | null = null
   private active = true
   private theme: Theme = 'light'
+  private cardShot: Shot | null = null
   state: ViewState
+  /** Called when a click in the explorer picks a corner or an object. */
+  onPick?: () => void
 
   constructor(
     private canvas: HTMLCanvasElement,
@@ -56,7 +59,7 @@ export class RoomView {
     zone = 0,
   ) {
     const card = variant === 'card'
-    const room = buildRoom(card ? { main: 1.35, sketch: 1, bold: 2.1 } : { main: 1.6, sketch: 1.15, bold: 2.6 }, this.theme)
+    const room = buildRoom(card ? { main: 1.75, sketch: 1.15, bold: 2.6 } : { main: 1.7, sketch: 1.2, bold: 2.8 }, this.theme)
     this.pieces = room.pieces
     this.shell = room.shell
     for (const p of this.pieces) this.scene.add(p.group)
@@ -116,7 +119,7 @@ export class RoomView {
 
   private zoneShot(zone: number): Shot {
     const s = this.zoneBounds(zone)
-    return this.fit(s.center, s.radius, ZONE_DIR, this.size.w / this.size.h, 0.95)
+    return this.fit(s.center, s.radius, ZONE_DIR, this.size.w / this.size.h, 1.22)
   }
 
   private objectDir(piece: Piece) {
@@ -140,8 +143,6 @@ export class RoomView {
     this.state = { ...this.state, zone }
     this.cardShot = null
   }
-
-  private cardShot: Shot | null = null
 
   /** Card: step to the next or previous zone. */
   step(delta: number) {
@@ -207,7 +208,7 @@ export class RoomView {
       this.targetOpacity.set(p, p === piece ? 1 : 0)
     }
     const { w, h } = this.mainSize()
-    const shot = this.fit(piece.center, piece.radius, this.objectDir(piece), w / h, 1.25)
+    const shot = this.fit(piece.center, piece.radius, this.objectDir(piece), w / h, 1.55)
     this.tween = null
     this.camera.position.copy(shot.pos)
     this.controls.target.copy(shot.target)
@@ -274,7 +275,7 @@ export class RoomView {
         const colW = w - main.w
         const area = h * 0.72
         const slot = area / list.length
-        const size = Math.min(colW * 0.62, slot * 0.86, 190)
+        const size = Math.min(colW * 0.72, slot * 0.98, 210)
         return { id: p.id, name: p.name, x: main.w + colW / 2 - size / 2 + colW * -0.02, y: (h - area) / 2 + slot * i + (slot - size) / 2, w: size, h: size, active: p.id === this.state.piece?.id }
       }
       const area = w * 0.9
@@ -301,8 +302,6 @@ export class RoomView {
     else this.showZone(hit.zone)
     this.onPick?.()
   }
-
-  onPick?: () => void
 
   private onMove = (e: PointerEvent) => {
     if (this.down || this.state.mode === 'object') return
@@ -370,7 +369,8 @@ export class RoomView {
     }
     if (!this.cardShot) {
       const s = this.zoneBounds(this.state.zone)
-      this.cardShot = this.fit(s.center, s.radius, CARD_DIR, this.size.w / this.size.h, 0.92)
+      s.center.y -= s.radius * 0.1
+      this.cardShot = this.fit(s.center, s.radius, CARD_DIR, this.size.w / this.size.h, 1.22)
     }
     const shot = this.cardShot
     const sway = Math.sin(performance.now() / 2600) * 0.07
@@ -451,6 +451,10 @@ export class RoomView {
 
   dispose() {
     cancelAnimationFrame(this.raf)
+    // The canvas (and its GL context) can be reused by the next view; don't leave label uploads' flags set.
+    const gl = this.renderer.getContext()
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false)
     this.canvas.removeEventListener('pointerdown', this.onDown)
     this.canvas.removeEventListener('pointerup', this.onUp)
     this.canvas.removeEventListener('pointermove', this.onMove)
