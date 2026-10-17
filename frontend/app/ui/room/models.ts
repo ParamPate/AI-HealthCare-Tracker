@@ -24,6 +24,8 @@ type Spec = {
   ry?: number
   pick?: boolean
   draw: (p: Pen) => void
+  /** Extra parts and motion, after drawing. */
+  setup?: (piece: Piece) => void
 }
 
 function arc(c: V, r: number, from: number, to: number, n = 12, plane: 'xy' | 'yz' = 'xy'): V[] {
@@ -71,70 +73,182 @@ function star(p: Pen, y: number, r: number, legs = 5, bold = true) {
   }
 }
 
+// The monitored chair. The README's recorded setup: a seated person with the two boards about
+// 1 m apart at chest height, one each side. The chair sits back so the front of the chest
+// rests about 30 cm behind the straight line between the boards' antennas.
+const BOARD_GAP = 1.0
+const CHEST_Y = 0.93
+/** z of the straight line between the two boards */
+export const LINK_Z = -3.7
+const CHEST_GAP = 0.3
+// the person's chest, relative to the chair: center (y, z) and front-to-back radius, at rest
+const CHEST_REL = { y: 0.9, z: -0.08, depth: 0.125 }
+export const CHAIR = { x: -0.45, z: LINK_Z - CHEST_GAP - (CHEST_REL.z + CHEST_REL.depth) }
+/** The chest in room coordinates; it grows forward by up to INHALE_DEPTH of its depth on a breath. */
+export const CHEST = { x: CHAIR.x, y: CHEST_REL.y, z: CHAIR.z + CHEST_REL.z, depth: CHEST_REL.depth }
+export const INHALE_DEPTH = 0.14
+export const TX_COLOR = ORANGE
+export const RX_COLOR = BLUE
+export const TX_AT: V = [CHAIR.x - BOARD_GAP / 2, CHEST_Y, LINK_Z]
+export const RX_AT: V = [CHAIR.x + BOARD_GAP / 2, CHEST_Y, LINK_Z]
+/** What a corner's camera frames, when it should not be the whole corner. */
+export const ZONE_FOCUS: Record<number, string[]> = { 0: ['patient', 'tx', 'rx', 'tx-stand', 'rx-stand'] }
+
+// ESP32 DevKitC, drawn from its real layout (mm), 2.5x life size so it reads in the room.
+const MM = 0.0025
+/** Antenna tip relative to the board's center, in meters. */
+export const ANTENNA_TOP = 26.5 * MM
+
+function esp32(p: Pen, tag: 'TX' | 'RX') {
+  const m = (v: number) => v * MM
+  const at = (x: number, y: number, z: number): V => [m(x), m(y), m(z)]
+  // the board itself, components facing +z, antenna end up
+  p.box([0, 0, 0], [m(28), m(55), m(1.6)])
+  p.ink(INK, () => {
+    // WROOM-32 module: its own small board, the shield can, and the printed antenna
+    p.box(at(0, 15.75, 1.2), [m(18), m(25.5), m(0.8)])
+    p.box(at(0, 12.4, 2.8), [m(16), m(17.6), m(2.4)])
+    p.label('ESP32-WROOM-32', at(0, 14.5, 4.05), m(14), m(3), { size: 0.48 })
+  })
+  p.ink(GOLD, () => {
+    const z = m(1.65)
+    const pts: V[] = []
+    for (let i = 0; i <= 7; i++) {
+      const x = m(-7 + i * 2)
+      pts.push(i % 2 ? [x, m(27.3), z] : [x, m(22.4), z], i % 2 ? [x, m(22.4), z] : [x, m(27.3), z])
+    }
+    p.poly(pts)
+  })
+  p.ink(INK, () => {
+    // two rows of 19 header pins
+    for (const x of [-12.7, 12.7]) {
+      p.box(at(x, 0, -2.05), [m(2.54), m(48.3), m(2.5)])
+      for (let i = 0; i < 19; i++) {
+        const y = -22.86 + i * 2.54
+        p.circle(at(x, y, 0.81), m(0.75), 'xy', 6)
+        p.seg(at(x, y, -3.3), at(x, y, -8.5))
+      }
+    }
+    // micro USB, EN and BOOT buttons, USB-serial chip, regulator
+    p.box(at(0, -25.7, 2.2), [m(7.5), m(5.2), m(2.8)])
+    for (const x of [-9.5, 9.5]) {
+      p.box(at(x, -22.5, 1.3), [m(3.6), m(3.6), m(1)])
+      p.circle(at(x, -22.5, 1.85), m(1), 'xy', 8)
+    }
+    p.box(at(1, -13.5, 1.25), [m(5), m(5), m(0.9)])
+    p.circle(at(-0.6, -12, 1.75), m(0.4), 'xy', 5)
+    p.box(at(-7.5, -5, 1.6), [m(6.5), m(3.5), m(1.6)])
+    p.label(tag, at(4.5, -4.5, 0.82), m(9), m(5), { size: 0.95 })
+  })
+  p.ink(RED, () => p.box(at(8, -9, 1.1), [m(1.6), m(0.8), m(0.6)]))
+}
+
+/** Tripod stand holding a board by its USB end, with the cable. */
+function stand(p: Pen, side: 'tx' | 'rx') {
+  const top = CHEST_Y - 27.5 * MM - 0.012
+  // label above the board, nudged away from the chair so the board doesn't hide it
+  p.ink(side === 'tx' ? ORANGE : BLUE, () => p.label(`${side} board`, [side === 'tx' ? -0.24 : 0.24, CHEST_Y + 0.26, 0.05], 0.32, 0.07, { size: 0.85 }))
+  p.seg([0, 0.3, 0], [0, top, 0], true)
+  for (const a of [0.9, 3.0, 5.1]) p.seg([0, 0.3, 0], [Math.cos(a) * 0.17, 0.005, Math.sin(a) * 0.17])
+  p.box([0, top - 0.004, 0], [0.03, 0.012, 0.075])
+  // USB plug under the board's port, cable down the pole
+  p.box([0, top + 0.004, 0], [0.012, 0.012, 0.02])
+  // cables leave on the side away from the chair
+  const d = side === 'tx' ? -1 : 1
+  const cable: V[] = [[0, top - 0.004, 0.012], [d * 0.012, top - 0.06, 0.014], [d * 0.014, 0.5, 0.014], [d * 0.016, 0.3, 0.016], [d * 0.05, 0.12, 0.03], [d * 0.09, 0.012, 0.05]]
+  if (side === 'tx') {
+    // TX only needs power: a small battery pack on the floor
+    p.poly([...cable, [-0.15, 0.012, 0.09]])
+    p.box([-0.21, 0.012, 0.12], [0.075, 0.024, 0.14])
+    p.circle([-0.21, 0.025, 0.07], 0.004, 'xz', 6)
+  } else {
+    // RX goes back to the computer that runs the backend
+    p.poly([...cable, [0.14, 0.006, -0.1], [0.12, 0.006, -0.55], [0.3, 0.006, -0.74], [0.9, 0.006, -0.77]])
+  }
+}
+
+/** A person sitting back in the chair. The chest and shoulders are separate parts so they can breathe. */
+function person(piece: Piece) {
+  const p = piece.pen(INK)
+  p.ball([0, 0.585, -0.05], [0.165, 0.1, 0.13])
+  for (const s of [-1, 1]) {
+    p.limb([s * 0.09, 0.565, -0.02], [s * 0.1, 0.56, 0.36], 0.075, 0.06)
+    p.ball([s * 0.1, 0.555, 0.37], [0.06, 0.06, 0.06])
+    p.limb([s * 0.1, 0.54, 0.38], [s * 0.11, 0.1, 0.42], 0.052, 0.04)
+    p.limb([s * 0.11, 0.045, 0.4], [s * 0.115, 0.04, 0.56], 0.045, 0.038)
+    p.ball([s * 0.115, 0.04, 0.56], [0.038, 0.038, 0.038])
+    p.ball([s * 0.27, 0.72, 0.02], [0.045, 0.045, 0.045])
+    p.limb([s * 0.27, 0.72, 0.02], [s * 0.29, 0.72, 0.27], 0.04, 0.033)
+    p.ball([s * 0.29, 0.715, 0.33], [0.035, 0.026, 0.06])
+  }
+
+  const chest = piece.part([0, CHEST_REL.y - 0.3, CHEST_REL.z])
+  const c = chest.pen(INK)
+  c.ball([0, 0.12, 0.04], [0.155, 0.13, 0.12])
+  c.ball([0, 0.3, 0.0], [0.172, 0.17, CHEST_REL.depth])
+
+  const upper = piece.part([0, 1.05, -0.09])
+  const u = upper.pen(INK)
+  u.limb([0, -0.05, 0], [0, 0.07, 0.01], 0.045)
+  u.ball([0, 0.18, 0.02], [0.085, 0.108, 0.098])
+  u.ball([0, 0.225, 0.0], [0.092, 0.075, 0.1])
+  u.poly([[0, 0.19, 0.118], [0.004, 0.158, 0.134], [0, 0.15, 0.121]])
+  for (const s of [-1, 1]) {
+    u.ball([s * 0.19, -0.05, 0], [0.06, 0.06, 0.06])
+    u.limb([s * 0.2, -0.06, 0], [s * 0.27, -0.33, 0.11], 0.052, 0.045)
+  }
+
+  piece.animate = (b) => {
+    const i = (b + 1) / 2
+    chest.group.scale.set(1 + 0.03 * i, 1 + 0.035 * i, 1 + INHALE_DEPTH * i)
+    upper.group.position.set(0, 1.05 + 0.02 * i, -0.09 + 0.006 * i)
+  }
+}
+
+function chair(p: Pen) {
+  p.box([0, 0.45, 0.02], [0.52, 0.08, 0.5])
+  p.with({ at: [0, 0.49, -0.21], rx: -0.13 }, () => p.box([0, 0.28, 0], [0.52, 0.54, 0.07]))
+  for (const x of [-0.31, 0.31]) {
+    p.box([x, 0.66, 0.0], [0.05, 0.035, 0.46])
+    p.poly([[x, 0.645, 0.2], [x, 0.02, 0.22], [x, 0.02, -0.24], [x, 0.45, -0.2]], false, true)
+  }
+}
+
 const SPECS: Spec[] = [
   // Seats
+  { id: 'patient', name: 'chair 1', zone: 0, color: RED, at: [CHAIR.x, 0, CHAIR.z], draw: chair, setup: person },
+  { id: 'tx', name: 'tx board', zone: 0, color: ORANGE, at: TX_AT, ry: Math.PI / 2, draw: (p) => esp32(p, 'TX') },
+  { id: 'rx', name: 'rx board', zone: 0, color: BLUE, at: RX_AT, ry: -Math.PI / 2, draw: (p) => esp32(p, 'RX') },
+  { id: 'tx-stand', name: 'stand', zone: 0, color: INK, at: [TX_AT[0], 0, TX_AT[2]], pick: false, draw: (p) => stand(p, 'tx') },
+  { id: 'rx-stand', name: 'stand', zone: 0, color: INK, at: [RX_AT[0], 0, RX_AT[2]], pick: false, draw: (p) => stand(p, 'rx') },
   {
-    id: 'chairs', name: 'waiting chairs', zone: 0, color: RED, at: [0, 0, -3.75],
+    id: 'chairs', name: 'waiting chairs', zone: 0, color: RED, at: [1.2, 0, -3.75],
     draw: (p) => {
       const pitch = 0.62
-      p.box([0, 0.34, -0.06], [pitch * 3 - 0.1, 0.05, 0.07])
-      for (const i of [-1, 0, 1]) {
-        const x = i * pitch
+      p.box([0, 0.34, -0.06], [pitch * 2 - 0.1, 0.05, 0.07])
+      for (const x of [-pitch / 2, pitch / 2]) {
         p.box([x, 0.45, 0.02], [0.52, 0.08, 0.5])
         p.with({ at: [x, 0.49, -0.21], rx: -0.13 }, () => p.box([0, 0.28, 0], [0.52, 0.54, 0.07]))
       }
-      for (const k of [-1.5, -0.5, 0.5, 1.5]) {
-        const x = k * pitch
+      for (const x of [-pitch, 0, pitch]) {
         p.box([x, 0.66, 0.0], [0.05, 0.035, 0.46])
         p.seg([x, 0.49, 0.2], [x, 0.645, 0.2])
       }
-      for (const x of [-0.82, 0.82]) {
+      for (const x of [-0.5, 0.5]) {
         p.seg([x, 0.32, -0.06], [x, 0.02, -0.06], true)
         p.seg([x, 0.01, -0.32], [x, 0.01, 0.24], true)
       }
     },
   },
   {
-    id: 'tx', name: 'tx board', zone: 0, color: ORANGE, at: [-1.45, 0, -3.45],
-    draw: (p) => {
-      for (const a of [0.4, 2.5, 4.6]) p.seg([0, 0.62, 0], [Math.cos(a) * 0.22, 0, Math.sin(a) * 0.22])
-      p.seg([0, 0.62, 0], [0, 0.9, 0], true)
-      p.with({ at: [0, 0.98, 0], ry: Math.PI / 2 }, () => {
-        p.box([0, 0, 0], [0.2, 0.11, 0.025])
-        p.ink(INK, () => p.rect([0.02, 0, 0.014], 0.07, 0.06, 'xy'))
-        p.seg([-0.07, 0.055, 0], [-0.07, 0.26, 0], true)
-        p.ball([-0.07, 0.27, 0], [0.014, 0.014, 0.014])
-      })
-      p.ink(GOLD, () => {
-        for (const r of [0.12, 0.2, 0.28]) p.poly(arc([0, 1.25, 0], r, -0.6, 0.6, 8, 'yz'))
-      })
-    },
-  },
-  {
-    id: 'rx', name: 'rx board', zone: 0, color: BLUE, at: [1.45, 0, -3.45],
-    draw: (p) => {
-      for (const a of [0.7, 2.8, 4.9]) p.seg([0, 0.62, 0], [Math.cos(a) * 0.22, 0, Math.sin(a) * 0.22])
-      p.seg([0, 0.62, 0], [0, 0.9, 0], true)
-      p.with({ at: [0, 0.98, 0], ry: -Math.PI / 2 }, () => {
-        p.box([0, 0, 0], [0.2, 0.11, 0.025])
-        p.ink(INK, () => p.rect([-0.02, 0, 0.014], 0.07, 0.06, 'xy'))
-        p.seg([0.07, 0.055, 0], [0.07, 0.26, 0], true)
-        p.ball([0.07, 0.27, 0], [0.014, 0.014, 0.014])
-      })
-      p.ink(INK, () =>
-        p.poly([[0, 0.93, 0.02], [0.05, 0.7, 0.08], [0.04, 0.35, 0.12], [0.1, 0.02, 0.18], [0.3, 0.01, 0.24]]),
-      )
-    },
-  },
-  {
-    id: 'rug', name: 'rug', zone: 0, color: INK, at: [0.05, 0, -2.75], pick: false,
+    id: 'rug', name: 'rug', zone: 0, color: INK, at: [0.55, 0, -2.75], pick: false,
     draw: (p) => {
       p.rect([0, 0.005, 0], 2.3, 1.3, 'xz', true)
       p.rect([0, 0.006, 0], 2.12, 1.12, 'xz')
     },
   },
   {
-    id: 'table', name: 'coffee table', zone: 0, color: INK, at: [0.15, 0, -2.6],
+    id: 'table', name: 'coffee table', zone: 0, color: INK, at: [0.9, 0, -2.6],
     draw: (p) => {
       p.cyl([0, 0.4, 0], 0.34, 0.04)
       for (const a of [0.5, 2.6, 4.7]) p.seg([Math.cos(a) * 0.2, 0.4, Math.sin(a) * 0.2], [Math.cos(a) * 0.27, 0.01, Math.sin(a) * 0.27], true)
@@ -160,7 +274,7 @@ const SPECS: Spec[] = [
     },
   },
   {
-    id: 'plant', name: 'plant', zone: 0, color: GREEN, at: [1.95, 0, -3.1],
+    id: 'plant', name: 'plant', zone: 0, color: GREEN, at: [2.3, 0, -3.75],
     draw: (p) => {
       p.ink(INK, () => p.cyl([0, 0, 0], 0.15, 0.36, { r1: 0.19 }))
       const leaves: [number, number, number, number][] = [
@@ -510,6 +624,7 @@ export function buildRoom(widths: { main: number; sketch: number; bold: number }
     piece.front = s.ry ?? 0
     piece.group.userData.pick = s.pick !== false
     s.draw(piece.pen())
+    s.setup?.(piece)
     piece.build(widths, theme)
     return piece
   })

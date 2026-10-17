@@ -1,11 +1,13 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { lockScroll } from '../lock-scroll'
+import { useStream, type StreamFrame } from '../use-stream'
 import { ZONES } from './models'
 import { RoomView, type ViewState } from './room-view'
 import type { Theme } from './sketch'
+
+// Breathing rate the person follows while no backend is running.
+const SIMULATED_RATE = 14
 
 let audio: AudioContext | null = null
 
@@ -26,7 +28,8 @@ function tick() {
 
 const HELP = ['drag to look around', 'click a corner to step in', 'click anything to pick it up', 'pinch to look closer', 'esc to step back']
 
-export default function Explorer({ zone, onClose }: { zone: number; onClose: () => void }) {
+/** The landing page: the waiting room in 3D, with the person in chair 1 breathing live when the backend runs. */
+export default function WaitingRoom() {
   const canvas = useRef<HTMLCanvasElement>(null)
   const view = useRef<RoomView | null>(null)
   const [state, setState] = useState<ViewState | null>(null)
@@ -37,7 +40,8 @@ export default function Explorer({ zone, onClose }: { zone: number; onClose: () 
   const [sound, setSound] = useState(true)
   const [dragging, setDragging] = useState(false)
   const soundRef = useRef(sound)
-  const closing = useRef(false)
+  const lastRate = useRef(SIMULATED_RATE)
+  const { frame, connected } = useStream()
 
   useEffect(() => {
     soundRef.current = sound
@@ -47,38 +51,40 @@ export default function Explorer({ zone, onClose }: { zone: number; onClose: () 
     if (soundRef.current) tick()
   }
 
-  const close = () => {
-    if (closing.current) return
-    closing.current = true
-    setShown(false)
-    setTimeout(onClose, 260)
-  }
-
   useEffect(() => {
-    const v = new RoomView(canvas.current!, 'explorer', setState)
+    const v = new RoomView(canvas.current!, setState)
     v.onPick = () => {
       if (soundRef.current) tick()
     }
     view.current = v
     const show = requestAnimationFrame(() => setShown(true))
-    const fly = setTimeout(() => v.showZone(zone, 1.6), 250)
-    const unlock = lockScroll()
+    const fly = setTimeout(() => v.showZone(0, 1.6), 250)
     return () => {
       cancelAnimationFrame(show)
       clearTimeout(fly)
-      unlock()
       v.dispose()
       view.current = null
     }
-  }, [zone])
+  }, [])
+
+  // Follow the sensor: its rate while breathing, still during a pause, the last rate otherwise.
+  useEffect(() => {
+    let rate = SIMULATED_RATE
+    let breathing = true
+    if (connected && frame) {
+      if (frame.status === 'breathing' && frame.rate_bpm) lastRate.current = frame.rate_bpm
+      rate = lastRate.current
+      breathing = frame.status !== 'pause'
+    }
+    view.current?.setBreathing({ rate, breathing })
+  }, [frame, connected])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const v = view.current
       if (!v) return
-      if (e.key === 'Escape') {
-        if (!v.back()) close()
-      } else if (v.state.mode === 'object' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+      if (e.key === 'Escape') v.back()
+      else if (v.state.mode === 'object' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
         v.step(e.key === 'ArrowLeft' ? -1 : 1)
         blip()
       }
@@ -98,11 +104,9 @@ export default function Explorer({ zone, onClose }: { zone: number; onClose: () 
   const muted = dark ? 'text-neutral-400 hover:text-neutral-100' : 'text-neutral-500 hover:text-neutral-900'
   const pill = dark ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200/80 bg-[#fdfdfd]'
 
-  return createPortal(
-    <div
-      className={`fixed inset-0 z-[100] transition-opacity duration-300 ${shown ? 'opacity-100' : 'opacity-0'} ${dark ? 'bg-[#141416]' : 'bg-white'}`}
-      role="dialog"
-      aria-modal="true"
+  return (
+    <main
+      className={`fixed inset-0 overflow-hidden font-body transition-opacity duration-300 ${shown ? 'opacity-100' : 'opacity-0'} ${dark ? 'bg-[#141416]' : 'bg-white'}`}
       aria-label="Waiting room in 3D"
     >
       <div className="absolute inset-0">
@@ -141,25 +145,21 @@ export default function Explorer({ zone, onClose }: { zone: number; onClose: () 
               </ul>
             )}
             {info && (
-              <p className={`max-w-[270px] ${help ? 'mt-[14px]' : ''}`}>
-                The waiting room this monitor was built for: two boards beside the chairs, a desk, coffee, an exam
-                corner and the lab bench.
+              <p className={`max-w-[290px] ${help ? 'mt-[14px]' : ''}`}>
+                Two ESP32 boards stand 1 m apart at chest height, about 30 cm in front of the person in chair 1.
+                Every breath nudges the Wi-Fi signal between them a little, and the backend turns that into a
+                breathing rate.
               </p>
             )}
           </div>
         )}
       </div>
 
-      <button
-        type="button"
-        aria-label="Close"
-        onClick={close}
-        className={`absolute right-[16px] top-[16px] grid h-[22px] w-[22px] place-items-center ${muted}`}
-      >
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round">
-          <path d="M1.5 1.5l9 9M10.5 1.5l-9 9" />
-        </svg>
-      </button>
+      <Status
+        frame={frame}
+        connected={connected}
+        className={`absolute right-[12px] top-[11px] rounded-full px-[9px] py-[3px] font-hand text-[15.5px] backdrop-blur-[2px] ${fg} ${dark ? 'bg-[#141416]/80' : 'bg-white/85'}`}
+      />
 
       {object && state?.piece && (
         <>
@@ -221,8 +221,36 @@ export default function Explorer({ zone, onClose }: { zone: number; onClose: () 
           </div>
         </div>
       )}
-    </div>,
-    document.body,
+    </main>
+  )
+}
+
+const SOURCE: Record<StreamFrame['source'], string> = { serial: 'live sensor', replay: 'replay', fake: 'test data' }
+
+/** What is driving the person's breathing right now. */
+function Status({ frame, connected, className }: { frame: StreamFrame | null; connected: boolean; className: string }) {
+  let dot = '#a1a1a6'
+  let text = `simulated · ${SIMULATED_RATE} breaths/min`
+  if (connected && frame) {
+    const source = SOURCE[frame.source]
+    if (frame.status === 'breathing') {
+      dot = '#2fb85a'
+      text = `${source} · ${frame.rate_bpm?.toFixed(1) ?? '--'} breaths/min`
+    } else if (frame.status === 'pause') {
+      dot = '#e5484d'
+      text = `${source} · no breath for ${Math.round(frame.pause_s ?? 0)} s`
+    } else if (frame.status === 'motion') {
+      dot = '#3a6be6'
+      text = `${source} · movement`
+    } else {
+      text = `${source} · measuring`
+    }
+  }
+  return (
+    <div className={`flex items-center gap-[7px] ${className}`} role="status">
+      <span className="h-[7px] w-[7px] rounded-full" style={{ background: dot }} />
+      {text}
+    </div>
   )
 }
 
