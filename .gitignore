@@ -1,2 +1,11 @@
 HARDWARE_SIGNAL_PROCESSING.md
 .env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Raw CSI recordings stay on the recording machine (privacy)
+recordings/
