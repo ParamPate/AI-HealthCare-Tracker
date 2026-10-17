@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "recording_sha256": "62f7cbafd65825d69fd7d2a7baeb28f2c50622d3e25265de67446f1ff7ba916a",
+  "participant_id": "P01",
+  "session_id": "S04_20261017-155933",
+  "split": "train",
+  "time_basis": "seconds_from_first_device_packet",
+  "duration_s": 89.351978,
+  "annotations": [
+    {
+      "start_s": 0.0,
+      "end_s": 43.2,
+      "label": "breathing",
+      "reference_rr_bpm": null,
+      "note": "User reported normal breathing, hold onset, and breathing resumed via chat; recorder marks at 45.2 and 62.6 s include response/transport delay. Two seconds around each mark are uncertain. No reference breathing rate was measured."
+    },
+    {
+      "start_s": 43.2,
+      "end_s": 47.2,
+      "label": "uncertain",
+      "reference_rr_bpm": null,
+      "note": "User reported normal breathing, hold onset, and breathing resumed via chat; recorder marks at 45.2 and 62.6 s include response/transport delay. Two seconds around each mark are uncertain. No reference breathing rate was measured."
+    },
+    {
+      "start_s": 47.2,
+      "end_s": 60.6,
+      "label": "breath_hold",
+      "reference_rr_bpm": null,
+      "note": "User reported normal breathing, hold onset, and breathing resumed via chat; recorder marks at 45.2 and 62.6 s include response/transport delay. Two seconds around each mark are uncertain. No reference breathing rate was measured."
+    },
+    {
+      "start_s": 60.6,
+      "end_s": 64.6,
+      "label": "uncertain",
+      "reference_rr_bpm": null,
+      "note": "User reported normal breathing, hold onset, and breathing resumed via chat; recorder marks at 45.2 and 62.6 s include response/transport delay. Two seconds around each mark are uncertain. No reference breathing rate was measured."
+    },
+    {
+      "start_s": 64.6,
+      "end_s": 89.351978,
+      "label": "breathing",
+      "reference_rr_bpm": null,
+      "note": "User reported normal breathing, hold onset, and breathing resumed via chat; recorder marks at 45.2 and 62.6 s include response/transport delay. Two seconds around each mark are uncertain. No reference breathing rate was measured."
+    }
+  ]
+}
