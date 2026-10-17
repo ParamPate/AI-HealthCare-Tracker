@@ -88,6 +88,9 @@ Calibration recording `recordings/20261017-172315_panting_calib.parquet` (old pl
 - **Right after panting** people often pause or breathe slowly; the model can call that a hold. Breathe
   normally until the page is green before starting the hold.
 - **A hold with movement in it** (shifting in the chair) can split into two `breath_hold` alerts.
+- **The RX USB link can drop** (seen at ~17:55: `ClearCommError ... Access is denied` on COM4). The backend
+  stays up but stops reading; the page shows SENSOR DISCONNECTED and no alerts fire. Fix: replug the RX
+  board if needed, then restart the backend. Check the page shows LIVE sensor before starting the demo.
 - Thresholds come from one person on one day. Re-run a rehearsal if the person, room or placement changes.
 - The backend and frontend were running as background tasks of a Claude Code session; restarting that
   session stops them. Use the commands above in normal terminals for the demo.
