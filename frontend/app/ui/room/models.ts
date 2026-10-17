@@ -169,36 +169,160 @@ function stand(p: Pen, side: 'tx' | 'rx') {
   }
 }
 
+type Egg = { c: V; r: V }
+
+/** The point at (x, y) on the front (+z) of the outermost of these ellipsoids, lifted just off it. */
+function front(eggs: Egg[], x: number, y: number): V {
+  let z = -Infinity
+  for (const { c, r } of eggs) {
+    const k = 1 - ((x - c[0]) / r[0]) ** 2 - ((y - c[1]) / r[1]) ** 2
+    if (k > 0) z = Math.max(z, c[2] + r[2] * Math.sqrt(k))
+  }
+  return [x, y, z + 0.003]
+}
+
+/** A line through (x, y) points, laid onto the front of the ellipsoids: seams, collars, brows. */
+function drawOn(p: Pen, eggs: Egg[], pts: [number, number][]) {
+  const out: V[] = []
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [[x0, y0], [x1, y1]] = [pts[i], pts[i + 1]]
+    for (let k = 0; k < 4; k++) out.push(front(eggs, x0 + ((x1 - x0) * k) / 4, y0 + ((y1 - y0) * k) / 4))
+  }
+  out.push(front(eggs, ...pts[pts.length - 1]))
+  p.poly(out)
+}
+
+/** A ring of radius r around the rod from a to b, at fraction t along it: hems, a watch strap. */
+function ring(p: Pen, a: V, b: V, t: number, r: number, n = 18) {
+  const d = [b[0] - a[0], b[1] - a[1], b[2] - a[2]]
+  const len = Math.hypot(...d)
+  const [dx, dy, dz] = d.map((v) => v / len)
+  // two directions square to the rod
+  const h = Math.abs(dy) < 0.9 ? [0, 1, 0] : [1, 0, 0]
+  const cu = [dy * h[2] - dz * h[1], dz * h[0] - dx * h[2], dx * h[1] - dy * h[0]]
+  const ul = Math.hypot(...cu)
+  const u = cu.map((v) => v / ul)
+  const w = [dy * u[2] - dz * u[1], dz * u[0] - dx * u[2], dx * u[1] - dy * u[0]]
+  const pts: V[] = []
+  for (let k = 0; k <= n; k++) {
+    const ang = (k / n) * Math.PI * 2
+    const [cs, sn] = [Math.cos(ang) * r, Math.sin(ang) * r]
+    pts.push([0, 1, 2].map((i) => a[i] + d[i] * t + u[i] * cs + w[i] * sn) as V)
+  }
+  p.poly(pts)
+}
+
+// chest over belly, in the breathing torso part's frame; head under the back of the skull, in the upper part's
+const TORSO: Egg[] = [
+  { c: [0, 0.12, 0.04], r: [0.155, 0.13, 0.12] },
+  { c: [0, 0.3, 0], r: [0.172, 0.17, CHEST_REL.depth] },
+]
+const HEAD: Egg[] = [
+  { c: [0, 0.18, 0.02], r: [0.085, 0.108, 0.098] },
+  { c: [0, 0.225, 0], r: [0.092, 0.075, 0.1] },
+]
+
 /** A person sitting back in the chair. The chest and shoulders are separate parts so they can breathe. */
 function person(piece: Piece) {
   const p = piece.pen(INK)
   p.ball([0, 0.585, -0.05], [0.165, 0.1, 0.13])
+  // belt and buckle
+  const belt: V[] = []
+  for (let k = 0; k <= 28; k++) {
+    const a = (k / 28) * Math.PI * 2
+    belt.push([0.148 * Math.sin(a), 0.645, -0.045 + 0.127 * Math.cos(a)])
+  }
+  p.poly(belt)
+  p.rect([0, 0.645, 0.084], 0.036, 0.026)
   for (const s of [-1, 1]) {
+    // trousers: thigh with a crease, knee, shin with a hem
     p.limb([s * 0.09, 0.565, -0.02], [s * 0.1, 0.56, 0.36], 0.075, 0.06)
+    p.seg([s * 0.092, 0.64, 0.04], [s * 0.099, 0.625, 0.33])
     p.ball([s * 0.1, 0.555, 0.37], [0.06, 0.06, 0.06])
     p.limb([s * 0.1, 0.54, 0.38], [s * 0.11, 0.1, 0.42], 0.052, 0.04)
+    ring(p, [s * 0.1, 0.54, 0.38], [s * 0.11, 0.1, 0.42], 0.86, 0.05)
+    // shoe: upper, toe, sole, laces
     p.limb([s * 0.11, 0.045, 0.4], [s * 0.115, 0.04, 0.56], 0.045, 0.038)
     p.ball([s * 0.115, 0.04, 0.56], [0.038, 0.038, 0.038])
+    p.rrect([s * 0.113, 0.007, 0.48], 0.1, 0.23, 0.04, 'xz')
+    for (const z of [0.46, 0.49, 0.52]) p.seg([s * 0.113 - 0.015, 0.085, z], [s * 0.113 + 0.015, 0.085, z])
+    // forearm on the armrest
     p.ball([s * 0.27, 0.72, 0.02], [0.045, 0.045, 0.045])
     p.limb([s * 0.27, 0.72, 0.02], [s * 0.29, 0.72, 0.27], 0.04, 0.033)
-    p.ball([s * 0.29, 0.715, 0.33], [0.035, 0.026, 0.06])
+    // hand over the end of the armrest: palm, four fingers curled down, thumb
+    const hx = s * 0.29
+    p.ball([hx, 0.71, 0.305], [0.04, 0.02, 0.045])
+    for (const f of [-0.024, -0.008, 0.008, 0.024]) {
+      p.limb([hx + f, 0.71, 0.335], [hx + f, 0.705, 0.37], 0.009, 0.0085)
+      p.limb([hx + f, 0.705, 0.37], [hx + f, 0.685, 0.385], 0.0085, 0.008)
+    }
+    p.limb([hx - s * 0.03, 0.708, 0.29], [hx - s * 0.042, 0.704, 0.33], 0.011, 0.009)
   }
+  // a watch on the left wrist
+  ring(p, [0.27, 0.72, 0.02], [0.29, 0.72, 0.27], 0.86, 0.037)
+  p.box([0.287, 0.757, 0.235], [0.026, 0.006, 0.024])
 
   const chest = piece.part([0, CHEST_REL.y - 0.3, CHEST_REL.z])
   const c = chest.pen(INK)
-  c.ball([0, 0.12, 0.04], [0.155, 0.13, 0.12])
-  c.ball([0, 0.3, 0.0], [0.172, 0.17, CHEST_REL.depth])
+  for (const { c: at, r } of TORSO) c.ball(at, r)
+  // polo shirt: collar around the neck, button placket, pocket
+  const shirt = (pts: [number, number][]) => drawOn(c, TORSO, pts)
+  for (const s of [-1, 1]) shirt([[s * 0.045, 0.455], [s * 0.1, 0.42], [s * 0.04, 0.385], [s * 0.005, 0.372]])
+  shirt([[-0.013, 0.375], [-0.013, 0.3], [0.013, 0.3], [0.013, 0.375]])
+  for (const y of [0.355, 0.322]) c.with({ at: front(TORSO, 0, y) }, () => c.circle([0, 0, 0], 0.006, 'xy', 8))
+  shirt([[-0.055, 0.3], [-0.055, 0.235], [-0.115, 0.235], [-0.115, 0.3]])
+  const band: V[] = []
+  for (let k = 0; k <= 20; k++) {
+    const a = (k / 20) * Math.PI * 2
+    band.push([0.06 * Math.sin(a), 0.46, -0.01 + 0.055 * Math.cos(a)])
+  }
+  c.poly(band)
 
   const upper = piece.part([0, 1.05, -0.09])
   const u = upper.pen(INK)
   u.limb([0, -0.05, 0], [0, 0.07, 0.01], 0.045)
-  u.ball([0, 0.18, 0.02], [0.085, 0.108, 0.098])
-  u.ball([0, 0.225, 0.0], [0.092, 0.075, 0.1])
+  for (const { c: at, r } of HEAD) u.ball(at, r)
   u.poly([[0, 0.19, 0.118], [0.004, 0.158, 0.134], [0, 0.15, 0.121]])
+  const face = (pts: [number, number][]) => drawOn(u, HEAD, pts)
   for (const s of [-1, 1]) {
+    // eye and pupil, brow, ear
+    u.with({ at: front(HEAD, s * 0.03, 0.19) }, () => {
+      u.circle([0, 0, 0], 0.011, 'xy', 12)
+      u.circle([0, 0, 0.001], 0.003, 'xy', 6)
+    })
+    face([[s * 0.016, 0.212], [s * 0.03, 0.217], [s * 0.046, 0.213]])
+    u.circle([s * 0.087, 0.178, 0.012], 0.022, 'yz', 14)
+    u.circle([s * 0.088, 0.178, 0.014], 0.011, 'yz', 8, 0.6, 3.6)
+    // shoulder, upper arm, short sleeve hem
     u.ball([s * 0.19, -0.05, 0], [0.06, 0.06, 0.06])
     u.limb([s * 0.2, -0.06, 0], [s * 0.27, -0.33, 0.11], 0.052, 0.045)
+    ring(u, [s * 0.2, -0.06, 0], [s * 0.27, -0.33, 0.11], 0.5, 0.057)
   }
+  face([[-0.022, 0.137], [0, 0.131], [0.022, 0.137]])
+  // hair: strands swept to one side, down to a hairline above the brows and ears
+  const [hc, hr] = [HEAD[1].c, HEAD[1].r]
+  const hair = (a: number, phi: number): V => [
+    hr[0] * 1.04 * Math.sin(phi) * Math.sin(a),
+    hc[1] + hr[1] * 1.04 * Math.cos(phi),
+    hr[2] * 1.04 * Math.sin(phi) * Math.cos(a),
+  ]
+  const edge = (a: number) => 1.15 + 0.8 * Math.min(1, Math.abs(a) / (Math.PI / 2))
+  for (let k = 0; k < 11; k++) {
+    const a = -Math.PI + ((k + 0.5) * 2 * Math.PI) / 11
+    const start = 0.35 + 0.3 * (k % 3)
+    const strand: V[] = []
+    for (let j = 0; j <= 5; j++) {
+      const t = j / 5
+      strand.push(hair(a + 0.45 * t, start + (edge(a + 0.45 * t) - 0.05 - start) * t))
+    }
+    u.poly(strand)
+  }
+  const hairline: V[] = []
+  for (let k = 0; k <= 20; k++) {
+    const a = -Math.PI / 2 + (k * Math.PI) / 20
+    hairline.push(hair(a, edge(a)))
+  }
+  u.poly(hairline)
 
   piece.animate = (b) => {
     const i = (b + 1) / 2
@@ -630,7 +754,7 @@ const SPECS: Spec[] = [
       name('exam room', -3.65, -1.8, 1.2)
       name("nurses' station", -4.4, 4.05, 2.0)
       name('ward', -0.6, 4.0, 0.9)
-      name('waiting room', 0.6, -1.4, 1.8)
+      name('waiting room', 0.9, -0.5, 1.8)
       name('cafe', 4.2, -3.2, 0.8)
       name('reception', 4.4, 3.6, 1.4)
 
