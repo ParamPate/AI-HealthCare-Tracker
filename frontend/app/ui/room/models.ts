@@ -1,7 +1,7 @@
-// The waiting room, drawn in lines. Units are meters; y is up; each piece's front is local +z.
+// A mini hospital floor, drawn in lines: the waiting room, reception, cafe, exam room, nurses' station and ward. Units are meters; y is up; each piece's front is local +z.
 import { INK, Piece, type Pen, type V } from './sketch'
 
-export const ZONES = ['Seats', 'Desk', 'Coffee', 'Exam', 'Monitors'] as const
+export const ZONES = ['Seats', 'Desk', 'Coffee', 'Exam', 'Monitors', 'Ward'] as const
 
 const RED = '#d8344f'
 const ORANGE = '#ee7a2c'
@@ -223,6 +223,45 @@ function monitor(p: Pen, screen: () => void) {
   p.box([0, 0.38, 0], [0.62, 0.38, 0.03])
   p.rect([0, 0.38, 0.016], 0.57, 0.33)
   p.with({ at: [0, 0.38, 0.017] }, screen)
+}
+
+/** Hospital bed, head end toward -z and raised; `patient` tucks someone in. */
+function hospitalBed(p: Pen, patient: boolean) {
+  p.ink(INK, () => {
+    for (const x of [-0.36, 0.36]) for (const z of [-0.85, 0.85]) p.circle([x, 0.06, z], 0.05, 'yz', 10)
+    p.box([0, 0.15, 0], [0.8, 0.05, 1.8])
+    for (const z of [-0.55, 0.55]) p.seg([0, 0.18, z], [0, 0.42, z], true)
+  })
+  p.box([0, 0.48, 0.2], [0.9, 0.12, 1.4])
+  p.with({ at: [0, 0.48, -0.5], rx: 0.5 }, () => {
+    p.box([0, 0, -0.22], [0.9, 0.12, 0.44])
+    p.ball([0, 0.11, -0.25], [0.28, 0.05, 0.13])
+    if (patient) p.ink(INK, () => p.ball([0, 0.17, -0.1], [0.09, 0.1, 0.1]))
+  })
+  p.box([0, 0.62, -1.0], [0.94, 0.75, 0.05])
+  p.box([0, 0.52, 1.0], [0.94, 0.5, 0.05])
+  for (const x of [-0.47, 0.47]) p.box([x, 0.66, -0.25], [0.03, 0.14, 0.6])
+  // blanket folded back
+  p.seg([-0.45, 0.545, 0], [0.45, 0.545, 0])
+  if (patient) p.ball([0, 0.56, 0.35], [0.26, 0.09, 0.6])
+}
+
+function wheelchair(p: Pen) {
+  for (const s of [-1, 1]) {
+    const x = s * 0.3
+    p.circle([x, 0.3, -0.05], 0.3, 'yz', 24)
+    p.circle([x, 0.3, -0.05], 0.03, 'yz', 8)
+    p.circle([x * 0.8, 0.07, 0.42], 0.07, 'yz', 12)
+    p.ink(INK, () => {
+      // seat rail, back post and push handle; front post down to the caster; footrest
+      p.poly([[x * 0.85, 0.48, 0.38], [x * 0.85, 0.48, -0.12], [x * 0.85, 0.98, -0.2], [x * 0.85, 1.0, -0.3]])
+      p.seg([x * 0.85, 0.48, 0.38], [x * 0.8, 0.14, 0.42])
+      p.seg([x * 0.8, 0.14, 0.42], [x * 0.6, 0.1, 0.56])
+    })
+  }
+  p.box([0, 0.5, 0.13], [0.48, 0.04, 0.44])
+  p.with({ at: [0, 0.5, -0.12], rx: -0.12 }, () => p.box([0, 0.24, 0], [0.48, 0.42, 0.03]))
+  for (const s of [-1, 1]) p.box([s * 0.14, 0.1, 0.6], [0.16, 0.02, 0.12])
 }
 
 const SPECS: Spec[] = [
@@ -532,12 +571,77 @@ const SPECS: Spec[] = [
       }),
   },
   {
-    id: 'desk-chair', name: 'desk chair', zone: 4, color: INK, at: [-2.6, 0, 3.15], ry: -2.5,
+    id: 'desk-chair', name: 'desk chair', zone: 4, color: INK, at: [-3.0, 0, 3.2], ry: -2.5,
     draw: (p) => {
       star(p, 0.08, 0.26)
       p.cyl([0, 0.08, 0], 0.025, 0.36)
       p.box([0, 0.47, 0], [0.48, 0.07, 0.46])
       p.with({ at: [0, 0.5, -0.21], rx: -0.12 }, () => p.box([0, 0.3, 0], [0.44, 0.5, 0.05]))
+    },
+  },
+
+  // Reception, out in the lobby
+  { id: 'wheelchair', name: 'wheelchair', zone: 1, color: PURPLE, at: [1.8, 0, 0.5], ry: 0.5, draw: wheelchair },
+
+  // Ward
+  { id: 'bed-1', name: 'ward bed', zone: 5, color: BLUE, at: [-1.55, 0, 2.5], draw: (p) => hospitalBed(p, true) },
+  { id: 'bed-2', name: 'ward bed', zone: 5, color: BLUE, at: [-0.1, 0, 2.5], draw: (p) => hospitalBed(p, false) },
+  {
+    id: 'iv', name: 'iv drip', zone: 5, color: TEAL, at: [-2.1, 0, 2.0],
+    draw: (p) => {
+      star(p, 0.06, 0.22)
+      p.seg([0, 0.06, 0], [0, 1.85, 0], true)
+      p.seg([-0.12, 1.85, 0], [0.12, 1.85, 0])
+      p.box([0.1, 1.66, 0], [0.12, 0.2, 0.04])
+      p.poly([[0.1, 1.56, 0], [0.16, 1.1, 0.1], [0.3, 0.7, 0.3]])
+    },
+  },
+  {
+    id: 'cabinet', name: 'bedside cabinet', zone: 5, color: INK, at: [-0.82, 0, 1.75],
+    draw: (p) => {
+      p.box([0, 0.36, 0], [0.42, 0.72, 0.42])
+      p.seg([-0.21, 0.52, 0.211], [0.21, 0.52, 0.211])
+      p.seg([-0.04, 0.6, 0.212], [0.04, 0.6, 0.212])
+      p.ink(BLUE, () => p.cyl([0.08, 0.72, 0], 0.035, 0.1))
+    },
+  },
+
+  // Low cut-away walls between the rooms, room names on the floor, the sign on the roof.
+  // Not a corner of its own, so it fades whenever one corner is in view.
+  {
+    id: 'walls', name: 'walls', zone: -1, color: INK, at: [0, 0, 0], pick: false,
+    draw: (p) => {
+      const h = 1.0
+      const wall = (x0: number, z0: number, x1: number, z1: number) =>
+        p.box([(x0 + x1) / 2, h / 2, (z0 + z1) / 2], [Math.abs(x1 - x0) || 0.1, h, Math.abs(z1 - z0) || 0.1])
+      // exam room and nurses' station on the left, each with a door onto the lobby
+      wall(-2.4, -4.5, -2.4, -1.4)
+      wall(-2.4, -0.5, -2.4, 0.4)
+      wall(-2.4, 1.3, -2.4, 4.5)
+      wall(-6, 0, -2.4, 0)
+      // the ward at the front, door in its back corner
+      wall(-2.4, 1.4, 0.4, 1.4)
+      wall(1.2, 1.4, 1.2, 4.5)
+      // a stub wall setting the cafe apart
+      wall(2.6, -4.5, 2.6, -3.0)
+
+      const name = (text: string, x: number, z: number, w: number) =>
+        p.with({ at: [x, 0.012, z], rx: -Math.PI / 2 }, () => p.label(text, [0, 0, 0], w, 0.32, { size: 0.85 }))
+      name('exam room', -3.65, -1.8, 1.2)
+      name("nurses' station", -4.4, 4.05, 2.0)
+      name('ward', -0.6, 4.0, 0.9)
+      name('waiting room', 0.6, -1.4, 1.8)
+      name('cafe', 4.2, -3.2, 0.8)
+      name('reception', 4.4, 3.6, 1.4)
+
+      // hospital sign standing on the back wall
+      p.box([0.5, 3.1, -4.57], [2.6, 0.6, 0.06])
+      p.ink(RED, () => {
+        const [a, b] = [0.18, 0.06]
+        const plus: [number, number][] = [[-b, a], [b, a], [b, b], [a, b], [a, -b], [b, -b], [b, -a], [-b, -a], [-b, -b], [-a, -b], [-a, b], [-b, b]]
+        p.poly(plus.map(([x, y]): V => [-0.45 + x, 3.1 + y, -4.535]), true)
+      })
+      p.label('hospital', [0.75, 3.1, -4.535], 1.8, 0.45, { size: 0.85 })
     },
   },
 ]

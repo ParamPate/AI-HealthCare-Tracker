@@ -29,7 +29,7 @@ function tick() {
 
 const MONITORS = ZONES.indexOf('Monitors')
 
-const HELP = ['drag to look around', 'click a corner to step in', 'click anything to pick it up', 'pinch to look closer', 'esc to step back']
+const HELP = ['drag to look around', 'click a room to step in', 'click anything to pick it up', 'pinch to look closer', 'esc to step back']
 
 /** The landing page: the waiting room in 3D, with the person in chair 1 breathing live when the backend runs. */
 export default function WaitingRoom() {
@@ -115,7 +115,7 @@ export default function WaitingRoom() {
   return (
     <main
       className={`fixed inset-0 overflow-hidden font-body transition-opacity duration-300 ${shown ? 'opacity-100' : 'opacity-0'} ${dark ? 'bg-[#141416]' : 'bg-white'}`}
-      aria-label="Waiting room in 3D"
+      aria-label="Mini hospital in 3D"
     >
       <div className="absolute inset-0">
         <canvas
