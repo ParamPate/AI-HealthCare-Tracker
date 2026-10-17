@@ -2,9 +2,16 @@ import csv
 from collections import Counter
 from dataclasses import replace
 import io
+import importlib.util
 import json
+import os
 from pathlib import Path
+import select
+import signal
+import subprocess
+import sys
 import tempfile
+import time
 from types import SimpleNamespace
 import unittest
 from unittest.mock import MagicMock, patch
@@ -27,6 +34,13 @@ def packet_line(data=None, overrides=None):
 
 
 class ParseLineTests(unittest.TestCase):
+    def test_teammates_captured_packets(self):
+        path = Path(__file__).resolve().parent.parent / "docs" / "sample_csi_lines.txt"
+        packets = [parse_line(line) for line in path.read_bytes().splitlines()]
+        self.assertEqual([p["id"] for p in packets], [4963, 4964, 4966])
+        self.assertTrue(all(len(p["data"]) == 384 for p in packets))
+        self.assertEqual(packets[0]["data"][:4], [47, -16, 2, 0])
+
     def test_valid_packet_sizes_and_metadata(self):
         for length in (128, 384):
             with self.subTest(length=length):
@@ -285,6 +299,96 @@ class ReadLinesTests(unittest.TestCase):
     def test_line_at_limit_is_preserved(self):
         line = b"x" * (MAX_LINE_BYTES - 1) + b"\n"
         self.assertEqual(next(read_lines(FakeSerial([line]))), line)
+
+
+class FailureTests(unittest.TestCase):
+    def test_port_open_failure_is_reported(self):
+        serial_module = SimpleNamespace(Serial=MagicMock(side_effect=OSError("port unavailable")), SerialException=OSError)
+        errors = io.StringIO()
+        with patch.dict("sys.modules", {"serial": serial_module}), patch("sys.stderr", errors):
+            self.assertEqual(main(["--port", "missing"]), 1)
+        self.assertIn("port unavailable", errors.getvalue())
+
+    def test_disconnect_closes_connection(self):
+        connection = MagicMock()
+        connection.__enter__.return_value = connection
+        connection.in_waiting = 1
+        connection.read.side_effect = OSError("device disconnected")
+        serial_module = SimpleNamespace(Serial=lambda *a, **kw: connection, SerialException=OSError)
+        errors = io.StringIO()
+        with patch.dict("sys.modules", {"serial": serial_module}), patch("sys.stderr", errors):
+            self.assertEqual(main(["--port", "fake"]), 1)
+        self.assertIn("device disconnected", errors.getvalue())
+        connection.__exit__.assert_called_once()
+
+    def test_missing_dependency_has_install_instruction(self):
+        errors = io.StringIO()
+        with patch.dict("sys.modules", {"serial": None}), patch("sys.stderr", errors):
+            self.assertEqual(main(["--port", "fake"]), 1)
+        self.assertIn("pip install", errors.getvalue())
+
+    def test_required_port_and_positive_baud(self):
+        for args in ([], ["--port", "fake", "--baud", "0"], ["--port", "fake", "--baud", "-1"]):
+            with self.subTest(args=args), patch("sys.stderr", io.StringIO()), self.assertRaises(SystemExit) as error:
+                main(args)
+            self.assertEqual(error.exception.code, 2)
+
+
+@unittest.skipUnless(os.name == "posix" and importlib.util.find_spec("serial") is not None,
+                     "POSIX and pyserial required for virtual serial-port check")
+class VirtualSerialTests(unittest.TestCase):
+    def read_until(self, stream, marker):
+        data = b""
+        deadline = time.monotonic() + 5
+        while marker not in data:
+            remaining = deadline - time.monotonic()
+            self.assertGreater(remaining, 0, f"Timed out waiting for {marker!r}; received {data!r}")
+            readable, _, _ = select.select([stream], [], [], remaining)
+            self.assertTrue(readable, f"Timed out waiting for {marker!r}")
+            chunk = os.read(stream.fileno(), 65536)
+            self.assertTrue(chunk, f"Process closed stream before {marker!r}: {data!r}")
+            data += chunk
+        return data
+
+    def test_real_serial_driver_recording_and_shutdown(self):
+        # A PTY exercises pyserial and the CLI without opening a physical ESP32.
+        import pty
+
+        for disconnect in (False, True):
+            with self.subTest(disconnect=disconnect), tempfile.TemporaryDirectory() as folder:
+                master, slave = pty.openpty()
+                process = None
+                path = Path(folder) / "capture.jsonl"
+                try:
+                    process = subprocess.Popen(
+                        # macOS PTYs support standard baud rates, not ESP32's 921600.
+                        [sys.executable, str(Path(__file__).with_name("serial_reader.py")),
+                         "--port", os.ttyname(slave), "--baud", "115200", "--record", str(path)],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                    )
+                    self.read_until(process.stderr, b"Recording to")
+                    line = packet_line()
+                    os.write(master, b"boot\n" + line[:100])
+                    os.write(master, line[100:])
+                    self.assertEqual(self.read_until(process.stdout, b"\n"), line)
+                    if disconnect:
+                        os.close(master)
+                        master = None
+                    else:
+                        process.send_signal(signal.SIGINT)
+                    _, errors = process.communicate(timeout=5)
+                    self.assertEqual(process.returncode, 1 if disconnect else 0, errors.decode())
+                    records = [json.loads(row) for row in path.read_text().splitlines()]
+                    self.assertEqual([r["raw_line"].encode("latin-1") for r in records], [b"boot\n", line])
+                    self.assertIsNotNone(parse_line(records[-1]["raw_line"].encode("latin-1")))
+                finally:
+                    if process is not None:
+                        if process.poll() is None:
+                            process.kill()
+                        process.communicate(timeout=5)
+                    if master is not None:
+                        os.close(master)
+                    os.close(slave)
 
 
 if __name__ == "__main__":
