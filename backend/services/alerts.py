@@ -7,7 +7,13 @@ MAX_UPDATE_GAP_S = 2.5
 PAUSE_S = 10.0
 
 
-def classify(status, rr=None, pause_s=None):
+def classify(status, rr=None, pause_s=None, *, ml_label=None):
+    if ml_label is not None:
+        if ml_label == "breath_hold":
+            return "breath_hold", "critical"
+        if ml_label == "breathing":
+            return "normal", "normal"
+        return ml_label, "unknown"
     if status in ("no_signal", "motion"):
         return status, "unknown"
     if status == "pause":
