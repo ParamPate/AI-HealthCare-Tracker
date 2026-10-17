@@ -18,7 +18,7 @@ import sys
 import threading
 import time
 from collections import Counter, deque
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 import pandas as pd
@@ -35,6 +35,7 @@ CONFIRM = 3           # BREATHING needs this many updates in a row that are stea
 AGREE_BPM = 2.0       # ...within this (a weak signal can flip between unrelated peaks)
 WAVE_S = 30.0         # breathing wave kept for display
 WAVE_HZ = 10.0
+WAVE_DELAY_S = breathing.EDGE_S + 1.0  # exclude the artificial end fade; still an offline-filter preview
 SPARK_S, SPARK_CHARS = 16.0, 40
 BARS = "▁▂▃▄▅▆▇█"
 LABELS = {"starting": "STARTING", "measuring": "MEASURING", "breathing": "BREATHING",
@@ -53,14 +54,16 @@ class LiveState:
     rssi: int | None
     packets_per_s: float
     estimate: breathing.RateEstimate | None
+    wave_times: np.ndarray = field(default_factory=lambda: np.zeros(0))  # device seconds
 
 
 class LiveAnalyser:
     """Rolling buffer of the last BUFFER_S of packets. add() and update() may run in different threads."""
 
-    def __init__(self) -> None:
+    def __init__(self, buffer_s: float = BUFFER_S) -> None:
         self.lock = threading.Lock()
-        self.packets: deque[tuple[float, np.ndarray]] = deque()  # (device time s, amplitudes)
+        self.buffer_s = buffer_s
+        self.packets: deque[tuple[float, np.ndarray]] = deque(maxlen=int(buffer_s * 200))
         self.rssi: int | None = None
         self.start: float | None = None
         self.segment: int | None = None
@@ -69,14 +72,21 @@ class LiveAnalyser:
 
     def add(self, t_s: float, amp: np.ndarray, rssi: int, segment: int = 0) -> None:
         with self.lock:
-            if segment != self.segment:  # RX restarted: its clock starts over
+            discontinuity = bool(self.packets) and (
+                t_s < self.packets[-1][0] or t_s - self.packets[-1][0] > 2.0
+                or amp.shape != self.packets[-1][1].shape
+            )
+            if segment != self.segment or discontinuity:
                 self.packets.clear()
                 self.start, self.segment, self.last_good, self.streak = None, segment, None, 0
+                self.prev_rate = np.nan
+            if self.packets and t_s == self.packets[-1][0]:
+                return
             if self.start is None:
                 self.start = t_s
             self.packets.append((t_s, amp))
             self.rssi = rssi
-            while self.packets[0][0] < t_s - BUFFER_S:
+            while self.packets[0][0] < t_s - self.buffer_s:
                 self.packets.popleft()
 
     def update(self) -> LiveState:
@@ -118,8 +128,12 @@ class LiveAnalyser:
             rate = est.rate_bpm
         elif self.last_good and now - self.last_good[0] <= HOLD_S:
             rate, held = self.last_good[1], True
-        wave = r["breath"][-int(WAVE_S * breathing.FS)::int(breathing.FS / WAVE_HZ)]
-        return LiveState(now - start, status, rate, held, est.calm_s, data_s, wave, rssi, pps, est)
+        end = max(0, len(r["breath"]) - int(WAVE_DELAY_S * breathing.FS))
+        indices = np.arange(max(0, end - int(WAVE_S * breathing.FS)), end,
+                            int(breathing.FS / WAVE_HZ))
+        wave = r["breath"][indices]
+        return LiveState(now - start, status, rate, held, est.calm_s, data_s, wave, rssi, pps, est,
+                         t[0] + r["grid"][indices])
 
 
 def sparkline(wave: np.ndarray) -> str:
