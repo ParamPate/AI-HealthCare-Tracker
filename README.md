@@ -92,6 +92,29 @@ so the live server can reuse it:
 If the RX board restarted during the recording, the longest uninterrupted stretch
 is analysed.
 
+## Live breathing monitor
+
+```bash
+uv run python -m backend.live                                      # from the RX board
+uv run python -m backend.live --replay recordings/<file>.parquet  # a recording, in real time
+```
+
+Once a second the last 60 s are analysed (same `backend/breathing.py`) and one line
+is printed: status, rate, calm data, a sketch of the last 16 s of the breathing
+wave, RSSI, and packets/s. Ctrl+C prints a summary, including the median rate
+while BREATHING was shown, to compare with a manual breath count.
+
+| Status | Meaning |
+|---|---|
+| STARTING | first 10 s of data |
+| MEASURING | not enough calm data yet (needs about 30 s), or a rhythm not yet confirmed |
+| BREATHING | a steady rhythm in 3 updates in a row, agreeing within 2/min |
+| MOVEMENT | movement right now; the last rate is shown as "held" for up to 10 s |
+| NO RHYTHM | enough calm data but no steady rhythm |
+
+`--replay ... --speed 0` runs as fast as possible, and `--debug` adds the numbers
+behind each verdict. `LiveAnalyser` in `backend/live.py` is what the server will use.
+
 ## Using the reader from code
 
 `backend/serial_io.py` is the one place that reads the RX port:
