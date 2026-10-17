@@ -439,13 +439,18 @@ These are fitting-recording results. The filtered waveform is still displayed
 about four seconds behind live. Seat presence is not detected: use the demo with
 the participant seated, as an empty chair can resemble a hold.
 
-The live check detected the reported hold but also flashed HOLD after breathing
-resumed. An additional P01/S03 normal-only capture and calibration candidate are
-saved locally; that candidate was not activated because it slowed hold detection
-without resolving the confusion. The active model remains the five-recording
-fit. Retraining the entire current recordings folder also includes this newer
-diagnostic capture. Stable recovery needs a paired normal/hold calibration run
-in the current setup.
+The original live check detected the reported hold but also flashed HOLD after
+breathing resumed. The earlier P01/S03 normal-only calibration did not fix this.
+A new P01/S04 paired capture has user-reported hold/resume marks at 45.2/62.6 s;
+two seconds around each chat mark are uncertain. The active v3 calibration candidate
+retains all seven recordings and gives the newest capture ten times the window
+weight. On that fitting capture it has no confirmed holds in 107 normal-breathing
+interior windows and holds in all 19 hold-interior windows. These overlapping
+windows are not an independent check. A fresh 30 s live observation still switched
+between breathing and hold; the participant's activity during it has not yet been
+confirmed. Reliable live recovery remains unresolved. See
+`models/demo-v3-paired-calibration.json`. Plain CLI training uses equal window
+weights and therefore does not reproduce this weighted calibration candidate.
 
 The serial and replay phone alarms now use the same confirmed `ml_label` as the
 dashboard: `breath_hold` starts the two-second alarm confirmation, `breathing`

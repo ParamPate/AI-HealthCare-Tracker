@@ -1,0 +1,1959 @@
+{
+  "3": {
+    "calibration_counts": {
+      "breathing_as_breathing": 78,
+      "breathing_as_checking": 17,
+      "breathing_as_breath_hold": 12,
+      "transition_as_checking": 2,
+      "transition_as_breath_hold": 22,
+      "breath_hold_as_breath_hold": 19,
+      "transition_as_breathing": 9
+    },
+    "all_unique_window_metrics": {
+      "windows": 1520,
+      "confusion": {
+        "breathing_as_breathing": 1038,
+        "breathing_as_hold": 151,
+        "hold_as_breathing": 55,
+        "hold_as_hold": 276
+      },
+      "hold_precision": 0.6463700234192038,
+      "hold_recall": 0.8338368580060423,
+      "false_hold_fraction_during_breathing": 0.12699747687132043
+    },
+    "timeline": [
+      {
+        "end_s": 10.0,
+        "score": 0.29943256090117276,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 10.5,
+        "score": 0.39958665788174513,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 11.0,
+        "score": 0.3731872320430625,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 11.5,
+        "score": 0.3733835890686787,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 12.0,
+        "score": 0.44363922114318166,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 12.5,
+        "score": 0.5023827722782128,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 13.0,
+        "score": 0.39354234212002975,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 13.5,
+        "score": 0.4277002510987498,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 14.0,
+        "score": 0.4621132150750713,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 14.5,
+        "score": 0.48385050649008077,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 15.0,
+        "score": 0.3952694998427965,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 15.5,
+        "score": 0.4760628136797434,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 16.0,
+        "score": 0.3356966127298588,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 16.5,
+        "score": 0.2263350315027451,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 17.0,
+        "score": 0.29463523606498987,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 17.5,
+        "score": 0.22926344389673772,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 18.0,
+        "score": 0.32588590412601964,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 18.5,
+        "score": 0.39725292737241313,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 19.0,
+        "score": 0.19747488349203404,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 19.5,
+        "score": 0.1484432099606931,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 20.0,
+        "score": 0.045844433542844835,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 20.5,
+        "score": 0.09777487700889861,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 21.0,
+        "score": 0.2105941359004027,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 21.5,
+        "score": 0.19864188838851268,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 22.0,
+        "score": 0.32704068478673537,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 22.5,
+        "score": 0.2925973741433675,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 23.0,
+        "score": 0.2008312102190826,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 23.5,
+        "score": 0.3631719850415429,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 24.0,
+        "score": 0.14202675220421968,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 24.5,
+        "score": 0.5482306811716378,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 25.0,
+        "score": 0.6795156253420193,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 25.5,
+        "score": 0.48406701143326003,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 26.0,
+        "score": 0.27627254705929916,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 26.5,
+        "score": 0.6244715134148093,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 27.0,
+        "score": 0.8431770080197453,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 27.5,
+        "score": 0.8075368753225189,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 28.0,
+        "score": 0.6894245776361778,
+        "label": "breath_hold",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 28.5,
+        "score": 0.4747851792920449,
+        "label": "breath_hold",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 29.0,
+        "score": 0.29541684962890863,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 29.5,
+        "score": 0.11488401329704545,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 30.0,
+        "score": 0.09503162383157936,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 30.5,
+        "score": 0.22368473693312116,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 31.0,
+        "score": 0.27094415495893454,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 31.5,
+        "score": 0.19340240419709342,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 32.0,
+        "score": 0.36468528704200726,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 32.5,
+        "score": 0.426931285272154,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 33.0,
+        "score": 0.4815666747307383,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 33.5,
+        "score": 0.435171592856182,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 34.0,
+        "score": 0.1718846002515094,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 34.5,
+        "score": 0.11587702994639716,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 35.0,
+        "score": 0.050180298383384614,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 35.5,
+        "score": 0.018767144942221058,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 36.0,
+        "score": 0.135351494594348,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 36.5,
+        "score": 0.25852983064939056,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 37.0,
+        "score": 0.49120505676740617,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 37.5,
+        "score": 0.4797269231494143,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 38.0,
+        "score": 0.40471293436050226,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 38.5,
+        "score": 0.6972837631643428,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 39.0,
+        "score": 0.6764567949975528,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 39.5,
+        "score": 0.7293382147766542,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 40.0,
+        "score": 0.5824241274181832,
+        "label": "breath_hold",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 40.5,
+        "score": 0.5452262582295121,
+        "label": "breath_hold",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 41.0,
+        "score": 0.47205811689309035,
+        "label": "breath_hold",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 41.5,
+        "score": 0.4925328710957193,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 42.0,
+        "score": 0.661983295357499,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 42.5,
+        "score": 0.9006442072058435,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 43.0,
+        "score": 0.8771685061082781,
+        "label": "checking",
+        "truth": "transition"
+      },
+      {
+        "end_s": 43.5,
+        "score": 0.8038188485345061,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 44.0,
+        "score": 0.891726338604246,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 44.5,
+        "score": 0.8951491243559941,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 45.0,
+        "score": 0.80196672281608,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 45.5,
+        "score": 0.5921497651084705,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 46.0,
+        "score": 0.9306108649625985,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 46.5,
+        "score": 0.8924078719040838,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 47.0,
+        "score": 0.9854195205812112,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 47.5,
+        "score": 0.9835810531173073,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 48.0,
+        "score": 0.9711342674037008,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 48.5,
+        "score": 0.944227399417655,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 49.0,
+        "score": 0.9791676615376512,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 49.5,
+        "score": 0.9876025123468641,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 50.0,
+        "score": 0.9881141557457402,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 50.5,
+        "score": 0.9856635496222617,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 51.0,
+        "score": 0.9606791631088846,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 51.5,
+        "score": 0.9840324658048097,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 52.0,
+        "score": 0.9840717315765296,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 52.5,
+        "score": 0.8288396744024161,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 53.0,
+        "score": 0.7942972906519309,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 53.5,
+        "score": 0.6527839897949345,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 54.0,
+        "score": 0.7614786137424856,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 54.5,
+        "score": 0.8166137844238013,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 55.0,
+        "score": 0.7263122047299609,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 55.5,
+        "score": 0.8532290177659617,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 56.0,
+        "score": 0.7444549139915256,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 56.5,
+        "score": 0.8852033111347032,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 57.0,
+        "score": 0.9341739552254271,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 57.5,
+        "score": 0.8574107808183502,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 58.0,
+        "score": 0.8462566726804749,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 58.5,
+        "score": 0.801925712630037,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 59.0,
+        "score": 0.8584880600489424,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 59.5,
+        "score": 0.8925612104332845,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 60.0,
+        "score": 0.9322832421636933,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 60.5,
+        "score": 0.795572791828307,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 61.0,
+        "score": 0.6907778353257896,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 61.5,
+        "score": 0.5644898998653491,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 62.0,
+        "score": 0.6270174559628254,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 62.5,
+        "score": 0.7736250520830409,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 63.0,
+        "score": 0.5021643967866117,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 63.5,
+        "score": 0.32417661329788994,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 64.0,
+        "score": 0.3479887400052118,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 64.5,
+        "score": 0.22613549930447538,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 65.0,
+        "score": 0.18596358937159704,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 65.5,
+        "score": 0.15018298607236238,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 66.0,
+        "score": 0.18088099334027205,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 66.5,
+        "score": 0.13076021636160107,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 67.0,
+        "score": 0.1735952665984284,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 67.5,
+        "score": 0.11098363396492697,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 68.0,
+        "score": 0.20353138498586923,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 68.5,
+        "score": 0.18366643398864443,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 69.0,
+        "score": 0.15558669474616818,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 69.5,
+        "score": 0.28978531069122243,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 70.0,
+        "score": 0.39326295234539593,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 70.5,
+        "score": 0.6319314582806389,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 71.0,
+        "score": 0.6426231970705771,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 71.5,
+        "score": 0.4528970273654268,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 72.0,
+        "score": 0.5092502007672518,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 72.5,
+        "score": 0.6864375846410206,
+        "label": "breath_hold",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 73.0,
+        "score": 0.6779452833497711,
+        "label": "breath_hold",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 73.5,
+        "score": 0.6679549138957436,
+        "label": "breath_hold",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 74.0,
+        "score": 0.7484630844197453,
+        "label": "breath_hold",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 74.5,
+        "score": 0.6049130683053103,
+        "label": "breath_hold",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 75.0,
+        "score": 0.6237511204333712,
+        "label": "breath_hold",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 75.5,
+        "score": 0.44282388243034965,
+        "label": "breath_hold",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 76.0,
+        "score": 0.26374748058014763,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 76.5,
+        "score": 0.12188953319376693,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 77.0,
+        "score": 0.08902100260961376,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 77.5,
+        "score": 0.07514583542150845,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 78.0,
+        "score": 0.03034864765456466,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 78.5,
+        "score": 0.05545963047190479,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 79.0,
+        "score": 0.07295712909180022,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 79.5,
+        "score": 0.08564078926206387,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 80.0,
+        "score": 0.017498857631466278,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 80.5,
+        "score": 0.015801825304250457,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 81.0,
+        "score": 0.03740219654489126,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 81.5,
+        "score": 0.032884692099009176,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 82.0,
+        "score": 0.1433605451476635,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 82.5,
+        "score": 0.3116057145179991,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 83.0,
+        "score": 0.053740023374694315,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 83.5,
+        "score": 0.03637098547490911,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 84.0,
+        "score": 0.047586402023451345,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 84.5,
+        "score": 0.07774322678516521,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 85.0,
+        "score": 0.3763768197946999,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 85.5,
+        "score": 0.336105316657784,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 86.0,
+        "score": 0.5170588929420346,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 86.5,
+        "score": 0.5964047914974027,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 87.0,
+        "score": 0.2158074751827354,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 87.5,
+        "score": 0.33638198453772916,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 88.0,
+        "score": 0.4033642345161989,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 88.5,
+        "score": 0.6603313928340782,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 89.0,
+        "score": 0.7052136212120595,
+        "label": "checking",
+        "truth": "transition"
+      }
+    ]
+  },
+  "10": {
+    "calibration_counts": {
+      "breathing_as_breathing": 96,
+      "breathing_as_checking": 11,
+      "transition_as_checking": 3,
+      "transition_as_breath_hold": 18,
+      "breath_hold_as_breath_hold": 19,
+      "transition_as_breathing": 12
+    },
+    "all_unique_window_metrics": {
+      "windows": 1520,
+      "confusion": {
+        "breathing_as_breathing": 1040,
+        "breathing_as_hold": 149,
+        "hold_as_breathing": 63,
+        "hold_as_hold": 268
+      },
+      "hold_precision": 0.6426858513189448,
+      "hold_recall": 0.8096676737160121,
+      "false_hold_fraction_during_breathing": 0.12531539108494533
+    },
+    "timeline": [
+      {
+        "end_s": 10.0,
+        "score": 0.13455916118618935,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 10.5,
+        "score": 0.13873118726139855,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 11.0,
+        "score": 0.1331544370491986,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 11.5,
+        "score": 0.1515322013541776,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 12.0,
+        "score": 0.24839737841456055,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 12.5,
+        "score": 0.2879073552808333,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 13.0,
+        "score": 0.1789341942663511,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 13.5,
+        "score": 0.24056736291791592,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 14.0,
+        "score": 0.2796315332060752,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 14.5,
+        "score": 0.2768984170277952,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 15.0,
+        "score": 0.25316546118075645,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 15.5,
+        "score": 0.32397184816556873,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 16.0,
+        "score": 0.2317325614593543,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 16.5,
+        "score": 0.09819304777896644,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 17.0,
+        "score": 0.16975452580950476,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 17.5,
+        "score": 0.07110487392315401,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 18.0,
+        "score": 0.14170268606043193,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 18.5,
+        "score": 0.20014239770074144,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 19.0,
+        "score": 0.07007573859537086,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 19.5,
+        "score": 0.037774164856319015,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 20.0,
+        "score": 0.012700193828894027,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 20.5,
+        "score": 0.018189630864684926,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 21.0,
+        "score": 0.05978500642292113,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 21.5,
+        "score": 0.07783761128593616,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 22.0,
+        "score": 0.20839580803325444,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 22.5,
+        "score": 0.18864872353306208,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 23.0,
+        "score": 0.09189855403355787,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 23.5,
+        "score": 0.18894216280073392,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 24.0,
+        "score": 0.05304217153010146,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 24.5,
+        "score": 0.4185379902317365,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 25.0,
+        "score": 0.5598544486798958,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 25.5,
+        "score": 0.26950022047584454,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 26.0,
+        "score": 0.11769452965825775,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 26.5,
+        "score": 0.3864631505809635,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 27.0,
+        "score": 0.7219402773802039,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 27.5,
+        "score": 0.5977666219057649,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 28.0,
+        "score": 0.41607111044286055,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 28.5,
+        "score": 0.20365303035192578,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 29.0,
+        "score": 0.15262874401322485,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 29.5,
+        "score": 0.023992454329736335,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 30.0,
+        "score": 0.02025387563971823,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 30.5,
+        "score": 0.04647106791457085,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 31.0,
+        "score": 0.08534965949801415,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 31.5,
+        "score": 0.06700772277034954,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 32.0,
+        "score": 0.15079742085900646,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 32.5,
+        "score": 0.1683862877571472,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 33.0,
+        "score": 0.21465966672396708,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 33.5,
+        "score": 0.22817656821874294,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 34.0,
+        "score": 0.0725761069172596,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 34.5,
+        "score": 0.042123674664386934,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 35.0,
+        "score": 0.010415096642759334,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 35.5,
+        "score": 0.0035085091666192574,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 36.0,
+        "score": 0.04406145978094306,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 36.5,
+        "score": 0.07705765302650289,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 37.0,
+        "score": 0.3663518935252958,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 37.5,
+        "score": 0.22015918363053139,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 38.0,
+        "score": 0.2069892360610238,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 38.5,
+        "score": 0.5985550181361432,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 39.0,
+        "score": 0.5257323641112164,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 39.5,
+        "score": 0.6490005510562843,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 40.0,
+        "score": 0.34998835292031233,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 40.5,
+        "score": 0.3355536092946958,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 41.0,
+        "score": 0.2999062470437827,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 41.5,
+        "score": 0.3656251535003314,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 42.0,
+        "score": 0.502121332010893,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 42.5,
+        "score": 0.75596698162255,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 43.0,
+        "score": 0.8594389133701716,
+        "label": "checking",
+        "truth": "transition"
+      },
+      {
+        "end_s": 43.5,
+        "score": 0.8183803122859952,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 44.0,
+        "score": 0.8824419265402106,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 44.5,
+        "score": 0.9146854681362019,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 45.0,
+        "score": 0.7159123359739429,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 45.5,
+        "score": 0.548139609518147,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 46.0,
+        "score": 0.9238645087191141,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 46.5,
+        "score": 0.9534186844687645,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 47.0,
+        "score": 0.9960725201051358,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 47.5,
+        "score": 0.9954816354203676,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 48.0,
+        "score": 0.9907505669113824,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 48.5,
+        "score": 0.9635568848480117,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 49.0,
+        "score": 0.9851978984763132,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 49.5,
+        "score": 0.991508092655072,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 50.0,
+        "score": 0.9888798001990019,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 50.5,
+        "score": 0.98281740179577,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 51.0,
+        "score": 0.9409224688538514,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 51.5,
+        "score": 0.9882656426549831,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 52.0,
+        "score": 0.9891824387679539,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 52.5,
+        "score": 0.8535669829317343,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 53.0,
+        "score": 0.8921723007277974,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 53.5,
+        "score": 0.7116758748868122,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 54.0,
+        "score": 0.7749136894761874,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 54.5,
+        "score": 0.884482162741878,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 55.0,
+        "score": 0.7752323295147447,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 55.5,
+        "score": 0.907512920779623,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 56.0,
+        "score": 0.8055631360869459,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 56.5,
+        "score": 0.9212211974202572,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 57.0,
+        "score": 0.9720632522428051,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 57.5,
+        "score": 0.9272599141180172,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 58.0,
+        "score": 0.9017445550496069,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 58.5,
+        "score": 0.801208616189227,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 59.0,
+        "score": 0.8616062207915248,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 59.5,
+        "score": 0.95054757836703,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 60.0,
+        "score": 0.9530335568005026,
+        "label": "breath_hold",
+        "truth": "breath_hold"
+      },
+      {
+        "end_s": 60.5,
+        "score": 0.8030472937434215,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 61.0,
+        "score": 0.6103752579081211,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 61.5,
+        "score": 0.39134145323782354,
+        "label": "breath_hold",
+        "truth": "transition"
+      },
+      {
+        "end_s": 62.0,
+        "score": 0.45432660915835477,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 62.5,
+        "score": 0.7489029232052533,
+        "label": "checking",
+        "truth": "transition"
+      },
+      {
+        "end_s": 63.0,
+        "score": 0.4116872614422616,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 63.5,
+        "score": 0.19687822667373656,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 64.0,
+        "score": 0.1721048627545297,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 64.5,
+        "score": 0.1290811790900218,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 65.0,
+        "score": 0.13228763516677025,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 65.5,
+        "score": 0.061758993383853225,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 66.0,
+        "score": 0.07355941846217691,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 66.5,
+        "score": 0.043579639561468694,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 67.0,
+        "score": 0.0678987379828534,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 67.5,
+        "score": 0.03609519895556352,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 68.0,
+        "score": 0.05400581498375812,
+        "label": "breathing",
+        "truth": "transition"
+      },
+      {
+        "end_s": 68.5,
+        "score": 0.06206429967433952,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 69.0,
+        "score": 0.05643832308043523,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 69.5,
+        "score": 0.12184351320306046,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 70.0,
+        "score": 0.20796659469972228,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 70.5,
+        "score": 0.47639135180109804,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 71.0,
+        "score": 0.4694231716285291,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 71.5,
+        "score": 0.17408460342411078,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 72.0,
+        "score": 0.2750701876503332,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 72.5,
+        "score": 0.512510254581316,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 73.0,
+        "score": 0.4436232264521035,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 73.5,
+        "score": 0.4577627452571427,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 74.0,
+        "score": 0.6424915897426845,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 74.5,
+        "score": 0.4383644796789253,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 75.0,
+        "score": 0.49688437787606393,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 75.5,
+        "score": 0.32994972689357777,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 76.0,
+        "score": 0.13586263417012576,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 76.5,
+        "score": 0.04247059991510013,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 77.0,
+        "score": 0.0375099742717885,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 77.5,
+        "score": 0.036814509621683825,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 78.0,
+        "score": 0.014053965080294136,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 78.5,
+        "score": 0.015503909674760563,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 79.0,
+        "score": 0.029268664742807707,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 79.5,
+        "score": 0.04354284393129685,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 80.0,
+        "score": 0.004542565224519455,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 80.5,
+        "score": 0.003838133086918741,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 81.0,
+        "score": 0.016644519111084104,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 81.5,
+        "score": 0.015949270347185834,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 82.0,
+        "score": 0.07526220192016547,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 82.5,
+        "score": 0.14027982349776572,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 83.0,
+        "score": 0.013547740581679497,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 83.5,
+        "score": 0.006734466162920741,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 84.0,
+        "score": 0.012029633180004438,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 84.5,
+        "score": 0.025196410759580123,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 85.0,
+        "score": 0.20105529684446505,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 85.5,
+        "score": 0.1392472849940291,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 86.0,
+        "score": 0.2782982192765157,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 86.5,
+        "score": 0.40070333587991636,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 87.0,
+        "score": 0.07392317843072167,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 87.5,
+        "score": 0.13181873474182546,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 88.0,
+        "score": 0.19951457385507074,
+        "label": "breathing",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 88.5,
+        "score": 0.5258487764378382,
+        "label": "checking",
+        "truth": "breathing"
+      },
+      {
+        "end_s": 89.0,
+        "score": 0.6500831536731232,
+        "label": "checking",
+        "truth": "transition"
+      }
+    ]
+  }
+}
