@@ -12,7 +12,8 @@ lines as a .txt next to it.
 
 Statuses: STARTING (first 10 s), MEASURING (not enough calm data yet, or a rhythm
 not yet confirmed), BREATHING (a steady rhythm in 3 updates in a row), MOVEMENT
-(movement right now), NO RHYTHM (enough calm data but no steady rhythm). Through
+(movement right now), NO RHYTHM (enough calm data but no steady rhythm), PANTING (a fast,
+steady rhythm in 2 updates in a row; backend.panting). Through
 movement the last rate stays on screen for up to 10 s, marked "(last)". A lost rhythm
 clears it, since that can be a pause in breathing.
 
@@ -33,7 +34,7 @@ import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
 
-from backend import breathing, config, record
+from backend import breathing, config, panting, record
 from backend.csi_format import amplitudes
 from backend.serial_io import CsiStream, find_rx_port, open_port
 
@@ -43,6 +44,7 @@ WARMUP_CALM_S = 30.0  # MEASURING until this much calm data (a first rate usuall
 HOLD_S = 10.0         # keep showing the last confirmed rate this long through movement
 CONFIRM = 3           # BREATHING needs this many updates in a row that are steady and agree...
 AGREE_BPM = 2.0       # ...within this (a weak signal can flip between unrelated peaks)
+PANT_CONFIRM = 2      # PANTING needs this many updates in a row
 WAVE_S = 30.0         # breathing wave kept for display
 WAVE_HZ = 10.0
 WAVE_DELAY_S = breathing.EDGE_S + 1.0  # exclude the artificial end fade; still an offline-filter preview
@@ -53,7 +55,7 @@ PAUSE_EXIT = 0.50     # 0.10 to 0.38; normal breathing: 0.47 and up); back above
 SPARK_S, SPARK_CHARS = 16.0, 40
 BARS = "▁▂▃▄▅▆▇█"
 LABELS = {"starting": "STARTING", "measuring": "MEASURING", "breathing": "BREATHING",
-          "moving": "MOVEMENT", "no_rhythm": "NO RHYTHM", "pause": "PAUSE"}
+          "moving": "MOVEMENT", "no_rhythm": "NO RHYTHM", "pause": "PAUSE", "panting": "PANTING"}
 
 
 @dataclass(frozen=True)
@@ -85,6 +87,7 @@ class LiveAnalyser:
         self.last_good: tuple[float, float] | None = None  # (device time s, rate)
         self.streak, self.prev_rate = 0, np.nan  # steady updates in a row that agree on the rate
         self.pause_start: float | None = None  # device time s when the current pause began
+        self.pant_streak = 0  # updates in a row that found panting
 
     def add(self, t_s: float, amp: np.ndarray, rssi: int, segment: int = 0) -> None:
         with self.lock:
@@ -151,7 +154,13 @@ class LiveAnalyser:
         else:
             self.pause_start = None
 
-        if moving:
+        # Panting lands in the movement band, so it is checked first.
+        pant = panting.panting_rate(r["x"], breathing.FS)
+        self.pant_streak = self.pant_streak + 1 if pant else 0
+
+        if self.pant_streak >= PANT_CONFIRM:
+            status = "panting"
+        elif moving:
             status = "moving"
         elif self.pause_start is not None:
             status = "pause"
@@ -165,6 +174,8 @@ class LiveAnalyser:
         rate, stale = None, False
         if status == "breathing":
             rate = est.rate_bpm
+        elif status == "panting":
+            rate = pant
         elif status == "moving" and self.last_good and now - self.last_good[0] <= HOLD_S:
             rate, stale = self.last_good[1], True
         indices = np.arange(max(0, end - int(WAVE_S * breathing.FS)), end,

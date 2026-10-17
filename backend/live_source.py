@@ -215,7 +215,8 @@ class SerialSource:
     def _state_frame(cls, state, sample):
         mapping = {"starting": ("no_signal", "warming_up"), "measuring": ("no_signal", "measuring"),
                    "moving": ("motion", "movement"), "no_rhythm": ("no_signal", "unreliable_rhythm"),
-                   "breathing": ("breathing", None), "pause": ("pause", "breathing_pause")}
+                   "breathing": ("breathing", None), "pause": ("pause", "breathing_pause"),
+                   "panting": ("breathing", "panting")}
         status, reason = mapping[state.status]
         frame = empty_frame(cls.name, reason)
         # level is set in main.py by the same classifier that drives the phone alarm.
@@ -224,7 +225,7 @@ class SerialSource:
                      and math.isfinite(state.pause_s) else None,
                      calm_s=float(state.calm_s), rssi=state.rssi,
                      packets_per_s=float(state.packets_per_s))
-        if state.status == "breathing" and not state.stale and state.rate_bpm is not None and math.isfinite(state.rate_bpm):
+        if state.status in ("breathing", "panting") and not state.stale and state.rate_bpm is not None and math.isfinite(state.rate_bpm):
             frame["rate_bpm"] = float(state.rate_bpm)
         offset = sample.host_time - sample.device_time_us / 1e6
         # A whole delayed window replaces the prior one; filtering may revise older points.

@@ -83,9 +83,10 @@ def test_phone_event_ack_reconnect_recovery_and_restart(use_ml):
                                               12 if status == "pause" else None, "serial", t,
                                               ml_label=ml_label))
 
+        hold = 5 if use_ml else 3  # model holds need HOLD_CRITICAL_S (4 s), DSP pauses CRITICAL_S (2 s)
         with client.websocket_connect("/ws/dashboard") as phone:
             assert phone.receive_json() == {"type": "snapshot", "alerts": []}
-            for t in range(3):
+            for t in range(hold):
                 result = publish("pause", t)
                 assert phone.receive_json()["type"] == "vitals"
             alert = phone.receive_json()
@@ -97,14 +98,14 @@ def test_phone_event_ack_reconnect_recovery_and_restart(use_ml):
             assert phone.receive_json()["alerts"] == [alert]
             assert client.post(f"/api/alerts/{alert['alert_id']}/ack").status_code == 200
             assert phone.receive_json() == {"type": "ack", "alert_id": alert["alert_id"]}
-        for t in range(3, 7):
+        for t in range(hold, hold + 4):
             assert "alert" not in publish("pause", t)  # acknowledge doesn't rearm
-        publish("motion", 7)
-        for t in range(8, 11):
+        publish("motion", hold + 4)
+        for t in range(hold + 5, hold + 8):
             assert "alert" not in publish("pause", t)  # neither does motion
-        for t in range(11, 15):
+        for t in range(hold + 8, hold + 12):
             publish("breathing", t)
-        for t in range(15, 18):
+        for t in range(hold + 12, 2 * hold + 12):
             result = publish("pause", t)
         second = result["alert"]
         assert second["alert_id"] != alert["alert_id"]

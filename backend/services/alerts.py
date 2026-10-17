@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 
 CRITICAL_S = 2.0
+HOLD_CRITICAL_S = 4.0  # model holds blip for ~3 s during slow breathing and at panting onset; real holds last longer
 RECOVERY_S = 3.0
 MAX_UPDATE_GAP_S = 2.5
 PAUSE_S = 10.0
@@ -49,7 +50,8 @@ class AlertState:
             self.recovery_since = None
             if self.pending_since is None or self.pattern != pattern:
                 self.pending_since, self.pattern = now, pattern
-            return not self.fired and now - self.pending_since >= CRITICAL_S
+            need = HOLD_CRITICAL_S if pattern == "breath_hold" else CRITICAL_S
+            return not self.fired and now - self.pending_since >= need
         self.pending_since, self.pattern = None, None
         if severity == "normal":
             if self.recovery_since is None:

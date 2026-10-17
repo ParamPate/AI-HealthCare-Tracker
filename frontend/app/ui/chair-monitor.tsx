@@ -33,6 +33,10 @@ function describe(frame: StreamFrame | null, connected: boolean, url: string): V
     return { label: 'OFFLINE', tone: 'grey', big: '--', unit: '', note: `Connecting to the server at ${url}...` }
   }
   if (!frame) return { label: 'CONNECTING', tone: 'grey', big: '--', unit: '', note: '' }
+  if (frame.reason === 'panting') {
+    return { label: 'PANTING', tone: 'red', big: frame.rate_bpm?.toFixed(0) ?? '--', unit: 'breaths/min',
+      note: 'Rapid, shallow breathing detected' }
+  }
   if (frame.source !== 'fake' && frame.ml_model_version) {
     if (frame.ml_label === 'checking') {
       return { label: 'CHECKING BREATHING', tone: 'amber', big: 'CHECK', unit: '',
@@ -84,8 +88,8 @@ export default function ChairMonitor() {
   const { frame, receivedAt, connected, wave, url } = useStream()
   const view = describe(frame, connected, url)
   const modelPrimary = frame?.source !== 'fake' && !!frame?.ml_model_version
-  const alarm = connected && (modelPrimary ? frame?.ml_label === 'breath_hold'
-    : frame?.status === 'pause' || frame?.level === 'critical')
+  const alarm = connected && (frame?.reason === 'panting' || (modelPrimary ? frame?.ml_label === 'breath_hold'
+    : frame?.status === 'pause' || frame?.level === 'critical'))
   const pauseStart = !modelPrimary && frame?.status === 'pause' && frame.pause_s !== null ? receivedAt - frame.pause_s : null
   const delay = frame?.waveform_delay_s ?? 3
 

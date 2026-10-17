@@ -49,14 +49,14 @@ def test_shared_publisher_reaches_two_phones_without_waveform_clients(tmp_path, 
             assert second.receive_json()["type"] == "snapshot"
             alerts = []
             for phone in (first, second):
-                for _ in range(8):
+                for _ in range(16):
                     event = phone.receive_json()
                     if event["type"] == "alert":
                         alerts.append(event)
                         break
             assert len(alerts) == 2 and alerts[0] == alerts[1]
             assert alerts[0]["pattern"] == "breath_hold" and alerts[0]["max_gap_s"] is None
-            assert source.tick >= 21  # many messages cannot shorten the 2 s confirmation
+            assert source.tick >= 41  # many messages cannot shorten the 4 s hold confirmation
             with client.websocket_connect("/ws") as waveform:
                 assert waveform.receive_json()["pause_s"] >= 11
             assert client.get("/api/alerts/active").json() == [alerts[0]]

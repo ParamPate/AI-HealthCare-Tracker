@@ -65,7 +65,9 @@ def create_app(source=None):
         while True:
             try:
                 frame = {**source.get_latest(), "sent_at": time.time()}
-                ml_label = None if frame["source"] == "fake" else frame["ml_label"] or "no_signal"
+                # The model only knows breathing vs hold; panting uses the fast-breathing rate rule.
+                ml_label = (None if frame["source"] == "fake" or frame["reason"] == "panting"
+                            else frame["ml_label"] or "no_signal")
                 severity = classify(frame["status"], frame["rate_bpm"], frame["pause_s"],
                                     ml_label=ml_label)[1]
                 frame["level"] = None if severity == "unknown" else severity
