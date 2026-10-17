@@ -3,10 +3,12 @@
 import argparse
 from collections import Counter
 import csv
+from dataclasses import dataclass
 import json
 import logging
 import re
 import sys
+import time
 
 
 MAX_LINE_BYTES = 16 * 1024
@@ -17,6 +19,24 @@ COLUMNS = (
     "noise_floor", "ampdu_cnt", "channel", "secondary_channel", "local_timestamp",
     "ant", "sig_len", "rx_format", "len", "first_word", "data",
 )
+
+
+@dataclass(frozen=True)
+class CSISample:
+    packet_id: int
+    mac: str
+    rssi: int
+    channel: int
+    received_at: float
+    received_monotonic: float
+    device_timestamp_raw: int
+    device_time_us: int
+    time_segment: int
+    metadata: dict
+    raw_iq: tuple
+    csi: tuple
+    valid_mask: tuple
+    raw_line: bytes
 
 
 def parse_line(line):
@@ -91,6 +111,63 @@ def read_lines(connection):
                 discarding = False
 
 
+def read_samples(connection, rejected=None):
+    """Yield CSI samples from an open serial connection owned by the caller.
+
+    A new iterator starts a new capture session. Device time is continuous only
+    within the same transmitter and time_segment. Calls block on serial input;
+    run acquisition outside the server's async event loop.
+    """
+    if rejected is None:
+        rejected = Counter()
+    clocks = {}
+    for line in read_lines(connection):
+        received_at = time.time()
+        received_monotonic = time.monotonic()
+        try:
+            packet = parse_line(line)
+        except ValueError as error:
+            reason = str(error)
+            rejected[reason] += 1
+            if rejected[reason] == 1:
+                LOGGER.warning("Skipping CSI packet: %s", reason)
+            continue
+        if packet is None:
+            continue
+
+        timestamp = packet["local_timestamp"] & 0xFFFFFFFF
+        previous, offset, segment = clocks.get(packet["mac"], (timestamp, 0, 0))
+        if timestamp < previous:
+            # shortcut: counter-only rollover detection is ambiguous after resets
+            # or long outages; add firmware boot IDs if those must be distinguished.
+            if previous - timestamp > 2**31:
+                offset += 2**32
+            else:
+                offset = 0
+                segment += 1
+        clocks[packet["mac"]] = (timestamp, offset, segment)
+
+        raw_iq = tuple(packet["data"])
+        csi = tuple(complex(raw_iq[i + 1], raw_iq[i]) for i in range(0, len(raw_iq), 2))
+        valid_mask = tuple(not (packet["first_word"] and i < 2) for i in range(len(csi)))
+        yield CSISample(
+            packet_id=packet["id"] & 0xFFFFFFFF,
+            mac=packet["mac"],
+            rssi=packet["rssi"],
+            channel=packet["channel"],
+            received_at=received_at,
+            received_monotonic=received_monotonic,
+            device_timestamp_raw=packet["local_timestamp"],
+            device_time_us=timestamp + offset,
+            time_segment=segment,
+            metadata={name: value for name, value in packet.items() if name != "data"},
+            raw_iq=raw_iq,
+            csi=csi,
+            valid_mask=valid_mask,
+            raw_line=line,
+        )
+
+
 def positive_int(value):
     number = int(value)
     if number <= 0:
@@ -113,18 +190,8 @@ def main(argv=None):
     try:
         with serial.Serial(args.port, baudrate=args.baud, timeout=1) as connection:
             print(f"Reading {args.port} at {args.baud} baud. Press Ctrl-C to stop.", file=sys.stderr)
-            for line in read_lines(connection):
-                try:
-                    packet = parse_line(line)
-                except ValueError as error:
-                    reason = str(error)
-                    rejected[reason] += 1
-                    if rejected[reason] == 1:
-                        LOGGER.warning("Skipping CSI packet: %s", reason)
-                    continue
-                if packet is None:
-                    continue
-                sys.stdout.buffer.write(line)
+            for sample in read_samples(connection, rejected):
+                sys.stdout.buffer.write(sample.raw_line)
                 sys.stdout.buffer.flush()
     except KeyboardInterrupt:
         print("\nSerial reader stopped.", file=sys.stderr)

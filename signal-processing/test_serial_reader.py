@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
-from serial_reader import MAX_LINE_BYTES, main, parse_line, read_lines
+from serial_reader import MAX_LINE_BYTES, main, parse_line, read_lines, read_samples
 
 
 def packet_line(data=None, overrides=None):
@@ -105,6 +105,61 @@ class FakeSerial:
 
     def read(self, size):
         return next(self.chunks)
+
+
+class ReadSamplesTests(unittest.TestCase):
+    def test_iq_order_mask_and_arrival_clocks(self):
+        data = [-16, 47, 2, -3, 4, 5]
+        line = packet_line(data)
+        with patch("serial_reader.time.time", return_value=1729125600.12), \
+                patch("serial_reader.time.monotonic", return_value=123.5):
+            sample = next(read_samples(FakeSerial([line])))
+        self.assertEqual(sample.csi, (47 - 16j, -3 + 2j, 5 + 4j))
+        self.assertEqual(sample.valid_mask, (False, False, True))
+        self.assertEqual(sample.raw_iq, tuple(data))
+        self.assertEqual(sample.raw_line, line)
+        self.assertEqual(sample.received_at, 1729125600.12)
+        self.assertEqual(sample.received_monotonic, 123.5)
+        self.assertEqual(sample.metadata["bandwidth"], 1)
+        self.assertEqual(sample.metadata["len"], 6)
+        self.assertNotIn("data", sample.metadata)
+
+    def test_variable_sizes_and_all_valid_flag(self):
+        lines = [packet_line([1, 2] * (size // 2), {23: "0"}) for size in (128, 384)]
+        reader = read_samples(FakeSerial(lines))
+        for size in (128, 384):
+            sample = next(reader)
+            self.assertEqual(len(sample.csi), size // 2)
+            self.assertEqual(sample.valid_mask, (True,) * (size // 2))
+
+    def test_signed_boundary_and_full_rollover(self):
+        raw_times = [2147483647, -2147483648, -1, 0, 10000]
+        reader = read_samples(FakeSerial([packet_line(overrides={18: str(t)}) for t in raw_times]))
+        samples = [next(reader) for _ in raw_times]
+        self.assertEqual([s.device_timestamp_raw for s in samples], raw_times)
+        self.assertEqual([s.device_time_us for s in samples],
+                         [2147483647, 2147483648, 4294967295, 4294967296, 4294977296])
+        self.assertEqual([s.time_segment for s in samples], [0] * 5)
+
+    def test_backward_jump_starts_new_segment_and_resets_offset(self):
+        raw_times = [-1, 10000, 100, 200]
+        reader = read_samples(FakeSerial([packet_line(overrides={18: str(t)}) for t in raw_times]))
+        samples = [next(reader) for _ in raw_times]
+        self.assertEqual([s.device_time_us for s in samples], [4294967295, 4294977296, 100, 200])
+        self.assertEqual([s.time_segment for s in samples], [0, 0, 1, 1])
+
+    def test_transmitters_have_independent_clocks(self):
+        first_mac, second_mac = "1a:00:00:00:00:00", "1a:00:00:00:00:01"
+        frames = [(first_mac, -1), (second_mac, 50), (first_mac, 0), (second_mac, 100)]
+        reader = read_samples(FakeSerial([
+            packet_line(overrides={2: mac, 18: str(timestamp), 1: "-1"})
+            for mac, timestamp in frames
+        ]))
+        samples = [next(reader) for _ in frames]
+        self.assertEqual([s.device_time_us for s in samples], [4294967295, 50, 4294967296, 100])
+        self.assertEqual([s.time_segment for s in samples], [0] * 4)
+        self.assertEqual(samples[0].packet_id, 4294967295)
+        self.assertEqual(samples[0].metadata["id"], -1)
 
 
 class ReadLinesTests(unittest.TestCase):
