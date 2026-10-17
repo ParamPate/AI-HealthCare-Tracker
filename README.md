@@ -109,11 +109,17 @@ while BREATHING was shown, to compare with a manual breath count.
 | STARTING | first 10 s of data |
 | MEASURING | not enough calm data yet (needs about 30 s), or a rhythm not yet confirmed |
 | BREATHING | a steady rhythm in 3 updates in a row, agreeing within 2/min |
-| MOVEMENT | movement right now; the last rate is shown as "held" for up to 10 s |
-| NO RHYTHM | enough calm data but no steady rhythm |
+| MOVEMENT | movement right now; the last rate stays on screen, marked "(last)", for up to 10 s |
+| NO RHYTHM | enough calm data but no steady rhythm (the rate is cleared: this can be a pause) |
 
-`--replay ... --speed 0` runs as fast as possible, and `--debug` adds the numbers
-behind each verdict. `LiveAnalyser` in `backend/live.py` is what the server will use.
+Press Enter while it runs to mark a moment, such as the start and end of a breath
+hold; marks are printed and listed in the summary.
+
+From the board, every session is also saved: the packets as
+`recordings/<date>-<time>_<label>.parquet` (same format as `backend.record`, so it can
+be replayed or analysed; `--label`, default `live`) and the printed lines as a `.txt`
+next to it. `--replay ... --speed 0` runs as fast as possible, and `--debug` adds the
+numbers behind each verdict. `LiveAnalyser` in `backend/live.py` is what the server will use.
 
 ## Using the reader from code
 

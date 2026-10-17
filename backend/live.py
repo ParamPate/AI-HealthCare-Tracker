@@ -6,12 +6,19 @@
 Once a second the last 60 s are analysed with backend.breathing and one line is
 printed: status, breathing rate, seconds of calm data, a sketch of the breathing wave
 over the last 16 s, RSSI, and packets/s. Ctrl+C stops and prints a summary.
+From the board, the packets are also saved as recordings/<date>-<time>_<label>.parquet
+(same format as backend.record, so it can be replayed or analysed) and the printed
+lines as a .txt next to it.
 
 Statuses: STARTING (first 10 s), MEASURING (not enough calm data yet, or a rhythm
 not yet confirmed), BREATHING (a steady rhythm in 3 updates in a row), MOVEMENT
 (movement right now), NO RHYTHM (enough calm data but no steady rhythm). Through
-movement or a lost rhythm the last rate is kept for 10 s and marked "held". Only one
-program can use the RX port at a time.
+movement the last rate stays on screen for up to 10 s, marked "(last)". A lost rhythm
+clears it, since that can be a pause in breathing.
+
+Press Enter to mark a moment (for example the start and end of a breath hold). Marks
+are printed, saved in the .txt, and listed in the summary. Only one program can use
+the RX port at a time.
 """
 import argparse
 import sys
@@ -19,18 +26,21 @@ import threading
 import time
 from collections import Counter, deque
 from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pyarrow.parquet as pq
 
-from backend import breathing, config
+from backend import breathing, config, record
 from backend.csi_format import amplitudes
 from backend.serial_io import CsiStream, find_rx_port, open_port
 
 BUFFER_S = 60.0       # analyse this much recent data
 MIN_DATA_S = 10.0     # before this, only collect
 WARMUP_CALM_S = 30.0  # MEASURING until this much calm data (a first rate usually needs 25 to 30 s)
-HOLD_S = 10.0         # keep showing the last good rate this long
+HOLD_S = 10.0         # keep showing the last confirmed rate this long through movement
 CONFIRM = 3           # BREATHING needs this many updates in a row that are steady and agree...
 AGREE_BPM = 2.0       # ...within this (a weak signal can flip between unrelated peaks)
 WAVE_S = 30.0         # breathing wave kept for display
@@ -46,7 +56,7 @@ class LiveState:
     elapsed_s: float         # seconds since data started
     status: str              # a key of LABELS
     rate_bpm: float | None   # breaths/min to show, or None
-    held: bool               # rate_bpm is the last good rate, kept through movement or a lost rhythm
+    stale: bool              # rate_bpm is the last confirmed rate, kept through movement
     calm_s: float            # calm seconds in the analysed window
     data_s: float            # seconds in the analysed window
     wave: np.ndarray         # breathing wave, last WAVE_S at WAVE_HZ (unit std, 0 during movement)
@@ -78,6 +88,11 @@ class LiveAnalyser:
             self.rssi = rssi
             while self.packets[0][0] < t_s - BUFFER_S:
                 self.packets.popleft()
+
+    def elapsed(self) -> float:
+        """Seconds of data so far, on the same clock as LiveState.elapsed_s."""
+        with self.lock:
+            return self.packets[-1][0] - self.start if self.packets else 0.0
 
     def update(self) -> LiveState:
         """Analyse the buffer (about 0.1 s of work) and decide what to show."""
@@ -113,13 +128,13 @@ class LiveAnalyser:
         else:
             status = "no_rhythm"
 
-        rate, held = None, False
+        rate, stale = None, False
         if status == "breathing":
             rate = est.rate_bpm
-        elif self.last_good and now - self.last_good[0] <= HOLD_S:
-            rate, held = self.last_good[1], True
+        elif status == "moving" and self.last_good and now - self.last_good[0] <= HOLD_S:
+            rate, stale = self.last_good[1], True
         wave = r["breath"][-int(WAVE_S * breathing.FS)::int(breathing.FS / WAVE_HZ)]
-        return LiveState(now - start, status, rate, held, est.calm_s, data_s, wave, rssi, pps, est)
+        return LiveState(now - start, status, rate, stale, est.calm_s, data_s, wave, rssi, pps, est)
 
 
 def sparkline(wave: np.ndarray) -> str:
@@ -133,21 +148,21 @@ def sparkline(wave: np.ndarray) -> str:
     return "".join(BARS[i] for i in idx)
 
 
-HEADER = f"{'time':>6}  {'status':<9}  {'rate':<14}  {'calm data':<12}  {'breathing wave, last 16 s':<{SPARK_CHARS}}  RSSI  pkt/s"
+HEADER = f"{'time':>6}  {'status':<9}  {'rate':<15}  {'calm data':<12}  {'breathing wave, last 16 s':<{SPARK_CHARS}}  RSSI  pkt/s"
 
 
 def format_line(s: LiveState, debug: bool = False) -> str:
     if s.status == "starting" and not s.packets_per_s:
         return f"{s.elapsed_s:5.0f}s  waiting for packets... (is TX powered?)"
-    rate = "--" if s.rate_bpm is None else f"{s.rate_bpm:4.1f}/min" + (" held" if s.held else "")
+    rate = "--" if s.rate_bpm is None else f"{s.rate_bpm:4.1f}/min" + (" (last)" if s.stale else "")
     if s.status == "starting":
         calm = f"data {s.data_s:.0f}/{MIN_DATA_S:.0f} s"
-    elif s.status == "measuring":
+    elif s.status == "measuring" and s.calm_s < WARMUP_CALM_S:
         calm = f"{s.calm_s:.0f}/{WARMUP_CALM_S:.0f} s"
     else:
         calm = f"{s.calm_s:.0f} s"
     rssi = "--" if s.rssi is None else str(s.rssi)
-    line = (f"{s.elapsed_s:5.0f}s  {LABELS[s.status]:<9}  {rate:<14}  {calm:<12}  {sparkline(s.wave)}  "
+    line = (f"{s.elapsed_s:5.0f}s  {LABELS[s.status]:<9}  {rate:<15}  {calm:<12}  {sparkline(s.wave)}  "
             f"{rssi:>4}  {s.packets_per_s:5.0f}")
     if debug and s.estimate is not None:
         e = s.estimate
@@ -172,30 +187,59 @@ def summary(states: list[LiveState]) -> str:
     return out
 
 
-def read_board(analyser: LiveAnalyser, port: str, baud: int, errors: list[Exception]) -> None:
-    """Background thread: feed every packet from the RX board into the analyser."""
+def read_board(analyser: LiveAnalyser, port: str, baud: int, path: Path,
+               stop: threading.Event, errors: list[Exception]) -> None:
+    """Background thread: feed every packet from the RX board into the analyser and save it to `path`."""
     try:
         with open_port(port, baud) as ser:
             stream = CsiStream(ser)
-            while True:
-                for s in stream.read():
-                    p = s.packet
-                    analyser.add(s.device_time_us / 1e6, amplitudes(p.csi, p.first_word_invalid), p.rssi, s.segment)
+            metadata = {"label": path.stem.split("_", 1)[1], "port": port, "source": "backend.live",
+                        "started": datetime.now().isoformat()}
+            writer = pq.ParquetWriter(path, record.SCHEMA.with_metadata(metadata))
+            batch, last_flush = [], time.monotonic()
+            try:
+                while not stop.is_set():
+                    samples = stream.read()
+                    for s in samples:
+                        p = s.packet
+                        analyser.add(s.device_time_us / 1e6, amplitudes(p.csi, p.first_word_invalid), p.rssi, s.segment)
+                    batch += samples
+                    if batch and time.monotonic() - last_flush >= record.FLUSH_EVERY_S:
+                        writer.write_table(record.to_table(batch))
+                        batch, last_flush = [], time.monotonic()
+            finally:
+                if batch:
+                    writer.write_table(record.to_table(batch))
+                writer.close()
     except Exception as e:  # noqa: BLE001  (reported by the main loop)
         errors.append(e)
 
 
-def run_board(port: str, baud: int, show) -> None:
-    analyser, errors = LiveAnalyser(), []
-    threading.Thread(target=read_board, args=(analyser, port, baud, errors), daemon=True).start()
-    print(f"Reading {port}. Ctrl+C to stop.")
+def watch_enter(analyser: LiveAnalyser, out, marks: list[float]) -> None:
+    """Background thread: each Enter press marks the current time."""
+    for _ in sys.stdin:
+        marks.append(analyser.elapsed())
+        out(f"   >> mark {len(marks)} at {marks[-1]:.1f} s")
+
+
+def run_board(port: str, baud: int, path: Path, show, out, marks: list[float]) -> None:
+    analyser, stop, errors = LiveAnalyser(), threading.Event(), []
+    reader = threading.Thread(target=read_board, args=(analyser, port, baud, path, stop, errors), daemon=True)
+    reader.start()
+    threading.Thread(target=watch_enter, args=(analyser, out, marks), daemon=True).start()
+    print(f"Reading {port}, saving to {path.relative_to(config.REPO_ROOT)}. "
+          "Enter marks a moment, Ctrl+C stops.")
     tick = time.monotonic()
-    while True:
-        tick += 1.0
-        time.sleep(max(0.0, tick - time.monotonic()))
-        if errors:
-            raise SystemExit(f"Serial error on {port}: {errors[0]}")
-        show(analyser.update())
+    try:
+        while True:
+            tick += 1.0
+            time.sleep(max(0.0, tick - time.monotonic()))
+            if errors:
+                raise SystemExit(f"Serial error on {port}: {errors[0]}")
+            show(analyser.update())
+    finally:
+        stop.set()
+        reader.join(timeout=5)  # writes the last packets
 
 
 def run_replay(path: str, speed: float, show) -> None:
@@ -222,6 +266,7 @@ def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--replay", metavar="PARQUET", help="play back a recording instead of reading the board")
     p.add_argument("--speed", type=float, default=1.0, help="replay speed, 0 = as fast as possible (default 1)")
+    p.add_argument("--label", default="live", help="name for the saved recording (default: live)")
     p.add_argument("--debug", action="store_true", help="also print the numbers behind each verdict")
     p.add_argument("--port", default=config.SERIAL_PORT, help="RX serial port (default: auto-detect)")
     p.add_argument("--baud", type=int, default=config.SERIAL_BAUD)
@@ -229,25 +274,43 @@ def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")  # block characters, even when output is redirected
 
     states: list[LiveState] = []
+    marks: list[float] = []
+    log = None
+
+    def out(text: str) -> None:
+        print(text, flush=True)
+        if log is not None:
+            log.write(text + "\n")
+            log.flush()
 
     def show(state: LiveState) -> None:
         states.append(state)
-        print(format_line(state, args.debug), flush=True)
+        out(format_line(state, args.debug))
 
-    print("Screening signal only, not a diagnosis.")
-    print(HEADER)
+    path = None
     try:
         if args.replay:
+            out("Screening signal only, not a diagnosis.")
+            out(HEADER)
             run_replay(args.replay, args.speed, show)
         else:
             try:
                 port = args.port or find_rx_port(args.baud)
             except RuntimeError as e:
                 raise SystemExit(str(e))
-            run_board(port, args.baud, show)
+            config.RECORDINGS_DIR.mkdir(exist_ok=True)
+            path = config.RECORDINGS_DIR / f"{datetime.now():%Y%m%d-%H%M%S}_{args.label}.parquet"
+            log = path.with_suffix(".txt").open("w", encoding="utf-8")
+            out("Screening signal only, not a diagnosis.")
+            out(HEADER)
+            run_board(port, args.baud, path, show, out, marks)
     except KeyboardInterrupt:
         pass
-    print("\n" + summary(states))
+    out("\n" + summary(states))
+    if marks:
+        out("Marks (Enter) at: " + ", ".join(f"{m:.1f} s" for m in marks))
+    if path is not None:
+        print(f"Saved {path.relative_to(config.REPO_ROOT)} and {path.with_suffix('.txt').name}")
 
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@ def test_locks_on_breathing_and_holds_the_rate_through_fidgeting():
     states = run(*synthetic())  # 15 breaths/min, fidgeting from 40 to 45 s
     assert states[5].status == "starting"
     assert states[38].status == "breathing" and abs(states[38].rate_bpm - 15) <= 1
-    assert states[43].status == "moving" and states[43].held and abs(states[43].rate_bpm - 15) <= 1
+    assert states[43].status == "moving" and states[43].stale and abs(states[43].rate_bpm - 15) <= 1
     last = states[max(states)]
     assert last.status == "breathing" and abs(last.rate_bpm - 15) <= 1
     format_line(last, debug=True)
