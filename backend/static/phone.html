@@ -1,0 +1,94 @@
+﻿<!doctype html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Triage Alarm</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; padding: 24px; background: #0f172a; color: #e2e8f0; text-align: center; }
+  button { font-size: 20px; padding: 16px 28px; border: 0; border-radius: 12px; margin: 12px; }
+  #arm { background: #3b82f6; color: white; }
+  #ack { background: white; color: #b91c1c; font-weight: bold; }
+  #alert { display: none; background: #b91c1c; border-radius: 16px; padding: 20px; margin-top: 20px; animation: flash 0.6s infinite alternate; }
+  @keyframes flash { from { background: #b91c1c; } to { background: #7f1d1d; } }
+  #log { margin-top: 24px; font-size: 14px; opacity: .8; }
+</style></head>
+<body>
+  <h1>Triage Alarm</h1>
+  <div id="status">Not armed</div>
+  <button id="arm">Enable alarm</button>
+  <div id="alert">
+    <h2 id="title">CRITICAL</h2>
+    <div id="detail"></div>
+    <button id="ack">Acknowledge</button>
+  </div>
+  <div id="log"></div>
+<script>
+let ctx = null, osc = null, gain = null, timer = null, vibTimer = null;
+let armed = false, current = null, ws = null;
+const $ = id => document.getElementById(id);
+
+$("arm").onclick = async () => {
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  await ctx.resume();
+  armed = true;
+  $("status").textContent = "Armed - waiting for alerts";
+  $("arm").style.display = "none";
+  try { await navigator.wakeLock.request("screen"); } catch (e) {}
+  beep(0.15);
+};
+
+function beep(len) {
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.frequency.value = 880; g.gain.value = 0.4;
+  o.connect(g); g.connect(ctx.destination);
+  o.start(); o.stop(ctx.currentTime + len);
+}
+
+function startAlarm() {
+  if (!armed || timer) return;
+  osc = ctx.createOscillator(); gain = ctx.createGain();
+  gain.gain.value = 0.8;
+  osc.type = "square"; osc.connect(gain); gain.connect(ctx.destination); osc.start();
+  let hi = false;
+  timer = setInterval(() => { hi = !hi; osc.frequency.value = hi ? 960 : 700; }, 400);
+  vibTimer = setInterval(() => navigator.vibrate && navigator.vibrate([300, 150, 300]), 1000);
+}
+
+function stopAlarm() {
+  clearInterval(timer); clearInterval(vibTimer); timer = vibTimer = null;
+  try { osc && osc.stop(); } catch (e) {}
+  osc = null; navigator.vibrate && navigator.vibrate(0);
+}
+
+function showAlert(m) {
+  current = m.alert_id;
+  $("title").textContent = "CRITICAL - " + m.seat_id;
+  $("detail").textContent = (m.pattern || "abnormal vitals") +
+    (m.max_gap_s ? " (" + m.max_gap_s.toFixed(0) + " s pause)" : "") +
+    (m.rr ? " | RR " + m.rr.toFixed(0) : "") + (m.hr ? " | HR " + m.hr.toFixed(0) : "");
+  $("alert").style.display = "block";
+  startAlarm();
+}
+
+function clearAlert() { stopAlarm(); $("alert").style.display = "none"; current = null; }
+
+$("ack").onclick = async () => {
+  if (current !== null) await fetch("/api/alerts/" + current + "/ack", { method: "POST" });
+  clearAlert();
+};
+
+function connect() {
+  const proto = location.protocol === "https:" ? "wss" : "ws";
+  ws = new WebSocket(proto + "://" + location.host + "/ws/dashboard");
+  ws.onopen = () => { $("log").textContent = "Connected"; };
+  ws.onmessage = e => {
+    const m = JSON.parse(e.data);
+    if (m.type === "alert") showAlert(m);
+    else if (m.type === "ack" && m.alert_id === current) clearAlert();
+    else if (m.type === "vitals")
+      $("log").textContent = m.seat_id + " RR " + (m.resp_rate_bpm ?? "-") + " | " + (m.breathing_pattern ?? "") + " | " + m.severity;
+  };
+  ws.onclose = () => { $("log").textContent = "Disconnected - retrying"; setTimeout(connect, 1000); };
+}
+setInterval(() => { if (ws && ws.readyState === 1) ws.send("ping"); }, 20000);
+connect();
+</script></body></html>

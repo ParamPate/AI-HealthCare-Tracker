@@ -10,3 +10,6 @@ __pycache__/
 # Raw CSI recordings stay on the recording machine (privacy)
 recordings/
 esp-csi/
+
+# Local databases
+*.db
