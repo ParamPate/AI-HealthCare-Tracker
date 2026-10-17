@@ -1,0 +1,65 @@
+{
+  "evaluation": "training_fit_only",
+  "status": "prototype; independent validation pending",
+  "note": "Overlapping windows from one training dataset are not independent validation.",
+  "training": {
+    "recordings": [
+      {
+        "file": "20261017-013311_hold.parquet",
+        "participant_id": "P01",
+        "session_id": "S01",
+        "split": "train",
+        "recording_sha256": "ddc08424f116378ad1e8aaabe2038314e93ac5034d66bc6b7085b1d4abb516e4",
+        "annotation_sha256": "87c4bf725c3ea11104f6935ed16549007325511a70372c7a20479606d710f318",
+        "training_windows": 119
+      }
+    ],
+    "radio_signatures": [
+      {
+        "csi_values": 384,
+        "channel": 11,
+        "bandwidth": null,
+        "secondary_channel": null
+      }
+    ],
+    "source_revision": "9e08655afff9953eea7e9174be2471cda99bbf70",
+    "source_dirty": false,
+    "preprocessing_source_sha256": {
+      "backend/classifier.py": "6ccea0c0005dfc7b456454319e1c3365bd9add6c9a91eeef4917fb8e24101a4c",
+      "backend/breathing.py": "9a177ad1417f4bdcc933a832299aaab9422113e1c5e909299c10ed245db0a603",
+      "backend/csi_format.py": "6874b7bfb62c16f4c75887090073dbed7853ac39232476a5ca21c3cfc0cfb9ba"
+    },
+    "dependencies": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "pyarrow": "26.0.0",
+      "pydantic": "2.14.1"
+    },
+    "python": "3.15.0",
+    "class_counts": {
+      "breathing": 102,
+      "breath_hold": 17
+    },
+    "rejected_windows": {},
+    "optimizer": {
+      "method": "L-BFGS-B",
+      "l2": 0.1,
+      "class_weight": "balanced",
+      "converged": true
+    }
+  },
+  "window_metrics": {
+    "windows": 119,
+    "confusion": {
+      "breathing_as_breathing": 101,
+      "breathing_as_hold": 1,
+      "hold_as_breathing": 1,
+      "hold_as_hold": 16
+    },
+    "hold_precision": 0.9411764705882353,
+    "hold_recall": 0.9411764705882353,
+    "false_hold_fraction_during_breathing": 0.00980392156862745
+  },
+  "model_file": "breathing-v1.json",
+  "model_sha256": "93bd3e186036d7be8bd518b758cc963108dd1e1ec88573b7580a92be8574541c"
+}
