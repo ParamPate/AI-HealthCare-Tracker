@@ -8,13 +8,12 @@ import time
 import numpy as np
 
 from backend.csi_format import amplitudes
-from backend.live import LiveAnalyser, WAVE_DELAY_S
+from backend.live import BUFFER_S, LiveAnalyser, WAVE_DELAY_S  # same 60 s window the terminal monitor was tested with
 from backend.serial_io import CsiStream, find_rx_port, open_port
 
 LOGGER = logging.getLogger(__name__)
 STALE_S = 2.0
 RESULT_STALE_S = 5.0
-BUFFER_S = 120.0
 MAX_PENDING = 24000
 
 
@@ -146,7 +145,7 @@ class SerialSource:
     def _state_frame(state, sample):
         mapping = {"starting": ("no_signal", "warming_up"), "measuring": ("no_signal", "measuring"),
                    "moving": ("motion", "movement"), "no_rhythm": ("no_signal", "unreliable_rhythm"),
-                   "breathing": ("breathing", None)}
+                   "breathing": ("breathing", None), "pause": ("pause", "breathing_pause")}
         status, reason = mapping[state.status]
         frame = empty_frame("serial", reason)
         frame.update(status=status, waveform_delay_s=WAVE_DELAY_S)

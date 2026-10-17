@@ -25,6 +25,19 @@ def test_locks_on_breathing_and_holds_the_rate_through_fidgeting():
     assert last.status == "breathing" and abs(last.rate_bpm - 15) <= 1
     format_line(last, debug=True)
     assert "Rate while BREATHING was shown: median 14.9/min" in summary(list(states.values()))
+    assert all(s.status != "pause" for s in states.values())
+
+
+def test_flags_a_breath_hold_as_a_pause_and_recovers():
+    t, breathing = synthetic(duration=120.0, motion=None)
+    _, holding = synthetic(duration=120.0, motion=None, breathing_on=False)  # same seed: same packets and noise
+    hold = (t > 60) & (t < 80)
+    states = run(t, np.where(hold[:, None], holding, breathing))
+    paused = [k for k, s in states.items() if s.status == "pause"]
+    assert paused and 70 <= paused[0] <= 76 and paused[-1] <= 88, paused
+    assert states[paused[0]].rate_bpm is None and states[paused[0]].pause_s >= 10
+    assert states[max(states)].status == "breathing"
+    assert "Pauses: 1" in summary(list(states.values()))
 
 
 def test_never_shows_breathing_without_it():

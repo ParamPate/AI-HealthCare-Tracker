@@ -111,6 +111,7 @@ while BREATHING was shown, to compare with a manual breath count.
 | BREATHING | a steady rhythm in 3 updates in a row, agreeing within 2/min |
 | MOVEMENT | movement right now; the last rate stays on screen, marked "(last)", for up to 10 s |
 | NO RHYTHM | enough calm data but no steady rhythm (the rate is cleared: this can be a pause) |
+| PAUSE | breathing was confirmed, the person is still, and the breathing wave has gone flat; shows seconds without a breath. First alert about 11 s into a pause, clears about 5 s after breathing resumes |
 
 Press Enter while it runs to mark a moment, such as the start and end of a breath
 hold; marks are printed and listed in the summary.

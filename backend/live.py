@@ -46,10 +46,14 @@ AGREE_BPM = 2.0       # ...within this (a weak signal can flip between unrelated
 WAVE_S = 30.0         # breathing wave kept for display
 WAVE_HZ = 10.0
 WAVE_DELAY_S = breathing.EDGE_S + 1.0  # exclude the artificial end fade; still an offline-filter preview
+PAUSE_WINDOW_S = 8.0  # PAUSE: the wave is flat over this long (ending WAVE_DELAY_S ago), so a first
+                      # alert comes about 11 s into a pause (apnea screening looks for 10+ s)
+PAUSE_ENTER = 0.40    # "flat": RMS below this share of the window's calm RMS (marked breath holds:
+PAUSE_EXIT = 0.50     # 0.10 to 0.38; normal breathing: 0.47 and up); back above PAUSE_EXIT ends it
 SPARK_S, SPARK_CHARS = 16.0, 40
 BARS = "▁▂▃▄▅▆▇█"
 LABELS = {"starting": "STARTING", "measuring": "MEASURING", "breathing": "BREATHING",
-          "moving": "MOVEMENT", "no_rhythm": "NO RHYTHM"}
+          "moving": "MOVEMENT", "no_rhythm": "NO RHYTHM", "pause": "PAUSE"}
 
 
 @dataclass(frozen=True)
@@ -65,6 +69,7 @@ class LiveState:
     packets_per_s: float
     estimate: breathing.RateEstimate | None
     wave_times: np.ndarray = field(default_factory=lambda: np.zeros(0))  # device seconds
+    pause_s: float | None = None  # while status is "pause": seconds since breathing stopped
 
 
 class LiveAnalyser:
@@ -79,6 +84,7 @@ class LiveAnalyser:
         self.segment: int | None = None
         self.last_good: tuple[float, float] | None = None  # (device time s, rate)
         self.streak, self.prev_rate = 0, np.nan  # steady updates in a row that agree on the rate
+        self.pause_start: float | None = None  # device time s when the current pause began
 
     def add(self, t_s: float, amp: np.ndarray, rssi: int, segment: int = 0) -> None:
         with self.lock:
@@ -89,7 +95,7 @@ class LiveAnalyser:
             if segment != self.segment or discontinuity:
                 self.packets.clear()
                 self.start, self.segment, self.last_good, self.streak = None, segment, None, 0
-                self.prev_rate = np.nan
+                self.prev_rate, self.pause_start = np.nan, None
             if self.packets and t_s == self.packets[-1][0]:
                 return
             if self.start is None:
@@ -129,8 +135,26 @@ class LiveAnalyser:
         confirmed = self.streak >= CONFIRM
         if confirmed:
             self.last_good = (now, est.rate_bpm)
+
+        # Pause: breathing was confirmed in the buffer and the person is still, but the breathing
+        # wave has gone flat. The last WAVE_DELAY_S are skipped (the filter fades them out).
+        end = max(0, len(r["breath"]) - int(WAVE_DELAY_S * breathing.FS))
+        breath, calm = r["breath"][:end], r["gate"][:end] > 0.99
+        recent = slice(max(0, end - int(PAUSE_WINDOW_S * breathing.FS)), end)
+        level = (np.sqrt(np.mean(breath[recent] ** 2) / (np.mean(breath[calm] ** 2) + 1e-12))
+                 if calm.any() else np.inf)
+        established = self.last_good is not None and now - self.last_good[0] <= self.buffer_s
+        limit = PAUSE_EXIT if self.pause_start is not None else PAUSE_ENTER
+        if established and calm[recent].all() and level < limit:
+            if self.pause_start is None:
+                self.pause_start = now - WAVE_DELAY_S - PAUSE_WINDOW_S
+        else:
+            self.pause_start = None
+
         if moving:
             status = "moving"
+        elif self.pause_start is not None:
+            status = "pause"
         elif confirmed:
             status = "breathing"
         elif est.steady or est.calm_s < WARMUP_CALM_S:
@@ -143,12 +167,12 @@ class LiveAnalyser:
             rate = est.rate_bpm
         elif status == "moving" and self.last_good and now - self.last_good[0] <= HOLD_S:
             rate, stale = self.last_good[1], True
-        end = max(0, len(r["breath"]) - int(WAVE_DELAY_S * breathing.FS))
         indices = np.arange(max(0, end - int(WAVE_S * breathing.FS)), end,
                             int(breathing.FS / WAVE_HZ))
         wave = r["breath"][indices]
+        pause_s = now - self.pause_start if status == "pause" else None
         return LiveState(now - start, status, rate, stale, est.calm_s, data_s, wave, rssi, pps, est,
-                         t[0] + r["grid"][indices])
+                         t[0] + r["grid"][indices], pause_s)
 
 
 def sparkline(wave: np.ndarray) -> str:
@@ -169,6 +193,8 @@ def format_line(s: LiveState, debug: bool = False) -> str:
     if s.status == "starting" and not s.packets_per_s:
         return f"{s.elapsed_s:5.0f}s  waiting for packets... (is TX powered?)"
     rate = "--" if s.rate_bpm is None else f"{s.rate_bpm:4.1f}/min" + (" (last)" if s.stale else "")
+    if s.status == "pause":
+        rate = f"no breath {s.pause_s:.0f} s"
     if s.status == "starting":
         calm = f"data {s.data_s:.0f}/{MIN_DATA_S:.0f} s"
     elif s.status == "measuring" and s.calm_s < WARMUP_CALM_S:
@@ -198,6 +224,17 @@ def summary(states: list[LiveState]) -> str:
                 f"(range {min(rates):.1f} to {max(rates):.1f}).")
     else:
         out += "\nNo steady breathing rhythm was found."
+    pauses, current = [], None  # longest pause_s shown in each run of PAUSE updates
+    for s in analysed:
+        if s.status == "pause":
+            current = s.pause_s
+        elif current is not None:
+            pauses.append(current)
+            current = None
+    if current is not None:
+        pauses.append(current)
+    if pauses:
+        out += f"\nPauses: {len(pauses)} (" + ", ".join(f"{p:.0f} s" for p in pauses) + ")."
     return out
 
 
