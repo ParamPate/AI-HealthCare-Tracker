@@ -20,11 +20,11 @@ MAX_PENDING = 24000
 def empty_frame(source, reason, seq=0):
     return {"t": None, "breath": None, "rate_bpm": None, "status": "no_signal",
             "reason": reason, "source": source, "seq": seq, "waveform": [],
-            "waveform_delay_s": 0.0, "alert": None}
+            "waveform_delay_s": 0.0, "pause_s": None, "alert": None}
 
 
 class FakeSource:
-    """Synthetic 15/min breathing, a 12 s pause, movement, and missing input."""
+    """Synthetic 15/min breathing, a 16 s pause, movement, and missing input."""
     def __init__(self):
         self.started = time.monotonic()
         self.epoch = time.time()
@@ -40,14 +40,15 @@ class FakeSource:
         seq = int(elapsed * 15)
         t = self.epoch + seq / 15
         phase = elapsed % 60
-        if 48 <= phase < 51:
+        if 52 <= phase < 55:
             return empty_frame("fake", "simulated_signal_loss", seq)
-        status = "pause" if 30 <= phase < 42 else "motion" if 42 <= phase < 48 else "breathing"
+        status = "pause" if 30 <= phase < 46 else "motion" if 46 <= phase < 52 else "breathing"
         breath = 0.0 if status == "pause" else math.sin(2 * math.pi * 0.25 * seq / 15)
         breath += 0.02 * math.sin(seq * 1.7)
         return {"t": t, "breath": breath, "rate_bpm": 15.0 if status == "breathing" else None,
                 "status": status, "reason": "simulated", "source": "fake", "seq": seq,
                 "waveform": [{"t": t, "breath": breath}], "waveform_delay_s": 0.0,
+                "pause_s": phase - 30 if status == "pause" else None,
                 "alert": {"id": f"demo-{self.epoch}-{int(elapsed // 60)}", "kind": "simulated_pause"}
                 if status == "pause" else None}
 
@@ -148,7 +149,9 @@ class SerialSource:
                    "breathing": ("breathing", None), "pause": ("pause", "breathing_pause")}
         status, reason = mapping[state.status]
         frame = empty_frame("serial", reason)
-        frame.update(status=status, waveform_delay_s=WAVE_DELAY_S)
+        frame.update(status=status, waveform_delay_s=WAVE_DELAY_S,
+                     pause_s=float(state.pause_s) if status == "pause" and state.pause_s is not None
+                     and math.isfinite(state.pause_s) else None)
         if state.status == "breathing" and not state.stale and state.rate_bpm is not None and math.isfinite(state.rate_bpm):
             frame["rate_bpm"] = float(state.rate_bpm)
         offset = sample.host_time - sample.device_time_us / 1e6

@@ -1,4 +1,4 @@
-﻿import sqlite3, json
+import sqlite3
 from pathlib import Path
 
 DB_PATH = Path(__file__).parent / "healthcare.db"
@@ -51,5 +51,9 @@ def init_db():
         ts TEXT DEFAULT CURRENT_TIMESTAMP
     );
     """)
+    columns = {row[1] for row in conn.execute("PRAGMA table_info(alerts)")}
+    for name, kind in (("max_gap_s", "REAL"), ("source", "TEXT")):
+        if name not in columns:
+            conn.execute(f"ALTER TABLE alerts ADD COLUMN {name} {kind}")
     conn.commit()
     conn.close()

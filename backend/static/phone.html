@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html><head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Triage Alarm</title>
@@ -24,6 +24,7 @@
 <script>
 let ctx = null, osc = null, gain = null, timer = null, vibTimer = null;
 let armed = false, current = null, ws = null;
+const pending = new Map();
 const $ = id => document.getElementById(id);
 
 $("arm").onclick = async () => {
@@ -33,7 +34,8 @@ $("arm").onclick = async () => {
   $("status").textContent = "Armed - waiting for alerts";
   $("arm").style.display = "none";
   try { await navigator.wakeLock.request("screen"); } catch (e) {}
-  beep(0.15);
+  if (current !== null) startAlarm();
+  else beep(0.15);
 };
 
 function beep(len) {
@@ -60,20 +62,36 @@ function stopAlarm() {
 }
 
 function showAlert(m) {
+  pending.set(m.alert_id, m);
   current = m.alert_id;
-  $("title").textContent = "CRITICAL - " + m.seat_id;
+  $("title").textContent = (m.source === "fake" ? "DEMO - " : "CRITICAL - ") + m.seat_id;
   $("detail").textContent = (m.pattern || "abnormal vitals") +
     (m.max_gap_s ? " (" + m.max_gap_s.toFixed(0) + " s pause)" : "") +
-    (m.rr ? " | RR " + m.rr.toFixed(0) : "") + (m.hr ? " | HR " + m.hr.toFixed(0) : "");
+    (m.rr ? " | RR " + m.rr.toFixed(0) : "");
   $("alert").style.display = "block";
   startAlarm();
 }
 
 function clearAlert() { stopAlarm(); $("alert").style.display = "none"; current = null; }
 
+function acknowledged(id) {
+  pending.delete(id);
+  if (current === id) {
+    clearAlert();
+    if (pending.size) showAlert(pending.values().next().value);
+  }
+}
+
 $("ack").onclick = async () => {
-  if (current !== null) await fetch("/api/alerts/" + current + "/ack", { method: "POST" });
-  clearAlert();
+  const id = current;
+  if (id === null) return;
+  try {
+    const response = await fetch("/api/alerts/" + id + "/ack", { method: "POST" });
+    if (!response.ok) throw new Error("Acknowledgement failed");
+    acknowledged(id);
+  } catch (e) {
+    $("log").textContent = "Could not acknowledge. Check connection and retry.";
+  }
 };
 
 function connect() {
@@ -82,8 +100,13 @@ function connect() {
   ws.onopen = () => { $("log").textContent = "Connected"; };
   ws.onmessage = e => {
     const m = JSON.parse(e.data);
-    if (m.type === "alert") showAlert(m);
-    else if (m.type === "ack" && m.alert_id === current) clearAlert();
+    if (m.type === "snapshot") {
+      pending.clear();
+      for (const alert of m.alerts) pending.set(alert.alert_id, alert);
+      if (pending.size) showAlert(pending.values().next().value);
+      else clearAlert();
+    } else if (m.type === "alert") showAlert(m);
+    else if (m.type === "ack") acknowledged(m.alert_id);
     else if (m.type === "vitals")
       $("log").textContent = m.seat_id + " RR " + (m.resp_rate_bpm ?? "-") + " | " + (m.breathing_pattern ?? "") + " | " + m.severity;
   };
