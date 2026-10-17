@@ -8,7 +8,6 @@ import time
 import numpy as np
 import pandas as pd
 
-from backend.classify import classify
 from backend.csi_format import CsiPacket, amplitudes
 from backend.live import BUFFER_S, LiveAnalyser, WAVE_DELAY_S  # same 60 s window the terminal monitor was tested with
 from backend.serial_io import CsiStream, Sample, find_rx_port, open_port
@@ -23,12 +22,14 @@ CHAIR = "Chair 1"
 def empty_frame(source, reason, seq=0):
     return {"t": None, "breath": None, "rate_bpm": None, "status": "no_signal",
             "reason": reason, "source": source, "seq": seq, "waveform": [],
-            "waveform_delay_s": 0.0, "alert": None, "chair": CHAIR, "level": None,
-            "pause_s": None, "calm_s": None, "rssi": None, "packets_per_s": None}
+            "waveform_delay_s": 0.0, "pause_s": None, "alert": None, "chair": CHAIR, "level": None,
+            "calm_s": None, "rssi": None, "packets_per_s": None}
 
 
 class FakeSource:
-    """Synthetic 15/min breathing, a 12 s pause, movement, and missing input."""
+    """Synthetic 15/min breathing, a 16 s pause, movement, and missing input."""
+    name = "fake"
+
     def __init__(self):
         self.started = time.monotonic()
         self.epoch = time.time()
@@ -44,15 +45,15 @@ class FakeSource:
         seq = int(elapsed * 15)
         t = self.epoch + seq / 15
         phase = elapsed % 60
-        if 48 <= phase < 51:
+        if 52 <= phase < 55:
             return empty_frame("fake", "simulated_signal_loss", seq)
-        status = "pause" if 30 <= phase < 42 else "motion" if 42 <= phase < 48 else "breathing"
+        status = "pause" if 30 <= phase < 46 else "motion" if 46 <= phase < 52 else "breathing"
         breath = 0.0 if status == "pause" else math.sin(2 * math.pi * 0.25 * seq / 15)
         breath += 0.02 * math.sin(seq * 1.7)
         return {**empty_frame("fake", "simulated", seq),
                 "t": t, "breath": breath, "rate_bpm": 15.0 if status == "breathing" else None,
                 "status": status, "waveform": [{"t": t, "breath": breath}],
-                "pause_s": phase - 30 + 10 if status == "pause" else None, "rssi": -60, "packets_per_s": 71.0,
+                "pause_s": phase - 30 if status == "pause" else None, "rssi": -60, "packets_per_s": 71.0,
                 "alert": {"id": f"demo-{self.epoch}-{int(elapsed // 60)}", "kind": "simulated_pause"}
                 if status == "pause" else None}
 
@@ -148,14 +149,17 @@ class SerialSource:
                     self._frame = frame
                     self._last_result = time.monotonic()
 
-    def _state_frame(self, state, sample):
+    @classmethod
+    def _state_frame(cls, state, sample):
         mapping = {"starting": ("no_signal", "warming_up"), "measuring": ("no_signal", "measuring"),
                    "moving": ("motion", "movement"), "no_rhythm": ("no_signal", "unreliable_rhythm"),
                    "breathing": ("breathing", None), "pause": ("pause", "breathing_pause")}
         status, reason = mapping[state.status]
-        frame = empty_frame(self.name, reason)
-        frame.update(status=status, waveform_delay_s=WAVE_DELAY_S, level=classify(state),
-                     pause_s=None if state.pause_s is None else float(state.pause_s),
+        frame = empty_frame(cls.name, reason)
+        # level is set in main.py by the same classifier that drives the phone alarm.
+        frame.update(status=status, waveform_delay_s=WAVE_DELAY_S,
+                     pause_s=float(state.pause_s) if status == "pause" and state.pause_s is not None
+                     and math.isfinite(state.pause_s) else None,
                      calm_s=float(state.calm_s), rssi=state.rssi,
                      packets_per_s=float(state.packets_per_s))
         if state.status == "breathing" and not state.stale and state.rate_bpm is not None and math.isfinite(state.rate_bpm):

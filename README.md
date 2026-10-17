@@ -150,8 +150,10 @@ level. Only processed numbers and the wave reach the browser; raw CSI stays in t
 Python process. Set `NEXT_PUBLIC_WS_URL` to point the page at another server.
 
 The level (normal, warning, critical) comes from `classify()` in
-`backend/classify.py`, which returns nothing until the classification rules are
-written; the page hides the level until then.
+`backend/services/alerts.py`, the same rules that ring the phone (see "Live server
+and phone alarm" below). The page hides it while the class is unknown (starting,
+measuring, movement, no signal). The phone page is served by the same backend at
+`/phone`.
 
 ## Using the reader from code
 
@@ -215,3 +217,103 @@ throughput, placement, and breathing detection still need hardware trials.
    clear error. Reconnect and start a new recording.
 6. Send the recordings and their printed summaries back for analysis.
    `recordings/` is gitignored, so pushing code does not transfer captures.
+
+## Live server and phone alarm
+
+Run one server from the project root (close other serial readers first):
+
+```bash
+uv run python -m backend.main --source serial --port /dev/cu.usbserial-0001 --host 0.0.0.0
+```
+
+On the same Wi-Fi network, open `http://<computer-LAN-IP>:8000/phone` on the phone
+and tap **Enable alarm**. Keep the page open and the phone awake. Sound depends on
+browser audio permission; vibration is optional and is not supported on every
+phone. This is a local demo server with no authentication; use a trusted LAN.
+
+To try the complete alert path without boards:
+
+```bash
+uv run python -m backend.main --source fake --host 0.0.0.0
+```
+
+The fake source cycles through breathing, a 16 s pause, movement, and missing input.
+An alarm should appear around 42–44 s after startup and is marked **DEMO**. Acknowledge
+it on the phone. For an immediate delivery/sound check, bypass classification with:
+
+```bash
+curl -X POST http://localhost:8000/api/demo/alert
+```
+
+The live path is:
+
+```
+serial_io → LiveAnalyser → SerialSource → shared server publisher
+    → breathing classification → timed alert → /ws/dashboard → phone sound
+```
+
+The shared publisher runs independently of browser connections. It evaluates new
+snapshots at most once a second; opening more tabs or receiving the same snapshot
+again does not advance alert confirmation. It publishes these rule-based classes:
+
+| Class | Input | Result |
+|---|---|---|
+| normal | confirmed RR 10–22/min | normal |
+| slow_breathing | confirmed RR below 10/min | warning; critical below 8/min |
+| fast_breathing | confirmed RR above 22/min | warning; critical above 28/min |
+| breathing_pause | detector reports a pause with duration | warning below 10 s; critical from 10 s |
+| motion / no_signal | movement, warmup, unreliable rhythm, missing packets | unknown; interrupts pending alarm |
+
+Critical readings must continue for **2 elapsed seconds** with fresh updates and
+the same classification. A gap longer than 2.5 s resets confirmation. The live
+pause detector itself uses an 8 s window ending 3 s ago; delivery therefore has
+that detection delay **plus** confirmation time, and filtering can add more delay.
+These are prototype thresholds, not a trained or clinically validated model.
+The current DSP only estimates rates within 3–30/min, so fast-rate detection has
+limited range. It does not classify shallow breathing or diagnose apnea.
+
+One alert is sent per episode. It stays active until acknowledged. Acknowledgement
+silences all connected phones; it does not immediately rearm the detector. Three
+seconds of fresh normal breathing rearm it for a later episode. Motion and signal
+loss cannot rearm it. Unacknowledged alerts survive a server restart and are sent
+when a phone reconnects. SQLite adds the new alert columns without deleting data.
+
+### Frontend and teammate contract
+
+- `/ws`: existing waveform stream (~15 messages/s), now including `pause_s`.
+  Serial analysis updates about once a second; use `seq` to deduplicate waveforms.
+- `/ws/dashboard`: phone events. First message is
+  `{"type":"snapshot","alerts":[...]}`, followed by `vitals`, `alert`, and `ack`.
+- `/api/alerts/active`: current unacknowledged alerts.
+- `POST /api/alerts/{alert_id}/ack`: acknowledge an alert.
+- `/health`: current source status. `/api/integrations`: phone and video endpoints.
+
+Example event that starts the phone alarm:
+
+```json
+{"type":"alert","alert_id":42,"seat_id":"CHAIR_01","severity":"critical","pattern":"breathing_pause","rr":null,"max_gap_s":13.0,"source":"serial"}
+```
+
+Phone alarms consume `/ws/dashboard`; the legacy simulated `alert` field on `/ws`
+is only a waveform demo marker. Video remains a placeholder in `/api/integrations`.
+No heart-rate input participates in classification.
+
+For Akshat's external-vitals simulator, run the standalone alert app **instead of**
+the live server:
+
+```bash
+uv run uvicorn backend.alert_app:app --host 0.0.0.0 --port 8000
+uv run python -m backend.scripts.simulate
+```
+
+Its `/api/vitals` endpoint accepts the existing breathing payload. Severity is
+computed from the values; a supplied severity string cannot force an alert. Low
+confidence interrupts pending confirmation. The live server rejects external
+vitals with HTTP 409 to prevent simulated and serial readings mixing in one seat.
+Live CSI does not supply a calibrated confidence probability.
+
+Checks: `uv run pytest` covers the synthetic pause detector, adapter, timed rules,
+WebSocket delivery, duplicate suppression, acknowledgement and recovery. Run
+`node tests/phone_alarm.cjs` for phone script behavior using mocked browser APIs.
+Real board placement, false alarms, detection timing and audible phone output
+still need an end-to-end hardware trial.

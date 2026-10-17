@@ -1,6 +1,7 @@
 import numpy as np
 
 from backend.live import LiveAnalyser, format_line, summary
+from backend.services.alerts import AlertState, classify
 from test_breathing import synthetic
 
 
@@ -38,6 +39,15 @@ def test_flags_a_breath_hold_as_a_pause_and_recovers():
     assert states[paused[0]].rate_bpm is None and states[paused[0]].pause_s >= 10
     assert states[max(states)].status == "breathing"
     assert "Pauses: 1" in summary(list(states.values()))
+    alarm, fired = AlertState(), []
+    for second, state in states.items():
+        status = {"moving": "motion", "starting": "no_signal", "measuring": "no_signal",
+                  "no_rhythm": "no_signal"}.get(state.status, state.status)
+        pattern, severity = classify(status, state.rate_bpm, state.pause_s)
+        if alarm.evaluate(pattern, severity, second):
+            fired.append(second)
+            alarm.fired = True
+    assert len(fired) == 1 and fired[0] >= paused[0] + 2
 
 
 def test_never_shows_breathing_without_it():
