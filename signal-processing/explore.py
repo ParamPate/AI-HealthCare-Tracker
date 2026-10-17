@@ -32,7 +32,8 @@ SURFACE, INK, INK_2, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e6e5e0"
 DIVERGING = LinearSegmentedColormap.from_list("blue_gray_red", ["#1c5cab", "#f0efec", "#e34948"])
 
 
-def load(path: Path):
+def load(path: Path, start: float = 0.0, end: float | None = None):
+    """Read a recording; keep packets between start and end seconds (times stay relative to its start)."""
     df = pd.read_parquet(path)
     if "segment" in df and df["segment"].nunique() > 1:
         longest = df["segment"].value_counts().idxmax()
@@ -42,6 +43,8 @@ def load(path: Path):
     lengths = df["csi"].map(len)
     df = df[lengths == lengths.mode().iloc[0]].reset_index(drop=True)
     t = (df["device_time_us"].to_numpy() - df["device_time_us"].iloc[0]) / 1e6
+    window = (t >= start) & (t <= (np.inf if end is None else end))
+    df, t = df[window].reset_index(drop=True), t[window]
     amp = amplitudes(np.stack(df["csi"].to_numpy()), bool(df["first_word_invalid"].iloc[0]))
     return df, t, amp
 
@@ -95,11 +98,15 @@ def style(ax, ylabel: str) -> None:
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("recording", type=Path)
-    path = p.parse_args().recording
+    p.add_argument("--start", type=float, default=0.0, help="analyse from this many seconds in")
+    p.add_argument("--end", type=float, help="analyse up to this many seconds in (default: the end)")
+    args = p.parse_args()
+    path = args.recording
 
-    df, t, amp = load(path)
-    if t[-1] < 2:
-        raise SystemExit("Recording is too short to analyse (under 2 s).")
+    df, t, amp = load(path, args.start, args.end)
+    if len(t) < 2 or t[-1] - t[0] < 2:
+        raise SystemExit("Too little data to analyse (under 2 s). Check --start and --end.")
+    span = t[-1] - t[0]
     seq = df["seq"].to_numpy(dtype=np.int64)
     dropped = 1 - len(seq) / ((seq[-1] - seq[0]) % (1 << 32) + 1)
 
@@ -129,7 +136,7 @@ def main() -> None:
     movement = ndimage.uniform_filter1d(np.abs(np.diff(z, axis=0, prepend=z[:1])).mean(axis=1), size=int(FS))
 
     label = (pq.read_schema(path).metadata or {}).get(b"label", path.stem.encode()).decode()
-    rate = (len(t) - 1) / t[-1]
+    rate = (len(t) - 1) / span
     rssi = int(df["rssi"].median())
     plt.rcParams.update({"font.size": 9, "text.color": INK, "axes.titlecolor": INK, "axes.titlesize": 10,
                          "axes.titlelocation": "left", "legend.frameon": False, "legend.fontsize": 8})
@@ -183,12 +190,13 @@ def main() -> None:
     ax_spec.legend(loc="upper left", bbox_to_anchor=(1.0, 1.0))
     style(ax_spec, "relative power")
 
-    fig.suptitle(f"{label}: {t[-1]:.0f} s, {rate:.0f} packets/s, {100 * dropped:.0f}% dropped, "
+    fig.suptitle(f"{label}: {t[0]:.0f} to {t[-1]:.0f} s, {rate:.0f} packets/s, {100 * dropped:.0f}% dropped, "
                  f"RSSI median {rssi} dBm", x=0.125, y=0.975, ha="left", fontsize=12, color=INK)
-    out = path.with_suffix(".png")
+    trimmed = args.start > 0 or args.end is not None
+    out = path.with_name(f"{path.stem}_{t[0]:.0f}-{t[-1]:.0f}s.png") if trimmed else path.with_suffix(".png")
     fig.savefig(out, dpi=110, bbox_inches="tight", facecolor=SURFACE)
 
-    print(f"{path.name}: {t[-1]:.1f} s, {len(t)} packets ({rate:.1f}/s), dropped {100 * dropped:.1f}%, "
+    print(f"{path.name}: {t[0]:.1f} to {t[-1]:.1f} s, {len(t)} packets ({rate:.1f}/s), dropped {100 * dropped:.1f}%, "
           f"RSSI median {rssi} dBm")
     print(f"subcarriers kept: {z.shape[1]} of {len(mean_amp)} (null: {sorted(set(range(len(mean_amp))) - set(sc_index))})")
     print(f"PC1 raw:        {100 * pc_var:4.1f}% of variance, peak {bpm:5.1f} bpm, "
