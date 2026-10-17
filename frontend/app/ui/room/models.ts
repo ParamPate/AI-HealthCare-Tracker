@@ -122,19 +122,19 @@ const SPECS: Spec[] = [
         p.ball([0.07, 0.27, 0], [0.014, 0.014, 0.014])
       })
       p.ink(INK, () =>
-        p.poly([[0, 0.93, 0.02], [0.05, 0.7, 0.08], [0.04, 0.35, 0.12], [0.12, 0.02, 0.2], [0.5, 0.01, 0.3], [0.9, 0.01, 0.62]]),
+        p.poly([[0, 0.93, 0.02], [0.05, 0.7, 0.08], [0.04, 0.35, 0.12], [0.1, 0.02, 0.18], [0.3, 0.01, 0.24]]),
       )
     },
   },
   {
-    id: 'rug', name: 'rug', zone: 0, color: INK, at: [0.05, 0, -2.55], pick: false,
+    id: 'rug', name: 'rug', zone: 0, color: INK, at: [0.05, 0, -2.75], pick: false,
     draw: (p) => {
-      p.rect([0, 0.005, 0], 2.7, 1.55, 'xz', true)
-      p.rect([0, 0.006, 0], 2.5, 1.35, 'xz')
+      p.rect([0, 0.005, 0], 2.3, 1.3, 'xz', true)
+      p.rect([0, 0.006, 0], 2.12, 1.12, 'xz')
     },
   },
   {
-    id: 'table', name: 'coffee table', zone: 0, color: INK, at: [0.15, 0, -2.5],
+    id: 'table', name: 'coffee table', zone: 0, color: INK, at: [0.15, 0, -2.6],
     draw: (p) => {
       p.cyl([0, 0.4, 0], 0.34, 0.04)
       for (const a of [0.5, 2.6, 4.7]) p.seg([Math.cos(a) * 0.2, 0.4, Math.sin(a) * 0.2], [Math.cos(a) * 0.27, 0.01, Math.sin(a) * 0.27], true)
@@ -146,7 +146,7 @@ const SPECS: Spec[] = [
     },
   },
   {
-    id: 'lamp', name: 'floor lamp', zone: 0, color: GOLD, at: [-2.2, 0, -3.95],
+    id: 'lamp', name: 'floor lamp', zone: 0, color: GOLD, at: [-2.3, 0, -2.85], ry: Math.PI / 4,
     draw: (p) => {
       p.box([0, 0.03, 0], [0.32, 0.05, 0.32])
       const pts: V[] = [[0, 0.06, 0], [0, 1.55, 0]]
@@ -160,7 +160,7 @@ const SPECS: Spec[] = [
     },
   },
   {
-    id: 'plant', name: 'plant', zone: 0, color: GREEN, at: [2.3, 0, -3.95],
+    id: 'plant', name: 'plant', zone: 0, color: GREEN, at: [1.95, 0, -3.1],
     draw: (p) => {
       p.ink(INK, () => p.cyl([0, 0, 0], 0.15, 0.36, { r1: 0.19 }))
       const leaves: [number, number, number, number][] = [
@@ -332,7 +332,7 @@ const SPECS: Spec[] = [
     },
   },
   {
-    id: 'screen', name: 'privacy screen', zone: 3, color: TEAL, at: [-3.75, 0, -1.25], ry: 0.5,
+    id: 'screen', name: 'privacy screen', zone: 3, color: TEAL, at: [-4.05, 0, -4.05], ry: -0.15,
     draw: (p) => {
       const panel = () => {
         p.rect([0, 0.95, 0], 0.55, 1.5, 'xy', true)
@@ -345,7 +345,7 @@ const SPECS: Spec[] = [
     },
   },
   {
-    id: 'bp', name: 'blood pressure monitor', zone: 3, color: PURPLE, at: [-4.25, 0, -3.95],
+    id: 'bp', name: 'blood pressure monitor', zone: 3, color: PURPLE, at: [-4.3, 0, -1.35],
     draw: (p) => {
       star(p, 0.08, 0.25)
       p.seg([0, 0.08, 0], [0, 1.08, 0], true)
@@ -371,7 +371,7 @@ const SPECS: Spec[] = [
     },
   },
   {
-    id: 'eye-chart', name: 'eye chart', zone: 3, color: RED, at: [-5.96, 0, -0.6], ry: Math.PI / 2,
+    id: 'eye-chart', name: 'eye chart', zone: 3, color: RED, at: [-5.96, 0.1, -3.95], ry: Math.PI / 2,
     draw: (p) => {
       p.box([0, 1.55, 0], [0.56, 0.82, 0.02])
       p.rect([0, 1.55, 0.011], 0.48, 0.74)
@@ -383,7 +383,7 @@ const SPECS: Spec[] = [
     },
   },
   {
-    id: 'stool', name: 'stool', zone: 3, color: INK, at: [-4.0, 0, -2.75],
+    id: 'stool', name: 'stool', zone: 3, color: INK, at: [-4.05, 0, -2.55],
     draw: (p) => {
       star(p, 0.08, 0.24)
       p.cyl([0, 0.08, 0], 0.025, 0.42)

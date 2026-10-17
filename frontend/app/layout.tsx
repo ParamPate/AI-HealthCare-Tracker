@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Delius, Geist, Geist_Mono, Inter, Pacifico } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,8 +12,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+// Hand-lettered labels in the 3D room.
+const delius = Delius({
+  variable: "--font-delius",
+  weight: "400",
+  subsets: ["latin"],
+});
+
+// The "breathe" tile.
+const pacifico = Pacifico({
+  variable: "--font-script",
+  weight: "400",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
-  title: "Waiting room monitor",
+  title: "Waiting Room Monitor",
   description: "Contactless breathing monitor for a waiting-room chair (Wi-Fi CSI). Screening signal only, not a diagnosis.",
 };
 
@@ -21,7 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${delius.variable} ${pacifico.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

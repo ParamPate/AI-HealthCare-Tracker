@@ -112,9 +112,9 @@ export class Piece {
     const mainMat = this.material(widths.main, 1)
     const sketchMat = this.material(widths.sketch, 0.42)
     const boldMat = this.material(widths.bold, 1)
-    this.addLines(main, mainKeys, mainMat, theme)
-    this.addLines(sketch, sketchKeys, sketchMat, theme)
-    this.addLines(thick, thickKeys, boldMat, theme)
+    this.addLines(main, mainKeys, mainMat)
+    this.addLines(sketch, sketchKeys, sketchMat)
+    this.addLines(thick, thickKeys, boldMat)
 
     if (this.rounds.length) {
       const keys: string[] = []
@@ -154,6 +154,7 @@ export class Piece {
       )
       mesh.matrixAutoUpdate = false
       mesh.matrix.copy(label.m)
+      mesh.matrixWorldNeedsUpdate = true
       this.group.add(mesh)
       this.labelMeshes.push({ mesh, label })
     }
@@ -175,15 +176,13 @@ export class Piece {
     return mat
   }
 
-  private addLines(pos: number[], keys: string[], mat: LineMaterial, theme: Theme) {
+  private addLines(pos: number[], keys: string[], mat: LineMaterial) {
     if (!pos.length) return
     const geo = new LineSegmentsGeometry()
     geo.setPositions(pos)
     geo.setColors(new Float32Array(keys.length * 6))
     this.colored.push({ geo, keys })
-    const line = new LineSegments2(geo, mat)
-    this.group.add(line)
-    void theme
+    this.group.add(new LineSegments2(geo, mat))
   }
 
   private measure() {
