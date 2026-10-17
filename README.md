@@ -117,8 +117,9 @@ while BREATHING was shown, to compare with a manual breath count.
 | NO RHYTHM | enough calm data but no steady rhythm (the rate is cleared: this can be a pause) |
 | PAUSE | breathing was confirmed, the person is still, and the breathing wave has gone flat; shows seconds without a breath. First alert about 11 s into a pause, clears about 5 s after breathing resumes |
 
-Press Enter while it runs to mark a moment, such as the start and end of a breath
-hold; marks are printed and listed in the summary.
+Start breathing normally. Press Enter when a breath hold starts, then Enter again
+when breathing resumes. Repeat for each hold; labeled timestamps are saved in the
+text log and listed in the summary.
 
 From the board, every session is also saved: the packets as
 `recordings/<date>-<time>_<label>.parquet` (same format as `backend.record`, so it can
@@ -267,11 +268,13 @@ On the computer connected to RX, close other serial readers and run:
 uv run python -m backend.live --label P01_S01
 ```
 
-This records CSI while showing the existing detector. Press **Enter** at observed
-activity transitions, then **Ctrl+C** to save the recording and its `.txt` log.
+This records CSI while showing the existing detector. Start breathing normally.
+Press **Enter** when a hold starts and again when breathing resumes; repeat for
+each hold. Press **Ctrl+C** to save the recording and its `.txt` log.
 The log lists marked times relative to the first device packet. Separately note
-which activity began at each mark, the independent breath count and count duration,
-and the board placement. Keep patient names and medical details out of these notes.
+movement/empty-chair times, the independent breath count and count duration,
+and the board placement. Enter is reserved for hold/breathing transitions.
+Keep patient names and medical details out of these notes.
 
 Start with seated normal breathing, natural movement, and an empty chair. Add
 other breathing examples only when their actual timing/rate can be observed. Leave
@@ -366,19 +369,25 @@ gate; it is not a breath-hold label.
 
 `backend/classifier.py` trains a breathing-versus-breath-hold logistic regression
 using NumPy/SciPy. It operates on raw CSI packets in trailing 10 s windows, once
-per second. Training windows stay one second inside a single observed label.
+every half second. Training targets use the most recent three seconds, with a
+half-second margin inside the observed activity; older context may include a
+transition.
 Each window independently uses the shared I/Q conversion, invalid-word handling,
-gain normalization, spike removal, and 20 Hz resampling. Five spectral/variance
-features are standardized using training data only. No full-recording filtering
-or PCA is fitted before extracting windows.
+gain normalization, spike removal, and 20 Hz resampling. Ten features capture
+variance, spectral energy, rhythmicity, energy changes across the window, dominant
+frequency, and fast breathing. They are calculated over both the ten-second
+context and the latest three seconds. Quadratic interactions let the model
+distinguish different wave shapes with similar amplitudes. The 230 resulting values are
+standardized using training data only. No full-recording filtering or PCA is
+fitted before extracting windows.
 
 ```bash
-uv run python -m backend.classifier train --data recordings --output models/breathing-v1.json
-uv run python -m backend.classifier predict --model models/breathing-v1.json --file recordings/20261017-013311_hold.parquet
-uv run python -m backend.classifier validate --data recordings --model models/breathing-v1.json --output models/validation-v1.json
+uv run python -m backend.classifier train --data recordings --output models/breathing-demo-v3.json
+uv run python -m backend.classifier predict --model models/breathing-demo-v3.json --file recordings/20261017-140921_P01_S02.parquet
+uv run python -m backend.classifier validate --data recordings --model models/breathing-demo-v3.json --output models/validation-demo-v3.json
 ```
 
-`train` saves the JSON model and `breathing-v1.training.json`. The bundle includes
+`train` saves the JSON model and `breathing-demo-v3.training.json`. The bundle includes
 preprocessing settings, feature order, learned means/scales, coefficients, class
 mapping, threshold 0.5, source hashes, dependency versions and dataset provenance.
 The source revision is recorded at training time; preprocessing hashes must match
@@ -402,11 +411,49 @@ each observed hold at most once; unmatched starts in known activity are false
 detections. These are model-level results before alarm confirmation/debouncing.
 Missing validation data produces a `pending` report with no accuracy metrics.
 
-The saved prototype is trained on the single P01/S01 recording; training fit is
-reported as `training_fit_only`. Its overlapping windows are not independent
-validation. Motion, empty-chair discrimination and generalization to new people
-remain unmeasured. The model is not connected to the live server or alarm yet;
-the existing server still uses its DSP/rules pipeline.
+The active demo model uses all five marked recordings from P01 and P02. In
+P01/S02, 47.0–71.7 s is panting (labeled breathing), and 120.7–156.3 s and
+185.9–221.1 s are holds. The earlier P02 attempts retain the operator's movement
+notes. All five recordings are now training data; reported replay results are
+`training_fit_only`. The previous P02 validation labels are preserved in its
+`.validation-v1-labels.json` snapshot. An independent v3 check needs new data.
+The v1 and v2 models are historical and require their matching code revisions.
+
+The serial and replay servers load `models/breathing-demo-v3.json` and publish optional
+`ml_label`, `ml_hold_score`, and `ml_model_version` fields on `/ws`. The dashboard
+uses the demo model as its main status, while retaining the DSP breathing rate
+when available. A raw hold prediction first shows CHECKING; four of the latest
+five new predictions must support a hold before the red hold state is shown.
+The model sees the original raw samples through the shared processing thread,
+with at most one prediction per half second of new device time. Serial processing
+publishes every quarter second; DSP waveform/rate analysis still runs once a second.
+The demo model reports
+its own prediction alongside the DSP movement status; the old movement rule does
+not suppress it. Clock/radio changes and gaps over two seconds reset the window,
+and stale input clears the displayed score.
+Replay preserves recorded radio fields and resets at each loop boundary.
+
+P01/S02 replay with the live path shows CHECKING about 3.6–3.8 s after the two
+hold marks and the red hold state after about 5.6 s, compared with 9–12 s in v2.
+These are fitting-recording results. The filtered waveform is still displayed
+about four seconds behind live. Seat presence is not detected: use the demo with
+the participant seated, as an empty chair can resemble a hold.
+
+The live check detected the reported hold but also flashed HOLD after breathing
+resumed. An additional P01/S03 normal-only capture and calibration candidate are
+saved locally; that candidate was not activated because it slowed hold detection
+without resolving the confusion. The active model remains the five-recording
+fit. Retraining the entire current recordings folder also includes this newer
+diagnostic capture. Stable recovery needs a paired normal/hold calibration run
+in the current setup.
+
+The prototype score does not drive phone alarms. Those still use the existing
+DSP/rules pipeline until independent validation and presence challenges have
+been reviewed. To collect a different participant's validation data, close other
+serial readers and run `uv run python -m backend.live --label P02_S01`. Press Enter
+when a hold starts and again when breathing resumes; Ctrl+C saves the raw
+recording and log. Add labels from those observations using `backend.label`, then
+run the validation command above.
 
 ## Live server and phone alarm
 

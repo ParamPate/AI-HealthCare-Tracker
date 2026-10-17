@@ -33,6 +33,21 @@ function describe(frame: StreamFrame | null, connected: boolean, url: string): V
     return { label: 'OFFLINE', tone: 'grey', big: '--', unit: '', note: `Connecting to the server at ${url}...` }
   }
   if (!frame) return { label: 'CONNECTING', tone: 'grey', big: '--', unit: '', note: '' }
+  if (frame.source !== 'fake' && frame.ml_model_version) {
+    if (frame.ml_label === 'checking') {
+      return { label: 'CHECKING BREATHING', tone: 'amber', big: 'CHECK', unit: '',
+        note: 'Reduced breathing movement; checking the next updates' }
+    }
+    if (frame.ml_label === 'breath_hold') {
+      return { label: 'POSSIBLE BREATH HOLD', tone: 'red', big: 'HOLD', unit: '',
+        note: 'Live model detects reduced breathing movement' }
+    }
+    if (frame.ml_label === 'breathing') {
+      return { label: 'BREATHING', tone: 'green', big: frame.rate_bpm?.toFixed(1) ?? 'LIVE',
+        unit: frame.rate_bpm != null ? 'breaths/min' : 'Breathing detected', note: '' }
+    }
+    return { label: 'MEASURING', tone: 'grey', big: '--', unit: '', note: 'Collecting a usable sensor window' }
+  }
   switch (frame.status) {
     case 'breathing':
       return { label: 'BREATHING', tone: 'green', big: frame.rate_bpm?.toFixed(1) ?? '--', unit: 'breaths/min', note: '' }
@@ -68,8 +83,10 @@ function SourceBadge({ frame, connected }: { frame: StreamFrame | null; connecte
 export default function ChairMonitor() {
   const { frame, receivedAt, connected, wave, url } = useStream()
   const view = describe(frame, connected, url)
-  const alarm = connected && (frame?.status === 'pause' || frame?.level === 'critical')
-  const pauseStart = frame?.status === 'pause' && frame.pause_s !== null ? receivedAt - frame.pause_s : null
+  const modelPrimary = frame?.source !== 'fake' && !!frame?.ml_model_version
+  const alarm = connected && (modelPrimary ? frame?.ml_label === 'breath_hold'
+    : frame?.status === 'pause' || frame?.level === 'critical')
+  const pauseStart = !modelPrimary && frame?.status === 'pause' && frame.pause_s !== null ? receivedAt - frame.pause_s : null
   const delay = frame?.waveform_delay_s ?? 3
 
   return (
@@ -95,7 +112,7 @@ export default function ChairMonitor() {
           <span className={`rounded-full px-4 py-1.5 text-sm font-bold tracking-wide ${PILL[view.tone]}`}>
             {view.label}
           </span>
-          {connected && frame?.level && (
+          {connected && !modelPrimary && frame?.level && (
             <span className={`ml-auto rounded-lg px-3 py-1.5 text-sm font-bold ${PILL[LEVEL_TONE[frame.level]]}`}>
               {frame.level.toUpperCase()}
             </span>
@@ -110,7 +127,23 @@ export default function ChairMonitor() {
         </div>
         <p className="mt-2 h-6 text-slate-400">{view.note}</p>
 
+        {frame?.source !== 'fake' && (
+          <div className="mt-3 text-sm text-slate-400" aria-live="polite" title={frame?.ml_model_version ?? undefined}>
+            <span className="text-amber-300">Prototype model</span>
+            {' · '}{!connected || !frame?.ml_label || frame.ml_label === 'no_signal' ? 'Unavailable'
+              : frame.ml_label === 'motion' ? 'Movement'
+              : frame.ml_label === 'checking' ? 'Checking for a hold'
+              : frame.ml_label === 'breath_hold' ? 'Possible breath hold' : 'Breathing'}
+            {connected && (frame?.ml_label === 'breathing' || frame?.ml_label === 'breath_hold')
+              && frame.ml_hold_score != null && (
+                <span> · Hold score {frame.ml_hold_score.toFixed(2)} (uncalibrated)</span>
+              )}
+            <p className="mt-1 text-xs">Seated-person demo; seat presence is not detected. Independent validation pending.</p>
+          </div>
+        )}
+
         <div className="mt-4">
+          <p className="mb-2 text-xs text-slate-500">Filtered waveform · about {Math.round(delay + LAG_S)} s behind live</p>
           <Wave wave={wave} delay={delay} pauseStart={pauseStart} color="#22c55e" pauseColor="#f87171" />
           <div className="mt-1 flex justify-between text-xs text-slate-500">
             <span>{Math.round(30 + delay + LAG_S)} s ago</span>

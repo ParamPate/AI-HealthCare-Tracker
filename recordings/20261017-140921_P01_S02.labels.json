@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "recording_sha256": "1f3d92799f14e9fc7b8cb1ba6e4b8abfef6bbd7563f7a876d84b815590a51c8f",
+  "participant_id": "P01",
+  "session_id": "S02_20261017-140921",
+  "split": "train",
+  "time_basis": "seconds_from_first_device_packet",
+  "duration_s": 240.96270600000003,
+  "annotations": [
+    {
+      "start_s": 0.0,
+      "end_s": 47.0,
+      "label": "breathing",
+      "reference_rr_bpm": null,
+      "note": "Operator Enter toggle marks hold onset and breathing resumption; normal breathing outside holds."
+    },
+    {
+      "start_s": 47.0,
+      "end_s": 71.7,
+      "label": "breathing",
+      "reference_rr_bpm": null,
+      "note": "Operator corrected first marked block to panting; breathing, not a hold."
+    },
+    {
+      "start_s": 71.7,
+      "end_s": 120.7,
+      "label": "breathing",
+      "reference_rr_bpm": null,
+      "note": "Operator Enter toggle marks hold onset and breathing resumption; normal breathing outside holds."
+    },
+    {
+      "start_s": 120.7,
+      "end_s": 156.3,
+      "label": "breath_hold",
+      "reference_rr_bpm": null,
+      "note": "Operator Enter toggle marks hold onset and breathing resumption; normal breathing outside holds."
+    },
+    {
+      "start_s": 156.3,
+      "end_s": 185.9,
+      "label": "breathing",
+      "reference_rr_bpm": null,
+      "note": "Operator Enter toggle marks hold onset and breathing resumption; normal breathing outside holds."
+    },
+    {
+      "start_s": 185.9,
+      "end_s": 221.1,
+      "label": "breath_hold",
+      "reference_rr_bpm": null,
+      "note": "Operator Enter toggle marks hold onset and breathing resumption; normal breathing outside holds."
+    },
+    {
+      "start_s": 221.1,
+      "end_s": 240.96270600000003,
+      "label": "breathing",
+      "reference_rr_bpm": null,
+      "note": "Breathing after final resume mark."
+    }
+  ]
+}

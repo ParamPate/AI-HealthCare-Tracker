@@ -6,9 +6,11 @@ import threading
 import time
 
 import numpy as np
-import pandas as pd
 
-from backend.csi_format import CsiPacket, amplitudes
+from backend import config
+from backend.classifier import CONFIG, load_model, predict_window, read_recording
+from backend.csi_format import amplitudes
+from backend.label import fingerprint
 from backend.live import BUFFER_S, LiveAnalyser, WAVE_DELAY_S  # same 60 s window the terminal monitor was tested with
 from backend.serial_io import CsiStream, Sample, find_rx_port, open_port
 
@@ -23,7 +25,57 @@ def empty_frame(source, reason, seq=0):
     return {"t": None, "breath": None, "rate_bpm": None, "status": "no_signal",
             "reason": reason, "source": source, "seq": seq, "waveform": [],
             "waveform_delay_s": 0.0, "pause_s": None, "alert": None, "chair": CHAIR, "level": None,
-            "calm_s": None, "rssi": None, "packets_per_s": None}
+            "calm_s": None, "rssi": None, "packets_per_s": None,
+            "ml_label": None, "ml_hold_score": None, "ml_model_version": None}
+
+
+class LiveClassifier:
+    """Trailing raw CSI window shared by serial and replay processing."""
+
+    def __init__(self):
+        path = config.REPO_ROOT / "models/breathing-demo-v3.json"
+        self.model = load_model(path)
+        self.version = f"{path.stem}:{fingerprint(path)[:12]}"
+        self.reset()
+
+    def reset(self):
+        self.samples = deque(maxlen=MAX_PENDING)
+        self.key = self.started = self.last_prediction = None
+        self.votes = deque(maxlen=CONFIG["prediction_history"])
+        self.result = {"ml_label": "no_signal", "ml_hold_score": None,
+                       "ml_model_version": self.version}
+
+    def update(self, batch):
+        for sample in batch:
+            p, now = sample.packet, sample.device_time_us / 1e6
+            key = (p.mac, sample.segment, len(p.csi), p.channel, p.bandwidth, p.secondary_channel)
+            previous = self.samples[-1].device_time_us / 1e6 if self.samples else None
+            if key != self.key or (previous is not None and
+                                  (now < previous or now - previous > CONFIG["max_packet_gap_s"])):
+                self.reset()
+                self.key = key
+            if self.samples and now == self.samples[-1].device_time_us / 1e6:
+                continue
+            if self.started is None:
+                self.started = now
+            self.samples.append(sample)
+            while self.samples[0].device_time_us / 1e6 < now - CONFIG["window_s"]:
+                self.samples.popleft()
+        if self.samples:
+            now = self.samples[-1].device_time_us / 1e6
+            if now - self.started >= CONFIG["window_s"] and (
+                    self.last_prediction is None or now - self.last_prediction >= CONFIG["step_s"]):
+                result = predict_window(self.model, list(self.samples), end_s=now)
+                label = result["label"]
+                if label == "no_signal":
+                    self.votes.clear()
+                else:
+                    self.votes.append(label == "breath_hold")
+                    label = ("breath_hold" if sum(self.votes) >= CONFIG["prediction_votes"]
+                             else "checking" if label == "breath_hold" else "breathing")
+                self.result.update(ml_label=label, ml_hold_score=result["hold_score"])
+                self.last_prediction = now
+        return self.result.copy()
 
 
 class FakeSource:
@@ -63,6 +115,7 @@ class SerialSource:
 
     def __init__(self, port=None, baud=921600):
         self.port, self.baud = port, baud
+        self._classifier = LiveClassifier()
         self._lock = threading.Lock()
         self._stop = threading.Event()
         self._pending = deque()
@@ -119,7 +172,8 @@ class SerialSource:
 
     def _process(self):
         analyser, key, generation = LiveAnalyser(buffer_s=BUFFER_S), None, -1
-        while not self._stop.wait(1.0):
+        state, last_analysis = None, None
+        while not self._stop.wait(0.25):
             with self._lock:
                 batch = list(self._pending)
                 self._pending.clear()
@@ -129,19 +183,27 @@ class SerialSource:
             try:
                 if generation != current_generation:
                     analyser, key = LiveAnalyser(buffer_s=BUFFER_S), None
+                    state = None
+                    self._classifier.reset()
                     generation = current_generation
                 for sample in batch:
                     p = sample.packet
                     next_key = (p.mac, sample.segment, len(p.csi), p.channel, p.bandwidth, p.secondary_channel)
                     if key != next_key:
                         analyser, key = LiveAnalyser(buffer_s=BUFFER_S), next_key
+                        state = None
                     analyser.add(sample.device_time_us / 1e6,
                                  amplitudes(p.csi, p.first_word_invalid), p.rssi, sample.segment)
-                state = analyser.update()
+                device_now = batch[-1].device_time_us / 1e6
+                if state is None or last_analysis is None or device_now < last_analysis or device_now - last_analysis >= 1:
+                    state, last_analysis = analyser.update(), device_now
                 frame = self._state_frame(state, batch[-1])
+                frame.update(self._classifier.update(batch))
             except Exception:
                 LOGGER.exception("Breathing analysis failed; restarting the processing window")
                 analyser, key = LiveAnalyser(buffer_s=BUFFER_S), None
+                state = None
+                self._classifier.reset()
                 frame = empty_frame(self.name, "processing_error")
             with self._lock:
                 if generation == self._generation:
@@ -186,23 +248,20 @@ class ReplaySource(SerialSource):
         self.path = path
 
     def _acquire(self):
-        df = pd.read_parquet(self.path)
-        t_us = df["device_time_us"].to_numpy(dtype=np.int64)
-        packets = [CsiPacket(mac=row.mac, seq=int(row.seq), rssi=int(row.rssi), noise_floor=int(row.noise_floor),
-                             bandwidth=1, channel=int(row.channel), secondary_channel=0,
-                             timestamp_us=int(row.timestamp_us), first_word_invalid=bool(row.first_word_invalid),
-                             csi=np.asarray(row.csi, dtype=np.int8))
-                   for row in df.itertuples()]
-        # Each loop continues the clock, so the analysis sees one long recording.
+        samples = read_recording(self.path)
+        t_us = np.asarray([s.device_time_us for s in samples], dtype=np.int64)
+        segments = max(s.segment for s in samples) + 1
+        # Keep time continuous, but reset processing at each recording boundary.
         loop_us = int(t_us[-1] - t_us[0]) + int(np.median(np.diff(t_us)))
         i, loop, started = 0, 0, time.monotonic()
         while not self._stop.is_set():
             elapsed_us = (time.monotonic() - started) * 1e6
             batch = []
             while t_us[i] - t_us[0] + loop * loop_us <= elapsed_us:
-                batch.append(Sample(time.time(), int(t_us[i] + loop * loop_us), 0, packets[i]))
+                batch.append(Sample(time.time(), int(t_us[i] + loop * loop_us),
+                                    samples[i].segment + loop * segments, samples[i].packet))
                 i += 1
-                if i == len(packets):
+                if i == len(samples):
                     i, loop = 0, loop + 1
             if batch:
                 with self._lock:

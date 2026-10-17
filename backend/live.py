@@ -16,7 +16,7 @@ not yet confirmed), BREATHING (a steady rhythm in 3 updates in a row), MOVEMENT
 movement the last rate stays on screen for up to 10 s, marked "(last)". A lost rhythm
 clears it, since that can be a pause in breathing.
 
-Press Enter to mark a moment (for example the start and end of a breath hold). Marks
+Start breathing normally. Enter marks a hold starting; the next Enter marks breathing resuming. Marks
 are printed, saved in the .txt, and listed in the summary. Only one program can use
 the RX port at a time.
 """
@@ -267,10 +267,11 @@ def read_board(analyser: LiveAnalyser, port: str, baud: int, path: Path,
 
 
 def watch_enter(analyser: LiveAnalyser, out, marks: list[float]) -> None:
-    """Background thread: each Enter press marks the current time."""
+    """Enter alternates between an observed breath hold and resumed breathing."""
     for _ in sys.stdin:
         marks.append(analyser.elapsed())
-        out(f"   >> mark {len(marks)} at {marks[-1]:.1f} s")
+        activity = "BREATH HOLD STARTED" if len(marks) % 2 else "BREATHING RESUMED"
+        out(f"   >> mark {len(marks)} at {marks[-1]:.1f} s: {activity}")
 
 
 def run_board(port: str, baud: int, path: Path, show, out, marks: list[float]) -> None:
@@ -278,8 +279,8 @@ def run_board(port: str, baud: int, path: Path, show, out, marks: list[float]) -
     reader = threading.Thread(target=read_board, args=(analyser, port, baud, path, stop, errors), daemon=True)
     reader.start()
     threading.Thread(target=watch_enter, args=(analyser, out, marks), daemon=True).start()
-    print(f"Reading {port}, saving to {path.relative_to(config.REPO_ROOT)}. "
-          "Enter marks a moment, Ctrl+C stops.")
+    out(f"Reading {port}, saving to {path.relative_to(config.REPO_ROOT)}. "
+        "Start breathing normally. Enter = hold started; next Enter = breathing resumed. Ctrl+C saves and stops.")
     tick = time.monotonic()
     try:
         while True:
@@ -359,7 +360,7 @@ def main() -> None:
         pass
     out("\n" + summary(states))
     if marks:
-        out("Marks (Enter) at: " + ", ".join(f"{m:.1f} s" for m in marks))
+        out("Marks (odd = hold started, even = breathing resumed) at: " + ", ".join(f"{m:.1f} s" for m in marks))
     if path is not None:
         print(f"Saved {path.relative_to(config.REPO_ROOT)} and {path.with_suffix('.txt').name}")
 

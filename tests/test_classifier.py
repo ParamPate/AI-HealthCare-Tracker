@@ -56,19 +56,21 @@ def fitted(tmp_path):
 def test_windows_respect_label_boundaries_and_margin():
     annotations = [Annotation(start_s=0, end_s=20, label="breathing"),
                    Annotation(start_s=20, end_s=40, label="breath_hold")]
-    assert interior_annotation(annotations, 10) is None
+    assert interior_annotation(annotations, 3) is None
+    assert interior_annotation(annotations, 3.5).label == "breathing"
     assert interior_annotation(annotations, 11).label == "breathing"
     assert interior_annotation(annotations, 19).label == "breathing"
     assert interior_annotation(annotations, 20) is None
-    assert interior_annotation(annotations, 25) is None
-    assert interior_annotation(annotations, 30) is None
+    assert interior_annotation(annotations, 23) is None
+    assert interior_annotation(annotations, 23.5).label == "breath_hold"
+    assert interior_annotation(annotations, 30).label == "breath_hold"
     assert interior_annotation(annotations, 31).label == "breath_hold"
     assert interior_annotation(annotations, 40) is None
     for end, batch, absolute_end in windows(samples(duration=42)):
         annotation = interior_annotation(annotations, end)
         if annotation is not None:
-            assert end - 10 >= annotation.start_s + 1
-            assert end <= annotation.end_s - 1
+            assert end - CONFIG["label_window_s"] >= annotation.start_s + CONFIG["label_margin_s"]
+            assert end <= annotation.end_s - CONFIG["label_margin_s"]
         assert max(s.device_time_us / 1e6 for s in batch) <= absolute_end
 
 
@@ -190,7 +192,7 @@ def test_metrics_count_misses_false_episodes_and_delay():
                    Annotation(start_s=40, end_s=60, label="breathing"),
                    Annotation(start_s=60, end_s=80, label="breath_hold")]
     timeline = [(float(t), "breath_hold" if 12 <= t < 15 or 25 <= t < 35 else "breathing")
-                for t in range(10, 81)]
+                for t in np.arange(10, 80 + CONFIG["step_s"], CONFIG["step_s"])]
     events = event_metrics(timeline, annotations)
     assert events["annotated_holds"] == 2 and events["detected_holds"] == 1
     assert events["missed_holds"] == 1 and events["false_hold_episodes"] == 1

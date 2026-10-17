@@ -1,0 +1,5822 @@
+{
+  "evaluation": "training_recording_replay; not unseen-data accuracy",
+  "model": "breathing-demo-v3:f296826457cc",
+  "model_sha256": "f296826457cc3262752eaa14323c96972238362e3ea2db1a3ba1d6a80972bdd3",
+  "events": {
+    "annotated_holds": 2,
+    "detected_holds": 2,
+    "missed_holds": 0,
+    "false_hold_episodes": 1,
+    "false_episode_starts_s": [
+      133.0
+    ],
+    "detections": [
+      {
+        "hold_start_s": 120.7,
+        "first_detection_s": 126.25,
+        "delay_s": 5.549999999999997
+      },
+      {
+        "hold_start_s": 185.9,
+        "first_detection_s": 191.5,
+        "delay_s": 5.599999999999994
+      }
+    ]
+  },
+  "early_checking": [
+    {
+      "hold_start_s": 120.7,
+      "checking_delay_s": 3.799999999999997
+    },
+    {
+      "hold_start_s": 185.9,
+      "checking_delay_s": 3.5999999999999943
+    }
+  ],
+  "panting_updates": {
+    "breathing": 93,
+    "checking": 6,
+    "breath_hold": 0,
+    "no_signal": 0
+  },
+  "timeline": [
+    {
+      "end_s": 0.25,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 0.5,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 0.75,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 1.0,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 1.25,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 1.5,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 1.75,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 2.0,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 2.25,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 2.5,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 2.75,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 3.0,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 3.25,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 3.5,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 3.75,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 4.0,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 4.25,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 4.5,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 4.75,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 5.0,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 5.25,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 5.5,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 5.75,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 6.0,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 6.25,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 6.5,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 6.75,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 7.0,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 7.25,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 7.5,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 7.75,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 8.0,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 8.25,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 8.5,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 8.75,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 9.0,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 9.25,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 9.5,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 9.75,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 10.0,
+      "ml_label": "no_signal",
+      "ml_hold_score": null,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 10.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.18113304347605802,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 10.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.18113304347605802,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 10.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1907276076978202,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 11.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1907276076978202,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 11.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1907276076978202,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 11.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.38362542582843,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 11.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.38362542582843,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 12.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.12242559783604379,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 12.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.12242559783604379,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 12.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.12242559783604379,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 12.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07461766960810912,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 13.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07461766960810912,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 13.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07461766960810912,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 13.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.060127560550702286,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 13.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.060127560550702286,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 14.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.060127560550702286,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 14.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07090215428893513,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 14.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07090215428893513,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 14.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.09346312259223384,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 15.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.09346312259223384,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 15.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.09346312259223384,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 15.5,
+      "ml_label": "checking",
+      "ml_hold_score": 0.5462757678734956,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 15.75,
+      "ml_label": "checking",
+      "ml_hold_score": 0.5462757678734956,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 16.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3299662961449652,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 16.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3299662961449652,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 16.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.036543546661171857,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 16.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.036543546661171857,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 17.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.036543546661171857,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 17.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.00217421123540183,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 17.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.00217421123540183,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 17.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.00217421123540183,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 18.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.005448748964383692,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 18.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.005448748964383692,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 18.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.005448748964383692,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 18.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0024843090570043696,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 19.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0024843090570043696,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 19.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0024843090570043696,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 19.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0038651617633478886,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 19.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0038651617633478886,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 20.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0038651617633478886,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 20.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.017738927090984104,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 20.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.017738927090984104,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 20.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0017776770864583135,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 21.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0017776770864583135,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 21.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0017776770864583135,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 21.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0001594402726402968,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 21.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0001594402726402968,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 22.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 9.546347440855764e-05,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 22.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 9.546347440855764e-05,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 22.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 9.546347440855764e-05,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 22.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0008594608965880443,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 23.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0008594608965880443,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 23.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0008594608965880443,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 23.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.00041610046977674537,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 23.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.00041610046977674537,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 24.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.00041610046977674537,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 24.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0019096150959739694,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 24.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0019096150959739694,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 24.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0019096150959739694,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 25.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.017230610195226138,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 25.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.017230610195226138,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 25.5,
+      "ml_label": "checking",
+      "ml_hold_score": 0.5530227697122402,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 25.75,
+      "ml_label": "checking",
+      "ml_hold_score": 0.5530227697122402,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 26.0,
+      "ml_label": "checking",
+      "ml_hold_score": 0.5530227697122402,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 26.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06861039751457826,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 26.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06861039751457826,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 26.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06861039751457826,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 27.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.007248216324015369,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 27.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.007248216324015369,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 27.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.002659483483425844,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 27.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.002659483483425844,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 28.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.002659483483425844,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 28.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.031056782177805334,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 28.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.031056782177805334,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 28.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.031056782177805334,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 29.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.04791956364602521,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 29.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.04791956364602521,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 29.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.04791956364602521,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 29.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03358249535172521,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 30.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03358249535172521,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 30.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05972535424670533,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 30.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05972535424670533,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 30.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05972535424670533,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 31.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.09557820447984113,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 31.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.09557820447984113,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 31.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.09656422339825976,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 31.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.09656422339825976,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 32.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.006721946851810837,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 32.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.006721946851810837,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 32.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.006721946851810837,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 32.75,
+      "ml_label": "checking",
+      "ml_hold_score": 0.630563232027966,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 33.0,
+      "ml_label": "checking",
+      "ml_hold_score": 0.630563232027966,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 33.25,
+      "ml_label": "checking",
+      "ml_hold_score": 0.630563232027966,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 33.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2621925983874279,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 33.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2621925983874279,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 34.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2621925983874279,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 34.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06983962554542383,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 34.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06983962554542383,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 34.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06983962554542383,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 35.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.15545087491887277,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 35.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.15545087491887277,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 35.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.41562261044721127,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 35.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.41562261044721127,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 36.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.41562261044721127,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 36.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.13810205376711537,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 36.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.13810205376711537,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 36.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.13810205376711537,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 37.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.015971380024841976,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 37.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.015971380024841976,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 37.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0815277614305156,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 37.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0815277614305156,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 38.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0815277614305156,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 38.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.027756478162005535,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 38.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.027756478162005535,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 38.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.027756478162005535,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 39.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.09327567645781956,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 39.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.09327567645781956,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 39.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.09327567645781956,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 39.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.04491836879157659,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 40.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.04491836879157659,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 40.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.037972658945378636,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 40.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.037972658945378636,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 40.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.037972658945378636,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 41.0,
+      "ml_label": "checking",
+      "ml_hold_score": 0.630381430904681,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 41.25,
+      "ml_label": "checking",
+      "ml_hold_score": 0.630381430904681,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 41.5,
+      "ml_label": "checking",
+      "ml_hold_score": 0.630381430904681,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 41.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07990193170065577,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 42.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07990193170065577,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 42.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.062487946079680654,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 42.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.062487946079680654,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 42.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.007061185454141744,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 43.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.007061185454141744,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 43.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.007061185454141744,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 43.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.052317307424363274,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 43.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.052317307424363274,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 44.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.016901741572290144,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 44.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.016901741572290144,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 44.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.016901741572290144,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 44.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0018257867350068783,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 45.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0018257867350068783,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 45.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0018257867350068783,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 45.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.015253597609802255,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 45.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.015253597609802255,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 46.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.015253597609802255,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 46.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06317053701397218,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 46.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06317053701397218,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 46.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03814373641220263,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 47.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03814373641220263,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 47.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08248760663939189,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 47.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08248760663939189,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 47.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08248760663939189,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 48.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06718623627759479,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 48.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06718623627759479,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 48.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06718623627759479,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 48.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08814117563181569,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 49.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08814117563181569,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 49.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08450845137341405,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 49.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08450845137341405,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 49.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08450845137341405,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 50.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.14158283794375334,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 50.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.14158283794375334,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 50.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.14158283794375334,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 50.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.09789118707221864,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 51.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.09789118707221864,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 51.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.09789118707221864,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 51.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.18535717931269227,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 51.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.18535717931269227,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 52.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.18535717931269227,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 52.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.15957081821021032,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 52.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.15957081821021032,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 52.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.15957081821021032,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 53.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.16610720947409185,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 53.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.16610720947409185,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 53.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.16610720947409185,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 53.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2873535300117652,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 54.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2873535300117652,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 54.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2873535300117652,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 54.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2777857709430849,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 54.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2777857709430849,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 55.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.043746089834824295,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 55.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.043746089834824295,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 55.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.043746089834824295,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 55.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3431706502970448,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 56.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3431706502970448,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 56.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3431706502970448,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 56.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.023955861588837304,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 56.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.023955861588837304,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 57.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.023955861588837304,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 57.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03892751762185571,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 57.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03892751762185571,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 57.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05794154075532428,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 58.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05794154075532428,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 58.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05794154075532428,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 58.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.32926321328814034,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 58.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.32926321328814034,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 59.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.32926321328814034,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 59.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03349326669560809,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 59.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03349326669560809,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 59.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03349326669560809,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 60.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.04186201489608607,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 60.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.04186201489608607,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 60.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.47218709715458373,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 60.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.47218709715458373,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 61.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.47218709715458373,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 61.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07806186292242849,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 61.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07806186292242849,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 61.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07806186292242849,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 62.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.4376754835570053,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 62.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.4376754835570053,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 62.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.4376754835570053,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 62.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.40674438141583624,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 63.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.40674438141583624,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 63.25,
+      "ml_label": "checking",
+      "ml_hold_score": 0.7254730641742316,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 63.5,
+      "ml_label": "checking",
+      "ml_hold_score": 0.7254730641742316,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 63.75,
+      "ml_label": "checking",
+      "ml_hold_score": 0.7254730641742316,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 64.0,
+      "ml_label": "checking",
+      "ml_hold_score": 0.7698199336515877,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 64.25,
+      "ml_label": "checking",
+      "ml_hold_score": 0.7698199336515877,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 64.5,
+      "ml_label": "checking",
+      "ml_hold_score": 0.7698199336515877,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 64.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3340196563464363,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 65.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3340196563464363,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 65.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3340196563464363,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 65.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3622917274344019,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 65.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3622917274344019,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 66.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1621473229444746,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 66.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1621473229444746,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 66.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1621473229444746,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 66.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008136101298334555,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 67.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008136101298334555,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 67.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008136101298334555,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 67.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.04437991933647931,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 67.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.04437991933647931,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 68.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.04437991933647931,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 68.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.019533095489416112,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 68.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.019533095489416112,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 68.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.019533095489416112,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 69.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.004420141552744245,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 69.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.004420141552744245,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 69.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.004420141552744245,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 69.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.054635672070428125,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 70.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.054635672070428125,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 70.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.054635672070428125,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 70.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.010256287587981158,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 70.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.010256287587981158,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 71.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.010256287587981158,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 71.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08873414517413393,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 71.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08873414517413393,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 71.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08873414517413393,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 72.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.14546836597059695,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 72.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.14546836597059695,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 72.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.14546836597059695,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 72.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.024624542686804054,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 73.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.024624542686804054,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 73.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008922147804511687,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 73.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008922147804511687,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 73.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008922147804511687,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 74.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.021085127266023088,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 74.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.021085127266023088,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 74.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.021085127266023088,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 74.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.013148631081926175,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 75.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.013148631081926175,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 75.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07202033598461195,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 75.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07202033598461195,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 75.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07202033598461195,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 76.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.17890915247709507,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 76.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.17890915247709507,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 76.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.17890915247709507,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 76.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.024680091477278253,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 77.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.024680091477278253,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 77.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.024680091477278253,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 77.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.045317158249719325,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 77.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.045317158249719325,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 78.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.014364682447859723,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 78.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.014364682447859723,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 78.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.014364682447859723,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 78.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0024818407935606095,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 79.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0024818407935606095,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 79.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0024818407935606095,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 79.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2701388484693457,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 79.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2701388484693457,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 80.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.13372177294326915,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 80.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.13372177294326915,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 80.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008843726944741446,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 80.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008843726944741446,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 81.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008843726944741446,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 81.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003248791878204829,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 81.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003248791878204829,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 81.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003248791878204829,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 82.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.009047115418932144,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 82.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.009047115418932144,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 82.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.017199165943390958,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 82.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.017199165943390958,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 83.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.02277896454431493,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 83.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.02277896454431493,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 83.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.02277896454431493,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 83.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05687841418046669,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 84.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05687841418046669,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 84.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05687841418046669,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 84.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.011863202711714333,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 84.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.011863202711714333,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 85.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.011863202711714333,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 85.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.01736508695360057,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 85.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.01736508695360057,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 85.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.01736508695360057,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 86.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08423638913214429,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 86.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08423638913214429,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 86.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08423638913214429,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 86.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.033266217718948714,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 87.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.033266217718948714,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 87.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.025787863305305525,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 87.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.025787863305305525,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 87.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008351020995202086,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 88.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008351020995202086,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 88.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008351020995202086,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 88.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06468394668704847,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 88.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06468394668704847,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 89.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.031629964298080016,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 89.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.031629964298080016,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 89.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.031629964298080016,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 89.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1795200973066644,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 90.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1795200973066644,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 90.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08530657966164436,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 90.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08530657966164436,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 90.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.15769120499001477,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 91.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.15769120499001477,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 91.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.15769120499001477,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 91.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2815405580053993,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 91.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2815405580053993,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 92.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2815405580053993,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 92.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.17631363681735268,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 92.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.17631363681735268,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 92.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.058494780918278595,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 93.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.058494780918278595,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 93.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.058494780918278595,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 93.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.028638517252563847,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 93.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.028638517252563847,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 94.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.028638517252563847,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 94.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.004229506840264575,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 94.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.004229506840264575,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 94.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.004229506840264575,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 95.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.007955976992439042,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 95.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.007955976992439042,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 95.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.015758929434820414,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 95.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.015758929434820414,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 96.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.005098662745559926,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 96.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.005098662745559926,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 96.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.005098662745559926,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 96.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.004614538014307552,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 97.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.004614538014307552,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 97.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.004614538014307552,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 97.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03376071261633532,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 97.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03376071261633532,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 98.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0014729893376268343,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 98.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0014729893376268343,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 98.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0014729893376268343,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 98.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0001971900630927882,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 99.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0001971900630927882,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 99.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0001971900630927882,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 99.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.00023458841484876627,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 99.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.00023458841484876627,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 100.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0017658114665154911,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 100.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0017658114665154911,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 100.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0017658114665154911,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 100.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0037584554103972856,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 101.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0037584554103972856,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 101.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0037584554103972856,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 101.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.01234113546435695,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 101.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.01234113546435695,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 102.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.01234113546435695,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 102.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03849137952433897,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 102.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03849137952433897,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 102.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.040620981924336816,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 103.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.040620981924336816,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 103.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.040620981924336816,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 103.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03826961171849888,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 103.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03826961171849888,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 104.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.026433818531439775,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 104.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.026433818531439775,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 104.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.033671024407191115,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 104.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.033671024407191115,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 105.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.033671024407191115,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 105.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.015841672684777684,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 105.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.015841672684777684,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 105.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.015841672684777684,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 106.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0034884714908868957,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 106.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0034884714908868957,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 106.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.005782600813764184,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 106.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.005782600813764184,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 107.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.005782600813764184,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 107.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008149052227629603,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 107.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008149052227629603,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 107.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008149052227629603,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 108.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.16366315938770673,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 108.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.16366315938770673,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 108.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.16366315938770673,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 108.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0026373366526199426,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 109.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0026373366526199426,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 109.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0004285464175393343,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 109.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0004285464175393343,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 109.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0004285464175393343,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 110.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 3.954890462754067e-05,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 110.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 3.954890462754067e-05,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 110.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 3.954890462754067e-05,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 110.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0017959512034288589,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 111.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0017959512034288589,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 111.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0017959512034288589,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 111.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.01953321570207737,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 111.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.01953321570207737,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 112.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.010236899855889815,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 112.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.010236899855889815,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 112.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.010236899855889815,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 112.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0030973718666686806,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 113.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0030973718666686806,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 113.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0030973718666686806,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 113.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0002745296504984698,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 113.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0002745296504984698,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 114.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0002745296504984698,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 114.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 9.101428960719002e-05,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 114.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 9.101428960719002e-05,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 114.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 9.101428960719002e-05,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 115.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0012707304569416077,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 115.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0012707304569416077,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 115.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.02851278138851439,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 115.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.02851278138851439,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 116.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.02851278138851439,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 116.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05498976860184817,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 116.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05498976860184817,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 116.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.022269372132198543,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 117.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.022269372132198543,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 117.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.024287022289081948,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 117.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.024287022289081948,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 117.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.024287022289081948,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 118.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.25386691827391855,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 118.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.25386691827391855,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 118.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.25386691827391855,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 118.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3828928847902548,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 119.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3828928847902548,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 119.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2917941392724307,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 119.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2917941392724307,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 119.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2917941392724307,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 120.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3172064321868545,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 120.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3172064321868545,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 120.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3172064321868545,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 120.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2908693651179723,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 121.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2908693651179723,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 121.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.23921687951229617,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 121.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.23921687951229617,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 121.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1064843670089875,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 122.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1064843670089875,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 122.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1064843670089875,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 122.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.009115662129652301,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 122.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.009115662129652301,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 123.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.02484128294573963,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 123.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.02484128294573963,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 123.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.02484128294573963,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 123.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.005526792105757249,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 124.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.005526792105757249,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 124.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.005526792105757249,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 124.5,
+      "ml_label": "checking",
+      "ml_hold_score": 0.6948458214618043,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 124.75,
+      "ml_label": "checking",
+      "ml_hold_score": 0.6948458214618043,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 125.0,
+      "ml_label": "checking",
+      "ml_hold_score": 0.8160178783699465,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 125.25,
+      "ml_label": "checking",
+      "ml_hold_score": 0.8160178783699465,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 125.5,
+      "ml_label": "checking",
+      "ml_hold_score": 0.8547248926157597,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 125.75,
+      "ml_label": "checking",
+      "ml_hold_score": 0.8547248926157597,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 126.0,
+      "ml_label": "checking",
+      "ml_hold_score": 0.8547248926157597,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 126.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.521688507103386,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 126.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.521688507103386,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 126.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.521688507103386,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 127.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.4373432664834992,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 127.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.4373432664834992,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 127.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.4373432664834992,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 127.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.4206636677519024,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 128.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.4206636677519024,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 128.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2804501479688477,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 128.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2804501479688477,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 128.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2804501479688477,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 129.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.23041131316399116,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 129.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.23041131316399116,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 129.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.23041131316399116,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 129.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.41236247893147804,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 130.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.41236247893147804,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 130.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2499051492639989,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 130.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2499051492639989,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 130.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2499051492639989,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 131.0,
+      "ml_label": "checking",
+      "ml_hold_score": 0.8352591522918238,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 131.25,
+      "ml_label": "checking",
+      "ml_hold_score": 0.8352591522918238,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 131.5,
+      "ml_label": "checking",
+      "ml_hold_score": 0.8352591522918238,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 131.75,
+      "ml_label": "checking",
+      "ml_hold_score": 0.7629123849909656,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 132.0,
+      "ml_label": "checking",
+      "ml_hold_score": 0.7629123849909656,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 132.25,
+      "ml_label": "checking",
+      "ml_hold_score": 0.7964532753759408,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 132.5,
+      "ml_label": "checking",
+      "ml_hold_score": 0.7964532753759408,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 132.75,
+      "ml_label": "checking",
+      "ml_hold_score": 0.7964532753759408,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 133.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.745221581417749,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 133.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.745221581417749,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 133.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.745221581417749,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 133.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8173227386109271,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 134.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8173227386109271,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 134.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.783426512485176,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 134.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.783426512485176,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 134.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7969238761222656,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 135.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7969238761222656,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 135.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7969238761222656,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 135.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8231085538215503,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 135.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8231085538215503,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 136.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8231085538215503,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 136.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6647652609029497,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 136.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6647652609029497,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 136.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.46229307136929976,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 137.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.46229307136929976,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 137.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.46229307136929976,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 137.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8610645281023889,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 137.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8610645281023889,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 138.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9510301216109487,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 138.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9510301216109487,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 138.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8673596530612129,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 138.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8673596530612129,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 139.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8673596530612129,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 139.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8867245874104736,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 139.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8867245874104736,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 139.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9266250528441617,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 140.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9266250528441617,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 140.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9266250528441617,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 140.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.934217631016287,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 140.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.934217631016287,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 141.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9067076809088316,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 141.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9067076809088316,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 141.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9067076809088316,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 141.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8558148814352721,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 142.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8558148814352721,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 142.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9793860041841677,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 142.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9793860041841677,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 142.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9793860041841677,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 143.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9720120737890293,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 143.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9720120737890293,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 143.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9720120737890293,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 143.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.978482239197133,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 144.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.978482239197133,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 144.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.978482239197133,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 144.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8931494309597273,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 144.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8931494309597273,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 145.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9417909181883743,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 145.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9417909181883743,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 145.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9417909181883743,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 145.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8540522306884443,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 146.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8540522306884443,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 146.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8540522306884443,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 146.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.940690603967646,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 146.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.940690603967646,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 147.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.940690603967646,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 147.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9875208933189737,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 147.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9875208933189737,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 147.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9934573703610666,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 148.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9934573703610666,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 148.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9934573703610666,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 148.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9977671477326362,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 148.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9977671477326362,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 149.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9977671477326362,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 149.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9928201734587936,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 149.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9928201734587936,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 149.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9928201734587936,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 150.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.954655483026739,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 150.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.954655483026739,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 150.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8255675490171487,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 150.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8255675490171487,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 151.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8255675490171487,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 151.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8493156931649588,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 151.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8493156931649588,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 151.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8493156931649588,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 152.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8700780938890136,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 152.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8700780938890136,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 152.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8700780938890136,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 152.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8415601471159156,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 153.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8415601471159156,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 153.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7788071902481145,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 153.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7788071902481145,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 153.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7788071902481145,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 154.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6520511519342306,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 154.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6520511519342306,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 154.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6520511519342306,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 154.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.643062532023131,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 155.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.643062532023131,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 155.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6388221809408683,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 155.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6388221809408683,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 155.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7073002995724769,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 156.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7073002995724769,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 156.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7073002995724769,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 156.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8834496066700304,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 156.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8834496066700304,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 157.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8834496066700304,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 157.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8201282142915913,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 157.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8201282142915913,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 157.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7180867611889024,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 158.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7180867611889024,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 158.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7180867611889024,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 158.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8842764975812907,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 158.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8842764975812907,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 159.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8842764975812907,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 159.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6431788498099248,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 159.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6431788498099248,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 159.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6431788498099248,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 160.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8751643879536588,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 160.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8751643879536588,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 160.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.5500466845194693,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 160.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.5500466845194693,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 161.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.5500466845194693,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 161.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.2741405802769726,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 161.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.2741405802769726,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 161.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.11852582551218444,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 162.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.11852582551218444,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 162.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008821231349906734,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 162.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008821231349906734,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 162.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.008821231349906734,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 163.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.011263514619042451,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 163.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.011263514619042451,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 163.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.011263514619042451,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 163.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06597542197958035,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 164.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.06597542197958035,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 164.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07953197024530453,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 164.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07953197024530453,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 164.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.07953197024530453,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 165.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.029641445530159502,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 165.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.029641445530159502,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 165.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.029641445530159502,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 165.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0024162929599144027,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 166.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0024162929599144027,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 166.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0024162929599144027,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 166.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.019631174240289075,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 166.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.019631174240289075,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 167.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.019631174240289075,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 167.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.015339674320556438,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 167.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.015339674320556438,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 167.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003687776401727907,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 168.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003687776401727907,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 168.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003687776401727907,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 168.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.046584455767737294,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 168.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.046584455767737294,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 169.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.046584455767737294,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 169.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.01222517353084335,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 169.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.01222517353084335,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 169.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003750393044242457,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 170.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003750393044242457,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 170.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003750393044242457,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 170.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.00563973628067087,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 170.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.00563973628067087,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 171.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.00563973628067087,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 171.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0012604987512214569,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 171.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0012604987512214569,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 171.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0012604987512214569,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 172.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.007783246329111009,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 172.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.007783246329111009,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 172.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.007783246329111009,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 172.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003589530003733505,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 173.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003589530003733505,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 173.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003589530003733505,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 173.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0025271784814251976,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 173.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0025271784814251976,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 174.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0063216161016571605,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 174.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0063216161016571605,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 174.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0063216161016571605,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 174.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.001482276819454281,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 175.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.001482276819454281,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 175.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003656894295750375,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 175.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003656894295750375,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 175.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.003656894295750375,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 176.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05511076901308546,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 176.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05511076901308546,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 176.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05511076901308546,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 176.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.010477323680212617,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 177.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.010477323680212617,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 177.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.010477323680212617,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 177.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1643176362571476,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 177.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1643176362571476,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 178.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.4449549054225179,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 178.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.4449549054225179,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 178.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.4449549054225179,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 178.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.43916882350246794,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 179.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.43916882350246794,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 179.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.43916882350246794,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 179.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.19078942841842003,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 179.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.19078942841842003,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 180.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.19078942841842003,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 180.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.24279908035016415,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 180.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.24279908035016415,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 180.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.12577990982656312,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 181.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.12577990982656312,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 181.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.12577990982656312,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 181.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.10149227918520315,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 181.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.10149227918520315,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 182.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.10149227918520315,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 182.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.10193899558780864,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 182.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.10193899558780864,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 182.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.10193899558780864,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 183.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2301953804145066,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 183.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2301953804145066,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 183.5,
+      "ml_label": "checking",
+      "ml_hold_score": 0.5019641902678947,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 183.75,
+      "ml_label": "checking",
+      "ml_hold_score": 0.5019641902678947,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 184.0,
+      "ml_label": "checking",
+      "ml_hold_score": 0.5019641902678947,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 184.25,
+      "ml_label": "checking",
+      "ml_hold_score": 0.527930883151551,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 184.5,
+      "ml_label": "checking",
+      "ml_hold_score": 0.527930883151551,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 184.75,
+      "ml_label": "checking",
+      "ml_hold_score": 0.527930883151551,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 185.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.022667503632248117,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 185.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.022667503632248117,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 185.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.014634253903629359,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 185.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.014634253903629359,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 186.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.018230835572243278,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 186.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.018230835572243278,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 186.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.018230835572243278,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 186.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03482139021491811,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 187.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03482139021491811,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 187.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03482139021491811,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 187.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0014115150421342712,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 187.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0014115150421342712,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 188.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0014115150421342712,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 188.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.00048210303371150413,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 188.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.00048210303371150413,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 188.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.02356786661043597,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 189.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.02356786661043597,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 189.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.02356786661043597,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 189.5,
+      "ml_label": "checking",
+      "ml_hold_score": 0.9565191756751625,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 189.75,
+      "ml_label": "checking",
+      "ml_hold_score": 0.9565191756751625,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 190.0,
+      "ml_label": "checking",
+      "ml_hold_score": 0.9565191756751625,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 190.25,
+      "ml_label": "checking",
+      "ml_hold_score": 0.8070389454689403,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 190.5,
+      "ml_label": "checking",
+      "ml_hold_score": 0.8070389454689403,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 190.75,
+      "ml_label": "checking",
+      "ml_hold_score": 0.7567049276870312,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 191.0,
+      "ml_label": "checking",
+      "ml_hold_score": 0.7567049276870312,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 191.25,
+      "ml_label": "checking",
+      "ml_hold_score": 0.7567049276870312,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 191.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9095456306356055,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 191.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9095456306356055,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 192.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9926250103648364,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 192.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9926250103648364,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 192.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9924951410128029,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 192.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9924951410128029,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 193.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9924951410128029,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 193.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9296045604951966,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 193.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9296045604951966,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 193.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9435384669545649,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 194.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9435384669545649,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 194.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8756988995923694,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 194.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8756988995923694,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 194.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8756988995923694,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 195.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9957125158872779,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 195.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9957125158872779,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 195.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.999468551688222,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 195.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.999468551688222,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 196.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.999468551688222,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 196.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9996607724405692,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 196.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9996607724405692,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 196.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9996607724405692,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 197.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9999803589441433,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 197.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9999803589441433,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 197.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9999803589441433,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 197.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9997568658462752,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 198.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9997568658462752,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 198.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9999668358520596,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 198.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9999668358520596,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 198.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9999668358520596,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 199.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9971721015171898,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 199.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9971721015171898,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 199.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9971721015171898,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 199.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9911955769549327,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 200.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9911955769549327,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 200.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9911955769549327,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 200.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9917200740372538,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 200.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9917200740372538,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 201.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9743869207442779,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 201.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9743869207442779,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 201.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9743869207442779,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 201.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9801645508651237,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 202.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9801645508651237,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 202.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.996262060474188,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 202.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.996262060474188,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 202.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.957609928681996,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 203.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.957609928681996,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 203.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.957609928681996,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 203.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9976747262790784,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 203.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9976747262790784,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 204.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9976747262790784,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 204.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9990841383249929,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 204.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9990841383249929,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 204.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9990841383249929,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 205.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9961673512497347,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 205.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9961673512497347,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 205.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9049139978249189,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 205.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9049139978249189,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 206.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9049139978249189,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 206.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9889177241562086,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 206.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9889177241562086,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 206.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9889177241562086,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 207.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9430580069517015,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 207.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9430580069517015,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 207.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9973004078782642,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 207.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9973004078782642,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 208.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9939283056904915,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 208.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9939283056904915,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 208.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9939283056904915,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 208.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9997955044700824,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 209.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9997955044700824,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 209.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9997955044700824,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 209.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.992555211236874,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 209.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.992555211236874,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 210.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.999661471378358,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 210.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.999661471378358,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 210.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.999661471378358,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 210.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6369915512611285,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 211.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6369915512611285,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 211.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6369915512611285,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 211.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9984623057388594,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 211.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9984623057388594,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 212.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9984623057388594,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 212.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9962471546563206,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 212.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9962471546563206,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 212.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9962471546563206,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 213.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9947084219305051,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 213.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9947084219305051,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 213.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9947084219305051,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 213.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9841968898408977,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 214.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9841968898408977,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 214.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9841968898408977,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 214.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9782069104196031,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 214.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9782069104196031,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 215.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9782069104196031,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 215.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9815708987519827,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 215.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9815708987519827,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 215.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9815708987519827,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 216.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9502030781203606,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 216.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9502030781203606,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 216.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9916117244560839,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 216.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9916117244560839,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 217.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9916117244560839,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 217.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9911189343759003,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 217.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9911189343759003,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 217.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9911189343759003,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 218.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9899405724844811,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 218.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9899405724844811,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 218.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9899405724844811,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 218.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9843048091585063,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 219.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9843048091585063,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 219.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9661844432691233,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 219.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9661844432691233,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 219.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9661844432691233,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 220.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9708332038073376,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 220.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9708332038073376,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 220.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.9708332038073376,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 220.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8939551172056979,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 221.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8939551172056979,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 221.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.8939551172056979,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 221.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.973238788820401,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 221.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.973238788820401,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 222.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7920475183953833,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 222.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7920475183953833,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 222.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7920475183953833,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 222.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6314561676998816,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 223.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6314561676998816,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 223.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.6314561676998816,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 223.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7315053221455317,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 223.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.7315053221455317,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 224.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.5653924524401249,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 224.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.5653924524401249,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 224.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.572534176475839,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 224.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.572534176475839,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 225.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.572534176475839,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 225.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.5226957158081266,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 225.5,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.5226957158081266,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 225.75,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.5226957158081266,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 226.0,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.47835612507276526,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 226.25,
+      "ml_label": "breath_hold",
+      "ml_hold_score": 0.47835612507276526,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 226.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2792360982807705,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 226.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2792360982807705,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 227.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.2792360982807705,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 227.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.011100922078416908,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 227.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.011100922078416908,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 227.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.011100922078416908,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 228.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.042366523862683116,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 228.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.042366523862683116,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 228.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.04784634009363088,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 228.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.04784634009363088,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 229.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.04784634009363088,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 229.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08784845201382646,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 229.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08784845201382646,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 229.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.08784845201382646,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 230.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.005091864768424837,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 230.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.005091864768424837,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 230.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05818344335264881,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 230.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05818344335264881,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 231.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.05818344335264881,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 231.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0882741894694047,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 231.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0882741894694047,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 231.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1684225935299614,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 232.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1684225935299614,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 232.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1684225935299614,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 232.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.022343561456439724,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 232.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.022343561456439724,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 233.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03351814992537197,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 233.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03351814992537197,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 233.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.03351814992537197,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 233.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0357467129551066,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 234.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0357467129551066,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 234.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0357467129551066,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 234.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0958124927431045,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 234.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0958124927431045,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 235.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0958124927431045,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 235.25,
+      "ml_label": "checking",
+      "ml_hold_score": 0.5602280821645854,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 235.5,
+      "ml_label": "checking",
+      "ml_hold_score": 0.5602280821645854,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 235.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.10338267680172228,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 236.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.10338267680172228,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 236.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.10338267680172228,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 236.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3300821150585398,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 236.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.3300821150585398,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 237.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.45271781992255206,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 237.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.45271781992255206,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 237.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.15546981374318755,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 237.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.15546981374318755,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 238.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.15546981374318755,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 238.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.4008256443697493,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 238.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.4008256443697493,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 238.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1315422178696394,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 239.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.1315422178696394,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 239.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.42558638834891027,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 239.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.42558638834891027,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 239.75,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.42558638834891027,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 240.0,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0977309529370462,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 240.25,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0977309529370462,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 240.5,
+      "ml_label": "breathing",
+      "ml_hold_score": 0.0977309529370462,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    },
+    {
+      "end_s": 240.75,
+      "ml_label": "checking",
+      "ml_hold_score": 0.5528577642810781,
+      "ml_model_version": "breathing-demo-v3:f296826457cc"
+    }
+  ]
+}

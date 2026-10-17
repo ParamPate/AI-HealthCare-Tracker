@@ -48,6 +48,9 @@ class StreamFrame(BaseModel):
     calm_s: FiniteFloat | None = None  # calm seconds in the analysed window (MEASURING needs about 30)
     rssi: int | None = None
     packets_per_s: FiniteFloat | None = None
+    ml_label: Literal["breathing", "breath_hold", "checking", "motion", "no_signal"] | None = None
+    ml_hold_score: FiniteFloat | None = Field(default=None, ge=0, le=1)
+    ml_model_version: str | None = None
 
 
 def create_app(source=None):
