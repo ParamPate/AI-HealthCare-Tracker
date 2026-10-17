@@ -228,7 +228,29 @@ throughput, placement, and breathing detection still need hardware trials.
 The first training step is collecting observed examples. Labels come from a human
 observer, breath count, or independent reference, rather than the CSI prediction.
 The filename's `--label` is only a session name; it does not label the whole file.
-No real training recordings are included in this repository.
+The shared `20261017-013311_hold` recording is now fully labeled for the first
+binary task, `breathing` versus `breath_hold`. The participant confirmed continuous
+breathing outside the two marked holds. There are 137.115 seconds of breathing
+and 40.4 seconds of breath holds:
+
+| Start (s) | End (s) | Label |
+|---|---|---|
+| 0 | 60.3 | breathing |
+| 60.3 | 80.3 | breath_hold |
+| 80.3 | 110.0 | breathing |
+| 110.0 | 130.4 | breath_hold |
+| 130.4 | 177.515118 | breathing |
+
+The sidecar assigns anonymous participant P01, session S01, and split `train`;
+retain P01 for this participant's later recordings. A `breathing` activity label
+needs no measured rate. The more specific normal/slow/fast rate labels still need
+an independent rate measurement. The intervals above are observer/participant
+labels, not predictions from a trained model. Use windows wholly within each
+interval and leave a margin around the marked transitions when training.
+
+Separate validation/test recordings are still needed to assess a trained model.
+This recording was already used for detector tuning and must not be treated as
+held-out evaluation data.
 
 Use anonymous participant IDs (`P01`, `P02`) and session IDs (`S01`, `S02`). Keep
 one participant entirely in one split, including all their sessions and paired
@@ -290,10 +312,19 @@ uv run python -m backend.label add recordings/SESSION.parquet \
 ```
 
 Only use example time ranges when they match what actually happened in your file.
-`--reference-rr` must be an independent measurement, not the model's estimate.
+For the initial two-class task, label an observed breathing range without a rate:
+
+```bash
+uv run python -m backend.label add recordings/SESSION.parquet \
+  --start 5 --end 35 --label breathing --note "Participant confirmed continuous breathing"
+```
+
+`--reference-rr` is optional for `breathing`, and required for normal/slow/fast
+breathing labels. It must be an independent measurement, not the model's estimate.
 
 | Label | Required observation |
 |---|---|
+| breathing | observed continuous breathing; no rate measurement required |
 | normal_breathing | measured rate 10–22/min; supply `--reference-rr` |
 | slow_breathing | measured rate greater than 0 and below 10/min; supply `--reference-rr` |
 | fast_breathing | measured rate above 22/min; supply `--reference-rr` |
@@ -305,8 +336,9 @@ Only use example time ranges when they match what actually happened in your file
 These rate boundaries match the current prototype rules. The tool saves
 `SESSION.labels.json` beside `SESSION.parquet`, including the source file's SHA-256,
 participant/session/split, time basis, and interval annotations. It leaves raw CSI
-unchanged. Both files stay local under the gitignored `recordings/` directory.
-Transfer them together when sharing the dataset with your teammate.
+unchanged. Raw captures are gitignored except for the shared breath-hold test;
+`recordings/*.labels.json` sidecars can be committed. Transfer each sidecar together
+with its matching recording when sharing the dataset with your teammate.
 
 ### 3. Check before training
 
@@ -323,12 +355,60 @@ Overlapping/out-of-range labels are rejected. A range crossing a packet gap over
 2 s cannot be labeled as breathing or a breath hold; mark it `uncertain`. For a
 mistake in an existing label, edit its `.labels.json` sidecar and run `check` again.
 
-The later training step must use windows wholly inside one observed interval,
+Training must use windows wholly inside one observed interval,
 exclude unlabeled/uncertain time, and keep the assigned participant split. Tune on
 `validation`; reserve `test` for final evaluation. Fit normalization/PCA on training
 data only. Do not generate training examples from predicted CSI labels or treat
 the fake source as measured validation data. Missing input remains a signal-quality
 gate; it is not a breath-hold label.
+
+## Trained binary prototype
+
+Hardware-machine setup and remaining work: [CLASSIFIER_HANDOFF.md](CLASSIFIER_HANDOFF.md).
+
+`backend/classifier.py` trains a breathing-versus-breath-hold logistic regression
+using NumPy/SciPy. It operates on raw CSI packets in trailing 10 s windows, once
+per second. Training windows stay one second inside a single observed label.
+Each window independently uses the shared I/Q conversion, invalid-word handling,
+gain normalization, spike removal, and 20 Hz resampling. Five spectral/variance
+features are standardized using training data only. No full-recording filtering
+or PCA is fitted before extracting windows.
+
+```bash
+uv run python -m backend.classifier train --data recordings --output models/breathing-v1.json
+uv run python -m backend.classifier predict --model models/breathing-v1.json --file recordings/20261017-013311_hold.parquet
+uv run python -m backend.classifier validate --data recordings --model models/breathing-v1.json --output models/validation-v1.json
+```
+
+`train` saves the JSON model and `breathing-v1.training.json`. The bundle includes
+preprocessing settings, feature order, learned means/scales, coefficients, class
+mapping, threshold 0.5, source hashes, dependency versions and dataset provenance.
+The source revision is recorded at training time; preprocessing hashes must match
+the code used to load the bundle. Do not edit the pipeline without regenerating
+the artifact. Loading JSON does not execute serialized Python objects.
+
+`predict` prints chronological JSONL with `end_s`, `label`, `hold_score`, and
+`reason`. `hold_score` is an uncalibrated model score, not a signal-confidence or
+clinical-risk probability. Incomplete windows, invalid CSI, clock changes, packet
+gaps over 2 s and incompatible radio settings return `no_signal` with a null score.
+Old recordings lack bandwidth/secondary-channel columns; their unknown values
+are preserved in provenance rather than inferred.
+
+`validate` uses only `validation` sidecars. It rejects training participants and
+copied training recordings, even when the training files are absent from the new
+computer. It reports window confusion counts, hold precision/recall, false holds
+during breathing, missed hold episodes, detection delay, and separate movement/
+empty-chair challenge results. For episode metrics a run begins at its first
+positive window; invalid or missing updates break the run. Episode starts match
+each observed hold at most once; unmatched starts in known activity are false
+detections. These are model-level results before alarm confirmation/debouncing.
+Missing validation data produces a `pending` report with no accuracy metrics.
+
+The saved prototype is trained on the single P01/S01 recording; training fit is
+reported as `training_fit_only`. Its overlapping windows are not independent
+validation. Motion, empty-chair discrimination and generalization to new people
+remain unmeasured. The model is not connected to the live server or alarm yet;
+the existing server still uses its DSP/rules pipeline.
 
 ## Live server and phone alarm
 

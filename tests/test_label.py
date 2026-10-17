@@ -126,3 +126,24 @@ def test_hand_edited_labels_still_get_validated(tmp_path):
 def test_check_empty_directory_reports_missing_data(tmp_path):
     with pytest.raises(ValueError, match="no .labels.json"):
         check_dataset(tmp_path)
+
+
+def test_observed_breathing_needs_no_rate_and_can_complete_binary_timeline(tmp_path):
+    path = recording(tmp_path)
+    main(["add", str(path), "--participant", "P01", "--session", "S01", "--split", "train",
+          "--start", "0", "--end", "20", "--label", "breathing",
+          "--note", "Participant confirmed continuous breathing"])
+    add_label(path, label(20, 40, "breath_hold", None))
+    end = float(timing(path)[-1])
+    add_label(path, label(40, end, "breathing", None))
+    labels = load_labels(path)
+    assert [a.label for a in labels.annotations] == ["breathing", "breath_hold", "breathing"]
+    assert all(a.reference_rr_bpm is None for a in labels.annotations)
+    totals = check_dataset(tmp_path)["labeled_seconds"]["train"]
+    assert totals["breathing"] == pytest.approx(end - 20)
+    assert totals["breath_hold"] == 20
+    assert sum(totals.values()) == pytest.approx(end)
+
+
+def test_generic_breathing_accepts_an_optional_independent_rate():
+    assert label(kind="breathing", rr=16).reference_rr_bpm == 16

@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "pipeline_version": "csi-window-v1",
+  "status": "prototype; independent validation pending",
+  "classes": [
+    "breathing",
+    "breath_hold"
+  ],
+  "feature_order": [
+    "log_variance",
+    "log_breathing_power",
+    "log_movement_power",
+    "breathing_power_fraction",
+    "spectral_peak_concentration"
+  ],
+  "preprocessing": {
+    "window_s": 10.0,
+    "step_s": 1.0,
+    "label_margin_s": 1.0,
+    "fs_hz": 20.0,
+    "max_packet_gap_s": 2.0,
+    "edge_tolerance_s": 0.1,
+    "min_packets": 200,
+    "min_subcarriers": 4,
+    "breathing_band_hz": [
+      0.05,
+      0.5
+    ],
+    "movement_band_hz": [
+      1.0,
+      5.0
+    ],
+    "total_band_hz": [
+      0.05,
+      5.0
+    ],
+    "periodogram_nfft": 256,
+    "epsilon": 1e-12,
+    "detrend": "linear",
+    "periodogram_window": "hann",
+    "spike_filter_packets": 5,
+    "null_carrier_fraction": 0.1,
+    "gain_normalization": "packet_mean"
+  },
+  "feature_mean": [
+    -3.2890281270904183,
+    -3.5994863730133737,
+    -3.9815307563428584,
+    0.6219831678542512,
+    0.39567314382144353
+  ],
+  "feature_scale": [
+    0.22606145991633522,
+    0.35610947054932623,
+    0.1865798291383715,
+    0.1576815268272291,
+    0.041178015518741104
+  ],
+  "coefficients": [
+    -0.24027517142823082,
+    -0.7339302019997278,
+    -0.3040822782977855,
+    -0.8247975549798197,
+    -0.4494707445788495
+  ],
+  "intercept": -1.686507032507803,
+  "threshold": 0.5,
+  "training": {
+    "recordings": [
+      {
+        "file": "20261017-013311_hold.parquet",
+        "participant_id": "P01",
+        "session_id": "S01",
+        "split": "train",
+        "recording_sha256": "ddc08424f116378ad1e8aaabe2038314e93ac5034d66bc6b7085b1d4abb516e4",
+        "annotation_sha256": "87c4bf725c3ea11104f6935ed16549007325511a70372c7a20479606d710f318",
+        "training_windows": 119
+      }
+    ],
+    "radio_signatures": [
+      {
+        "csi_values": 384,
+        "channel": 11,
+        "bandwidth": null,
+        "secondary_channel": null
+      }
+    ],
+    "source_revision": "9e08655afff9953eea7e9174be2471cda99bbf70",
+    "source_dirty": false,
+    "preprocessing_source_sha256": {
+      "backend/classifier.py": "6ccea0c0005dfc7b456454319e1c3365bd9add6c9a91eeef4917fb8e24101a4c",
+      "backend/breathing.py": "9a177ad1417f4bdcc933a832299aaab9422113e1c5e909299c10ed245db0a603",
+      "backend/csi_format.py": "6874b7bfb62c16f4c75887090073dbed7853ac39232476a5ca21c3cfc0cfb9ba"
+    },
+    "dependencies": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "pyarrow": "26.0.0",
+      "pydantic": "2.14.1"
+    },
+    "python": "3.15.0",
+    "class_counts": {
+      "breathing": 102,
+      "breath_hold": 17
+    },
+    "rejected_windows": {},
+    "optimizer": {
+      "method": "L-BFGS-B",
+      "l2": 0.1,
+      "class_weight": "balanced",
+      "converged": true
+    }
+  }
+}

@@ -17,7 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field, FiniteFloat, model_validator
 
 from backend.services.alerts import classify
 
-LABELS = ("normal_breathing", "slow_breathing", "fast_breathing", "breath_hold",
+LABELS = ("breathing", "normal_breathing", "slow_breathing", "fast_breathing", "breath_hold",
           "movement", "empty_chair", "uncertain")
 SPLITS = ("train", "validation", "test")
 
@@ -26,7 +26,7 @@ class Annotation(BaseModel):
     model_config = ConfigDict(extra="forbid")
     start_s: FiniteFloat = Field(ge=0)
     end_s: FiniteFloat = Field(gt=0)
-    label: Literal["normal_breathing", "slow_breathing", "fast_breathing", "breath_hold",
+    label: Literal["breathing", "normal_breathing", "slow_breathing", "fast_breathing", "breath_hold",
                    "movement", "empty_chair", "uncertain"]
     reference_rr_bpm: FiniteFloat | None = Field(default=None, gt=0)
     note: str = Field(default="", max_length=2000)
@@ -42,7 +42,7 @@ class Annotation(BaseModel):
             expected = "normal_breathing" if pattern == "normal" else pattern
             if self.label != expected:
                 raise ValueError(f"reference RR {self.reference_rr_bpm:g} belongs to {expected}")
-        elif self.reference_rr_bpm is not None:
+        elif self.reference_rr_bpm is not None and self.label != "breathing":
             raise ValueError("reference RR is only used for breathing rate labels")
         return self
 
