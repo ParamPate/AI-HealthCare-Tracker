@@ -6,21 +6,25 @@ import threading
 import time
 
 import numpy as np
+import pandas as pd
 
-from backend.csi_format import amplitudes
+from backend.classify import classify
+from backend.csi_format import CsiPacket, amplitudes
 from backend.live import BUFFER_S, LiveAnalyser, WAVE_DELAY_S  # same 60 s window the terminal monitor was tested with
-from backend.serial_io import CsiStream, find_rx_port, open_port
+from backend.serial_io import CsiStream, Sample, find_rx_port, open_port
 
 LOGGER = logging.getLogger(__name__)
 STALE_S = 2.0
 RESULT_STALE_S = 5.0
 MAX_PENDING = 24000
+CHAIR = "Chair 1"
 
 
 def empty_frame(source, reason, seq=0):
     return {"t": None, "breath": None, "rate_bpm": None, "status": "no_signal",
             "reason": reason, "source": source, "seq": seq, "waveform": [],
-            "waveform_delay_s": 0.0, "alert": None}
+            "waveform_delay_s": 0.0, "alert": None, "chair": CHAIR, "level": None,
+            "pause_s": None, "calm_s": None, "rssi": None, "packets_per_s": None}
 
 
 class FakeSource:
@@ -45,14 +49,17 @@ class FakeSource:
         status = "pause" if 30 <= phase < 42 else "motion" if 42 <= phase < 48 else "breathing"
         breath = 0.0 if status == "pause" else math.sin(2 * math.pi * 0.25 * seq / 15)
         breath += 0.02 * math.sin(seq * 1.7)
-        return {"t": t, "breath": breath, "rate_bpm": 15.0 if status == "breathing" else None,
-                "status": status, "reason": "simulated", "source": "fake", "seq": seq,
-                "waveform": [{"t": t, "breath": breath}], "waveform_delay_s": 0.0,
+        return {**empty_frame("fake", "simulated", seq),
+                "t": t, "breath": breath, "rate_bpm": 15.0 if status == "breathing" else None,
+                "status": status, "waveform": [{"t": t, "breath": breath}],
+                "pause_s": phase - 30 + 10 if status == "pause" else None, "rssi": -60, "packets_per_s": 71.0,
                 "alert": {"id": f"demo-{self.epoch}-{int(elapsed // 60)}", "kind": "simulated_pause"}
                 if status == "pause" else None}
 
 
 class SerialSource:
+    name = "serial"
+
     def __init__(self, port=None, baud=921600):
         self.port, self.baud = port, baud
         self._lock = threading.Lock()
@@ -62,7 +69,7 @@ class SerialSource:
         self._last_input = None
         self._last_result = None
         self._error = None
-        self._frame = empty_frame("serial", "warming_up")
+        self._frame = empty_frame(self.name, "warming_up")
         self._threads = []
 
     def start(self):
@@ -86,7 +93,7 @@ class SerialSource:
                 reason = "waiting_for_packets" if self._last_input is None else "stale_input"
             if reason is None and self._last_result is not None and now - self._last_result > RESULT_STALE_S:
                 reason = "processing_delayed"
-            return empty_frame("serial", reason, self._frame["seq"]) if reason else self._frame.copy()
+            return empty_frame(self.name, reason, self._frame["seq"]) if reason else self._frame.copy()
 
     def _acquire(self):
         try:
@@ -101,7 +108,7 @@ class SerialSource:
                         if len(self._pending) + len(samples) > MAX_PENDING:
                             self._pending.clear()
                             self._generation += 1
-                            self._frame = empty_frame("serial", "buffer_overrun", self._frame["seq"] + 1)
+                            self._frame = empty_frame(self.name, "buffer_overrun", self._frame["seq"] + 1)
                         self._pending.extend(samples[-MAX_PENDING:])
                         self._last_input = time.monotonic()
         except Exception:
@@ -134,21 +141,23 @@ class SerialSource:
             except Exception:
                 LOGGER.exception("Breathing analysis failed; restarting the processing window")
                 analyser, key = LiveAnalyser(buffer_s=BUFFER_S), None
-                frame = empty_frame("serial", "processing_error")
+                frame = empty_frame(self.name, "processing_error")
             with self._lock:
                 if generation == self._generation:
                     frame["seq"] = self._frame["seq"] + 1
                     self._frame = frame
                     self._last_result = time.monotonic()
 
-    @staticmethod
-    def _state_frame(state, sample):
+    def _state_frame(self, state, sample):
         mapping = {"starting": ("no_signal", "warming_up"), "measuring": ("no_signal", "measuring"),
                    "moving": ("motion", "movement"), "no_rhythm": ("no_signal", "unreliable_rhythm"),
                    "breathing": ("breathing", None), "pause": ("pause", "breathing_pause")}
         status, reason = mapping[state.status]
-        frame = empty_frame("serial", reason)
-        frame.update(status=status, waveform_delay_s=WAVE_DELAY_S)
+        frame = empty_frame(self.name, reason)
+        frame.update(status=status, waveform_delay_s=WAVE_DELAY_S, level=classify(state),
+                     pause_s=None if state.pause_s is None else float(state.pause_s),
+                     calm_s=float(state.calm_s), rssi=state.rssi,
+                     packets_per_s=float(state.packets_per_s))
         if state.status == "breathing" and not state.stale and state.rate_bpm is not None and math.isfinite(state.rate_bpm):
             frame["rate_bpm"] = float(state.rate_bpm)
         offset = sample.host_time - sample.device_time_us / 1e6
@@ -159,3 +168,40 @@ class SerialSource:
             frame["t"] = frame["waveform"][-1]["t"]
             frame["breath"] = frame["waveform"][-1]["breath"]
         return frame
+
+
+class ReplaySource(SerialSource):
+    """Plays a saved recording in real time, looping, through the same analysis as the board.
+
+    For working on the page without the boards, and as a backup during a demo.
+    """
+    name = "replay"
+
+    def __init__(self, path):
+        super().__init__()
+        self.path = path
+
+    def _acquire(self):
+        df = pd.read_parquet(self.path)
+        t_us = df["device_time_us"].to_numpy(dtype=np.int64)
+        packets = [CsiPacket(mac=row.mac, seq=int(row.seq), rssi=int(row.rssi), noise_floor=int(row.noise_floor),
+                             bandwidth=1, channel=int(row.channel), secondary_channel=0,
+                             timestamp_us=int(row.timestamp_us), first_word_invalid=bool(row.first_word_invalid),
+                             csi=np.asarray(row.csi, dtype=np.int8))
+                   for row in df.itertuples()]
+        # Each loop continues the clock, so the analysis sees one long recording.
+        loop_us = int(t_us[-1] - t_us[0]) + int(np.median(np.diff(t_us)))
+        i, loop, started = 0, 0, time.monotonic()
+        while not self._stop.is_set():
+            elapsed_us = (time.monotonic() - started) * 1e6
+            batch = []
+            while t_us[i] - t_us[0] + loop * loop_us <= elapsed_us:
+                batch.append(Sample(time.time(), int(t_us[i] + loop * loop_us), 0, packets[i]))
+                i += 1
+                if i == len(packets):
+                    i, loop = 0, loop + 1
+            if batch:
+                with self._lock:
+                    self._pending.extend(batch)
+                    self._last_input = time.monotonic()
+            self._stop.wait(0.05)

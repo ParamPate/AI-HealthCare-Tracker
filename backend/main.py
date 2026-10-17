@@ -1,4 +1,5 @@
-"""Run: python -m backend.main --source fake (or --source serial --port PORT)."""
+"""Run: python -m backend.main --source serial (or --source replay --file recordings/<file>.parquet,
+or --source fake). The page (frontend/, Next.js) connects to ws://localhost:8000/ws."""
 import argparse
 import asyncio
 from contextlib import asynccontextmanager
@@ -10,7 +11,7 @@ from pydantic import BaseModel, Field, FiniteFloat
 import uvicorn
 
 from backend import config
-from backend.live_source import FakeSource, SerialSource
+from backend.live_source import FakeSource, ReplaySource, SerialSource
 
 
 class WavePoint(BaseModel):
@@ -30,11 +31,17 @@ class StreamFrame(BaseModel):
     rate_bpm: FiniteFloat | None = Field(ge=0)
     status: Literal["no_signal", "motion", "breathing", "pause"]
     reason: str | None
-    source: Literal["fake", "serial"]
+    source: Literal["fake", "serial", "replay"]
     seq: int = Field(ge=0)
     waveform: list[WavePoint] = Field(max_length=300)
     waveform_delay_s: FiniteFloat = Field(ge=0)
     alert: AlertPlaceholder | None
+    chair: str
+    level: Literal["normal", "warning", "critical"] | None  # from backend/classify.py
+    pause_s: FiniteFloat | None      # seconds without a breath while status is "pause"
+    calm_s: FiniteFloat | None       # calm seconds in the analysed window (MEASURING needs about 30)
+    rssi: int | None
+    packets_per_s: FiniteFloat | None
 
 
 def create_app(source=None):
@@ -98,7 +105,8 @@ app = create_app()
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", choices=["fake", "serial"], default="fake")
+    parser.add_argument("--source", choices=["fake", "serial", "replay"], default="fake")
+    parser.add_argument("--file", help="recording to loop with --source replay (recordings/<file>.parquet)")
     parser.add_argument("--port", default=config.SERIAL_PORT, help="ESP32 serial port; default: auto-detect")
     parser.add_argument("--baud", type=int, default=config.SERIAL_BAUD)
     parser.add_argument("--host", default="127.0.0.1", help="Use 0.0.0.0 to allow phones on your LAN")
@@ -106,7 +114,10 @@ def main():
     args = parser.parse_args()
     if args.baud <= 0 or not 1 <= args.http_port <= 65535:
         parser.error("baud must be positive and HTTP port must be between 1 and 65535")
-    source = FakeSource() if args.source == "fake" else SerialSource(args.port, args.baud)
+    if args.source == "replay" and not args.file:
+        parser.error("--source replay needs --file recordings/<file>.parquet")
+    source = (FakeSource() if args.source == "fake" else ReplaySource(args.file) if args.source == "replay"
+              else SerialSource(args.port, args.baud))
     uvicorn.run(create_app(source), host=args.host, port=args.http_port, workers=1)
 
 

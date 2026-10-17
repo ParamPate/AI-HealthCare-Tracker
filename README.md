@@ -122,6 +122,37 @@ be replayed or analysed; `--label`, default `live`) and the printed lines as a `
 next to it. `--replay ... --speed 0` runs as fast as possible, and `--debug` adds the
 numbers behind each verdict. `LiveAnalyser` in `backend/live.py` is what the server will use.
 
+## Live web page (waiting-room chair)
+
+Two terminals. First the backend, which reads the RX board, analyses once a second
+(the same `LiveAnalyser` as the terminal monitor), and serves `ws://localhost:8000/ws`:
+
+```bash
+uv run python -m backend.main --source serial
+# or loop a saved recording (no boards needed; also a demo backup):
+uv run python -m backend.main --source replay --file recordings/<file>.parquet
+# or simulated data:
+uv run python -m backend.main --source fake
+```
+
+Then the page (Next.js; run `npm install` the first time):
+
+```bash
+cd frontend
+npm run dev
+```
+
+Open http://localhost:3000. The page shows the chair, whether the data is live, a
+replay, or simulated, the status (starting, measuring, breathing, movement, pause), the
+level, the rate or the seconds without a breath, a 30 s breathing wave (about 4 s
+behind real time), and signal quality. It turns red during a pause or a critical
+level. Only processed numbers and the wave reach the browser; raw CSI stays in the
+Python process. Set `NEXT_PUBLIC_WS_URL` to point the page at another server.
+
+The level (normal, warning, critical) comes from `classify()` in
+`backend/classify.py`, which returns nothing until the classification rules are
+written; the page hides the level until then.
+
 ## Using the reader from code
 
 `backend/serial_io.py` is the one place that reads the RX port:
