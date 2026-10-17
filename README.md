@@ -76,11 +76,21 @@ of packets are dropped on the board. That is plenty for breathing (0.1 to 0.5 Hz
 uv run python signal-processing/explore.py recordings/<file>.parquet
 ```
 
-Prints a summary and saves `<file>.png` next to the recording: RSSI, a
-per-subcarrier heatmap, a movement score, the subcarriers with the most
-breathing-band energy, a breathing estimate (first principal component, 0.1 to
-0.5 Hz), and its spectrum in breaths per minute. If the RX board restarted during
-the recording, the longest uninterrupted stretch is analysed.
+Add `--start`/`--end` (seconds) to analyse part of a recording. Prints a summary
+and saves a PNG next to the recording. The analysis lives in `backend/breathing.py`
+so the live server can reuse it:
+
+1. Movement (energy above 1 Hz, which breathing barely has) is detected and ignored.
+2. Inside movement the signal is frozen, so posture shifts can't ring through the
+   filters as fake slow waves; slow drift is removed with a rolling median.
+3. Subcarriers are picked by how rhythmic they are, not how much they change.
+4. A rate (3 to 30 breaths/min) is only reported as breathing if it lasts at least
+   3 cycles of calm data, stays steady over time, and stands out across all
+   subcarriers. Energy at half the rate is noted, since the signal can show two
+   bumps per breath; only marked breaths can settle that.
+
+If the RX board restarted during the recording, the longest uninterrupted stretch
+is analysed.
 
 ## Using the reader from code
 
