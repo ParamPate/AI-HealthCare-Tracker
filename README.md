@@ -218,6 +218,113 @@ throughput, placement, and breathing detection still need hardware trials.
 6. Send the recordings and their printed summaries back for analysis.
    `recordings/` is gitignored, so pushing code does not transfer captures.
 
+## Label recordings for a classification model
+
+The first training step is collecting observed examples. Labels come from a human
+observer, breath count, or independent reference, rather than the CSI prediction.
+The filename's `--label` is only a session name; it does not label the whole file.
+No real training recordings are included in this repository.
+
+Use anonymous participant IDs (`P01`, `P02`) and session IDs (`S01`, `S02`). Keep
+one participant entirely in one split, including all their sessions and paired
+empty-chair trials. For example, collect P01's sessions for `train`, P02's for
+`validation`, and P03's for a final `test`. This is an initial collection plan,
+not enough evidence on its own to establish model accuracy. Add more participants
+and sessions with different chair positions and room conditions.
+
+### 1. Collect and mark what actually happened
+
+On the computer connected to RX, close other serial readers and run:
+
+```bash
+uv run python -m backend.live --label P01_S01
+```
+
+This records CSI while showing the existing detector. Press **Enter** at observed
+activity transitions, then **Ctrl+C** to save the recording and its `.txt` log.
+The log lists marked times relative to the first device packet. Separately note
+which activity began at each mark, the independent breath count and count duration,
+and the board placement. Keep patient names and medical details out of these notes.
+
+Start with seated normal breathing, natural movement, and an empty chair. Add
+other breathing examples only when their actual timing/rate can be observed. Leave
+transition periods and ambiguous data unlabeled, or explicitly mark `uncertain`.
+Do not use the detector's displayed status/rate as a training label. Record a new
+file after an RX restart or transmitter change.
+
+If a teammate records on another computer, transfer the `.parquet` and observation
+notes to the same `recordings/` folder. Git pull does not transfer recordings.
+
+### 2. Inspect and add observed intervals
+
+Replace the example path with the actual saved filename:
+
+```bash
+uv run python -m backend.label show recordings/SESSION.parquet
+```
+
+The output gives the available time range. Times are seconds from the first
+recorded device packet. Labels are half-open intervals: `[start, end)`. Add one
+interval at a time, using the observer's timing and allowing a margin around changes.
+For example, **if** the observer counted 8 breaths from second 5 to second 35,
+that is `8 * 60 / 30 = 16` breaths/min:
+
+```bash
+uv run python -m backend.label add recordings/SESSION.parquet \
+  --participant P01 --session S01 --split train \
+  --start 5 --end 35 --label normal_breathing --reference-rr 16 \
+  --note "Observer counted 8 breaths in these 30 seconds; seated, boards 1 m apart"
+```
+
+The first interval requires participant, session, and split. Later intervals reuse
+them. For an observed movement period in that same recording:
+
+```bash
+uv run python -m backend.label add recordings/SESSION.parquet \
+  --start 45 --end 55 --label movement --note "Observed arm and torso movement"
+```
+
+Only use example time ranges when they match what actually happened in your file.
+`--reference-rr` must be an independent measurement, not the model's estimate.
+
+| Label | Required observation |
+|---|---|
+| normal_breathing | measured rate 10–22/min; supply `--reference-rr` |
+| slow_breathing | measured rate greater than 0 and below 10/min; supply `--reference-rr` |
+| fast_breathing | measured rate above 22/min; supply `--reference-rr` |
+| breath_hold | observed voluntary pause with known start/end; this is not a clinical apnea diagnosis |
+| movement | observed body movement |
+| empty_chair | nobody in the monitored chair; use the paired session's participant ID |
+| uncertain | ambiguous timing, transitions, or missing input; exclude from model training |
+
+These rate boundaries match the current prototype rules. The tool saves
+`SESSION.labels.json` beside `SESSION.parquet`, including the source file's SHA-256,
+participant/session/split, time basis, and interval annotations. It leaves raw CSI
+unchanged. Both files stay local under the gitignored `recordings/` directory.
+Transfer them together when sharing the dataset with your teammate.
+
+### 3. Check before training
+
+```bash
+uv run python -m backend.label check recordings
+```
+
+This checks hashes, timestamps, intervals, packet coverage, duplicate recordings,
+and participant IDs across splits. It reports labeled seconds by split/class and
+which splits are still missing. Missing classes/participants must still be reviewed
+before fitting a model; a successful integrity check is not an accuracy result.
+
+Overlapping/out-of-range labels are rejected. A range crossing a packet gap over
+2 s cannot be labeled as breathing or a breath hold; mark it `uncertain`. For a
+mistake in an existing label, edit its `.labels.json` sidecar and run `check` again.
+
+The later training step must use windows wholly inside one observed interval,
+exclude unlabeled/uncertain time, and keep the assigned participant split. Tune on
+`validation`; reserve `test` for final evaluation. Fit normalization/PCA on training
+data only. Do not generate training examples from predicted CSI labels or treat
+the fake source as measured validation data. Missing input remains a signal-quality
+gate; it is not a breath-hold label.
+
 ## Live server and phone alarm
 
 Run one server from the project root (close other serial readers first):
