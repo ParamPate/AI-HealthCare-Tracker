@@ -447,9 +447,13 @@ fit. Retraining the entire current recordings folder also includes this newer
 diagnostic capture. Stable recovery needs a paired normal/hold calibration run
 in the current setup.
 
-The prototype score does not drive phone alarms. Those still use the existing
-DSP/rules pipeline until independent validation and presence challenges have
-been reviewed. To collect a different participant's validation data, close other
+The serial and replay phone alarms now use the same confirmed `ml_label` as the
+dashboard: `breath_hold` starts the two-second alarm confirmation, `breathing`
+counts toward three-second recovery, and `checking` or missing input interrupts
+confirmation and recovery. The score alone does not trigger an alarm. Empty-chair
+and recovery false holds can therefore also ring the phone; this is a seated-person
+hackathon demo with independent validation pending.
+To collect a different participant's validation data, close other
 serial readers and run `uv run python -m backend.live --label P02_S01`. Press Enter
 when a hold starts and again when breathing resumes; Ctrl+C saves the raw
 recording and log. Add labels from those observations using `backend.label`, then
@@ -464,8 +468,9 @@ uv run python -m backend.main --source serial --port /dev/cu.usbserial-0001 --ho
 ```
 
 On the same Wi-Fi network, open `http://<computer-LAN-IP>:8000/phone` on the phone
-and tap **Enable alarm**. Keep the page open and the phone awake. Sound depends on
-browser audio permission; vibration is optional and is not supported on every
+and tap **Enable alarm**. Keep the page open and the phone awake. On iPhone, turn
+Silent Mode off and raise the volume. Sound depends on browser audio permission;
+vibration is optional and is not supported on every
 phone. This is a local demo server with no authentication; use a trusted LAN.
 
 To try the complete alert path without boards:
@@ -485,13 +490,25 @@ curl -X POST http://localhost:8000/api/demo/alert
 The live path is:
 
 ```
-serial_io → LiveAnalyser → SerialSource → shared server publisher
-    → breathing classification → timed alert → /ws/dashboard → phone sound
+serial_io → SerialSource / LiveClassifier → shared server publisher
+    → confirmed ML label → timed alert → /ws/dashboard → phone sound
 ```
 
 The shared publisher runs independently of browser connections. It evaluates new
-snapshots at most once a second; opening more tabs or receiving the same snapshot
-again does not advance alert confirmation. It publishes these rule-based classes:
+serial/replay snapshots at most twice a second; opening more tabs or receiving the
+same snapshot again does not advance alert confirmation. Serial/replay alerts use:
+
+| ML label | Phone classification | Result |
+|---|---|---|
+| breath_hold | breath_hold | critical; sounds after 2 elapsed seconds of continued hold labels |
+| breathing | normal | recovery; rearms after 3 elapsed seconds |
+| checking / motion / no_signal / unavailable | unknown | interrupts confirmation and recovery |
+
+The model does not measure hold onset or duration, so ML alarms send `max_gap_s: null`.
+The DSP waveform and breathing rate remain available; they do not override ML phone
+alerts. Model detection delay comes before the additional two-second confirmation.
+
+The fake source and standalone external-vitals app retain the existing rules:
 
 | Class | Input | Result |
 |---|---|---|
@@ -502,12 +519,10 @@ again does not advance alert confirmation. It publishes these rule-based classes
 | motion / no_signal | movement, warmup, unreliable rhythm, missing packets | unknown; interrupts pending alarm |
 
 Critical readings must continue for **2 elapsed seconds** with fresh updates and
-the same classification. A gap longer than 2.5 s resets confirmation. The live
-pause detector itself uses an 8 s window ending 3 s ago; delivery therefore has
-that detection delay **plus** confirmation time, and filtering can add more delay.
-These are prototype thresholds, not a trained or clinically validated model.
-The current DSP only estimates rates within 3–30/min, so fast-rate detection has
-limited range. It does not classify shallow breathing or diagnose apnea.
+the same classification. A gap longer than 2.5 s resets confirmation. These are
+prototype thresholds and a demo model, not clinically validated monitoring.
+The DSP only estimates rates within 3–30/min, so the older fast-rate detection has
+limited range. This project does not diagnose apnea.
 
 One alert is sent per episode. It stays active until acknowledged. Acknowledgement
 silences all connected phones; it does not immediately rearm the detector. Three
@@ -517,8 +532,8 @@ when a phone reconnects. SQLite adds the new alert columns without deleting data
 
 ### Frontend and teammate contract
 
-- `/ws`: existing waveform stream (~15 messages/s), now including `pause_s`.
-  Serial analysis updates about once a second; use `seq` to deduplicate waveforms.
+- `/ws`: waveform stream (~15 messages/s), including DSP `pause_s` and ML fields.
+  Serial snapshots update about four times a second; use `seq` to deduplicate.
 - `/ws/dashboard`: phone events. First message is
   `{"type":"snapshot","alerts":[...]}`, followed by `vitals`, `alert`, and `ack`.
 - `/api/alerts/active`: current unacknowledged alerts.
@@ -528,7 +543,7 @@ when a phone reconnects. SQLite adds the new alert columns without deleting data
 Example event that starts the phone alarm:
 
 ```json
-{"type":"alert","alert_id":42,"seat_id":"CHAIR_01","severity":"critical","pattern":"breathing_pause","rr":null,"max_gap_s":13.0,"source":"serial"}
+{"type":"alert","alert_id":42,"seat_id":"CHAIR_01","severity":"critical","pattern":"breath_hold","rr":null,"max_gap_s":null,"source":"serial"}
 ```
 
 Phone alarms consume `/ws/dashboard`; the legacy simulated `alert` field on `/ws`

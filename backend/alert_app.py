@@ -70,8 +70,14 @@ class AlertService:
     def interrupt(self, seat_id):
         self.states.setdefault(seat_id, AlertState()).interrupt()
 
-    async def publish(self, seat_id, status, rr, pause_s, source, now=None, confidence=None):
-        pattern, severity = classify(status, rr, pause_s)
+    async def publish(self, seat_id, status, rr, pause_s, source, now=None, confidence=None,
+                      *, ml_label=None):
+        pattern, severity = classify(status, rr, pause_s, ml_label=ml_label)
+        if ml_label is not None:
+            # The model labels holds; it does not measure their start time or duration.
+            pause_s = None
+            if ml_label != "breathing":
+                rr = None
         if confidence is not None and confidence < 0.5:
             pattern, severity = "no_signal", "unknown"
         # Unknown input must not carry a held rate into classification or storage.

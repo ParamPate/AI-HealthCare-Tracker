@@ -36,7 +36,8 @@ def test_shared_publisher_reaches_two_phones_without_waveform_clients(tmp_path, 
         def get_latest(self):
             self.tick += 1
             frame = empty_frame("serial", None, self.tick)
-            frame.update(t=time.time(), status="pause", pause_s=11 + self.tick / 10)
+            frame.update(t=time.time(), status="pause", pause_s=11 + self.tick / 10,
+                         ml_label="breath_hold", ml_model_version="prototype")
             return frame
 
     source = Source()
@@ -54,6 +55,7 @@ def test_shared_publisher_reaches_two_phones_without_waveform_clients(tmp_path, 
                         alerts.append(event)
                         break
             assert len(alerts) == 2 and alerts[0] == alerts[1]
+            assert alerts[0]["pattern"] == "breath_hold" and alerts[0]["max_gap_s"] is None
             assert source.tick >= 21  # many messages cannot shorten the 2 s confirmation
             with client.websocket_connect("/ws") as waveform:
                 assert waveform.receive_json()["pause_s"] >= 11
@@ -76,7 +78,8 @@ def test_duplicate_snapshot_cannot_confirm_an_alert(tmp_path, monkeypatch):
         def get_latest(self):
             self.tick += 1
             frame = empty_frame("serial", None, 1)
-            frame.update(status="pause", pause_s=12)
+            frame.update(status="pause", pause_s=12,
+                         ml_label="breath_hold", ml_model_version="prototype")
             return frame
 
     source = Source()

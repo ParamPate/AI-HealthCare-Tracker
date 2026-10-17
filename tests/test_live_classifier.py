@@ -118,7 +118,7 @@ def test_replay_preserves_raw_metadata_and_resets_at_loop_boundary(raw_window, m
     assert pending[2].packet is samples[0].packet
 
 
-def test_websocket_carries_prototype_fields_without_triggering_phone_alerts(tmp_path, monkeypatch):
+def test_websocket_model_hold_triggers_phone_alerts_over_normal_dsp(tmp_path, monkeypatch):
     monkeypatch.setattr(db, "DB_PATH", tmp_path / "alerts.db")
 
     class Source:
@@ -141,4 +141,7 @@ def test_websocket_carries_prototype_fields_without_triggering_phone_alerts(tmp_
         with client.websocket_connect("/ws") as ws:
             frame = ws.receive_json()
             assert frame["ml_label"] == "breath_hold" and frame["ml_hold_score"] == 0.99
-        assert client.get("/api/alerts/active").json() == []
+        alerts = client.get("/api/alerts/active").json()
+        assert len(alerts) == 1
+        assert alerts[0]["pattern"] == "breath_hold"
+        assert alerts[0]["rr"] is None and alerts[0]["max_gap_s"] is None

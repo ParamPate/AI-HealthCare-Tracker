@@ -65,17 +65,20 @@ def create_app(source=None):
         while True:
             try:
                 frame = {**source.get_latest(), "sent_at": time.time()}
-                severity = classify(frame["status"], frame["rate_bpm"], frame["pause_s"])[1]
+                ml_label = None if frame["source"] == "fake" else frame["ml_label"] or "no_signal"
+                severity = classify(frame["status"], frame["rate_bpm"], frame["pause_s"],
+                                    ml_label=ml_label)[1]
                 frame["level"] = None if severity == "unknown" else severity
                 latest = StreamFrame.model_validate(frame).model_dump()
                 now = time.monotonic()
                 # Invalid status can replace a snapshot without incrementing its sequence.
-                if latest["status"] in ("motion", "no_signal"):
+                if severity == "unknown":
                     alerts.interrupt("CHAIR_01")
-                key = (latest["seq"], latest["status"])
-                if key != last_key and (last_publish is None or now - last_publish >= 1):
+                key = (latest["seq"], latest["status"], ml_label)
+                interval = 0.5 if ml_label is not None else 1
+                if key != last_key and (last_publish is None or now - last_publish >= interval):
                     await alerts.publish("CHAIR_01", latest["status"], latest["rate_bpm"],
-                                         latest["pause_s"], latest["source"], now=now)
+                                         latest["pause_s"], latest["source"], now=now, ml_label=ml_label)
                     last_key, last_publish = key, now
             except Exception:
                 logging.getLogger(__name__).exception("Breathing alert update failed")
