@@ -1,11 +1,14 @@
-// Drives one canvas: the small card (one zone at a time, crossfading) or the full explorer
-// (whole room, zones, and close-ups of a single object with a strip of its neighbours).
+// Drives the full-screen room: the whole room, one corner at a time, and close-ups of a single
+// object with a strip of its neighbours. The seated person breathes; WiFi waves run between the boards.
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { buildRoom, pickable, ZONES } from './models'
+import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js'
+import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js'
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
+import { ANTENNA_TOP, buildRoom, CHEST, LINK_Z, pickable, RX_AT, RX_COLOR, TX_AT, TX_COLOR, ZONE_FOCUS } from './models'
 import { paper, type Piece, type Theme } from './sketch'
 
-export type Mode = 'card' | 'room' | 'zone' | 'object'
+export type Mode = 'room' | 'zone' | 'object'
 
 export type Thumb = { id: string; name: string; x: number; y: number; w: number; h: number; active: boolean }
 
@@ -17,16 +20,158 @@ export type ViewState = {
   hovering: boolean
 }
 
+/** What the person's breathing should follow: a rate, and whether they are breathing at all. */
+export type Breathing = { rate: number; breathing: boolean }
+
 type Shot = { pos: THREE.Vector3; target: THREE.Vector3 }
 
 const FOV = 30
 const FADED = 0.13
 const ROOM_DIR = new THREE.Vector3(0.62, 0.86, 1).normalize()
 const ZONE_DIR = new THREE.Vector3(0.5, 0.62, 1).normalize()
-const CARD_DIR = new THREE.Vector3(0.62, 0.56, 1).normalize()
+// looking down at about 62 degrees, so the gap between the boards' line and the chest shows
+const FOCUS_DIR = new THREE.Vector3(0.42, 1.95, 1).normalize()
 const OBJECT_DIR = new THREE.Vector3(0.42, 0.3, 1).normalize()
 
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
+
+/**
+ * Wave paths from TX to RX. Each bows out away from the person by `bow` meters at its middle;
+ * breathing out pushes it `give` meters further, breathing in lets it settle back.
+ */
+const WAVES = [
+  { bow: 0.07, give: 0.045, strength: 1 },
+  { bow: 0.14, give: 0.065, strength: 0.78 },
+  { bow: 0.21, give: 0.085, strength: 0.58 },
+]
+const PATH_SEGS = 60
+const FRONTS = 6 // wavefronts travelling along each path at once
+const FRONT_SEGS = 8
+const RIPPLES = 3
+const RIPPLE_SEGS = 10
+const UP = new THREE.Vector3(0, 1, 0)
+const pa = new THREE.Vector3()
+const pb = new THREE.Vector3()
+const tangent = new THREE.Vector3()
+const tint = new THREE.Color()
+
+/** Fat-line segments rewritten every frame. */
+class LiveLines {
+  readonly line: LineSegments2
+
+  constructor(count: number, mat: LineMaterial) {
+    const geo = new LineSegmentsGeometry()
+    geo.setPositions(new Float32Array(count * 6))
+    geo.setColors(new Float32Array(count * 6))
+    this.line = new LineSegments2(geo, mat)
+    this.line.frustumCulled = false
+  }
+
+  private data(name: 'instanceStart' | 'instanceColorStart') {
+    return (this.line.geometry.getAttribute(name) as THREE.InterleavedBufferAttribute).data
+  }
+
+  /** Segment i from a to b, colored c. */
+  set(i: number, a: THREE.Vector3, b: THREE.Vector3, c: THREE.Color) {
+    ;(this.data('instanceStart').array as Float32Array).set([a.x, a.y, a.z, b.x, b.y, b.z], i * 6)
+    ;(this.data('instanceColorStart').array as Float32Array).set([c.r, c.g, c.b, c.r, c.g, c.b], i * 6)
+  }
+
+  flush() {
+    this.data('instanceStart').needsUpdate = true
+    this.data('instanceColorStart').needsUpdate = true
+  }
+}
+
+/**
+ * The radio between the boards. A faint dashed line is the straight path; WiFi waves leave TX
+ * (orange), bow out away from the person, and arrive at RX (blue). Each breath out pushes them a little.
+ */
+class RadioLink {
+  readonly group = new THREE.Group()
+  private paper = new THREE.Color(paper('light'))
+  private txColor = new THREE.Color(TX_COLOR)
+  private rxColor = new THREE.Color(RX_COLOR)
+  private from = new THREE.Vector3(TX_AT[0], TX_AT[1] + ANTENNA_TOP * 0.9, TX_AT[2])
+  private to = new THREE.Vector3(RX_AT[0], RX_AT[1] + ANTENNA_TOP * 0.9, RX_AT[2])
+  private dir = this.to.clone().sub(this.from).normalize()
+  private directMat = new LineMaterial({ color: '#8a8a90', linewidth: 1.1, transparent: true, depthWrite: false, dashed: true, dashSize: 0.03, gapSize: 0.03 })
+  private pathMat = new LineMaterial({ linewidth: 1.6, vertexColors: true, transparent: true, depthWrite: false })
+  private frontMat = new LineMaterial({ linewidth: 2.4, vertexColors: true, transparent: true, depthWrite: false })
+  private paths = new LiveLines(WAVES.length * PATH_SEGS, this.pathMat)
+  private fronts = new LiveLines(WAVES.length * FRONTS * FRONT_SEGS + 2 * RIPPLES * RIPPLE_SEGS, this.frontMat)
+
+  constructor() {
+    const geo = new LineSegmentsGeometry()
+    geo.setPositions([...this.from.toArray(), ...this.to.toArray()])
+    const direct = new LineSegments2(geo, this.directMat)
+    direct.computeLineDistances()
+    this.group.add(direct, this.paths.line, this.fronts.line)
+  }
+
+  setTheme(color: string) {
+    this.paper.set(color)
+  }
+
+  /** Point s (0 at TX, 1 at RX) along wave k: out of the straight line, away from the person, back in. */
+  private path(k: number, s: number, push: number, out: THREE.Vector3) {
+    const shape = (1 - (2 * s - 1) ** 2) ** 2
+    const { bow, give } = WAVES[k]
+    return out.set(this.from.x + (this.to.x - this.from.x) * s, this.from.y, LINK_Z + (bow + give * push) * shape)
+  }
+
+  /** Orange at TX to blue at RX, faded toward the background by (1 - strength). */
+  private color(s: number, strength: number) {
+    return tint.copy(this.txColor).lerp(this.rxColor, s).lerp(this.paper, 1 - Math.max(0, Math.min(1, strength)))
+  }
+
+  /** An arc ")" of radius r facing along `facing`, its front at p. */
+  private arc(i: number, p: THREE.Vector3, facing: THREE.Vector3, r: number, spread: number, segs: number, c: THREE.Color) {
+    const center = pa.copy(p).addScaledVector(facing, -r)
+    const at = (a: number, out: THREE.Vector3) => out.copy(center).addScaledVector(facing, Math.cos(a) * r).addScaledVector(UP, Math.sin(a) * r)
+    const q0 = new THREE.Vector3()
+    const q1 = new THREE.Vector3()
+    for (let n = 0; n < segs; n++) {
+      this.fronts.set(i++, at(-spread + (2 * spread * n) / segs, q0), at(-spread + (2 * spread * (n + 1)) / segs, q1), c)
+    }
+    return i
+  }
+
+  update(t: number, opacity: number, inhale: number, w: number, h: number) {
+    for (const m of [this.directMat, this.pathMat, this.frontMat]) m.resolution.set(w, h)
+    this.directMat.opacity = 0.5 * opacity
+    this.pathMat.opacity = opacity
+    this.frontMat.opacity = opacity
+    // breathing out pushes the waves a little further from the person; breathing in lets them settle
+    const push = 1 - inhale
+    const ends = (s: number) => Math.min(1, s * 6, (1 - s) * 6)
+
+    let i = 0
+    let f = 0
+    WAVES.forEach((spec, k) => {
+      for (let n = 0; n < PATH_SEGS; n++) {
+        const s = (n + 0.5) / PATH_SEGS
+        this.paths.set(i++, this.path(k, n / PATH_SEGS, push, pa), this.path(k, (n + 1) / PATH_SEGS, push, pb), this.color(s, 0.75 * spec.strength * ends(s)))
+      }
+      for (let j = 0; j < FRONTS; j++) {
+        const s = (t * 0.32 + j / FRONTS + k * 0.11) % 1
+        this.path(k, s, push, pb)
+        this.path(k, Math.min(1, s + 0.005), push, tangent).sub(this.path(k, Math.max(0, s - 0.005), push, pa)).normalize()
+        f = this.arc(f, pb.clone(), tangent.clone(), 0.06, 0.9, FRONT_SEGS, this.color(s, spec.strength * ends(s)))
+      }
+    })
+    this.paths.flush()
+
+    // ")))" leaving the TX antenna, "(((" closing in on the RX antenna
+    for (let j = 0; j < RIPPLES; j++) {
+      const g = (t * 0.9 + j / RIPPLES) % 1
+      const fade = Math.min(1, g * 4, (1 - g) * 4)
+      f = this.arc(f, this.from.clone().addScaledVector(this.dir, 0.02 + 0.09 * g), this.dir, 0.03 + 0.06 * g, 0.75, RIPPLE_SEGS, this.color(0, fade))
+      f = this.arc(f, this.to.clone().addScaledVector(this.dir, -0.02 - 0.09 * (1 - g)), this.dir.clone().negate(), 0.03 + 0.06 * (1 - g), 0.75, RIPPLE_SEGS, this.color(1, fade))
+    }
+    this.fronts.flush()
+  }
+}
 
 export class RoomView {
   readonly pieces: Piece[]
@@ -35,65 +180,57 @@ export class RoomView {
   private scene = new THREE.Scene()
   private camera = new THREE.PerspectiveCamera(FOV, 1, 0.05, 200)
   private thumbCam = new THREE.PerspectiveCamera(FOV, 1, 0.05, 200)
-  private controls?: OrbitControls
+  private controls: OrbitControls
+  private link = new RadioLink()
   private raf = 0
   private clock = new THREE.Clock()
   private size = { w: 1, h: 1 }
   private tween: { from: Shot; to: Shot; t: number; dur: number } | null = null
   private targetOpacity = new Map<Piece, number>()
-  private cardFade: { phase: 'out' | 'in'; next: number } | null = null
   private ray = new THREE.Raycaster()
   private pointer = new THREE.Vector2()
   private down: { x: number; y: number } | null = null
-  private active = true
-  private theme: Theme = 'light'
-  private cardShot: Shot | null = null
+  private breath = { phase: 0, amp: 1, rate: 14, target: { rate: 14, breathing: true } as Breathing }
+  /** 0 breathed out .. 1 breathed in */
+  private inhale = 0.5
   state: ViewState
-  /** Called when a click in the explorer picks a corner or an object. */
+  /** Called when a click picks a corner or an object. */
   onPick?: () => void
 
   constructor(
     private canvas: HTMLCanvasElement,
-    private variant: 'card' | 'explorer',
     private onState: (s: ViewState) => void,
-    zone = 0,
   ) {
-    const card = variant === 'card'
-    const room = buildRoom(card ? { main: 1.75, sketch: 1.15, bold: 2.6 } : { main: 1.7, sketch: 1.2, bold: 2.8 }, this.theme)
+    const room = buildRoom({ main: 1.7, sketch: 1.2, bold: 2.8 }, 'light')
     this.pieces = room.pieces
     this.shell = room.shell
     for (const p of this.pieces) this.scene.add(p.group)
-    this.scene.add(this.shell.group)
+    this.scene.add(this.shell.group, this.link.group)
 
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false })
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
-    this.renderer.setClearColor(paper(this.theme))
+    this.renderer.setClearColor(paper('light'))
 
-    this.state = { mode: card ? 'card' : 'room', zone, piece: null, thumbs: [], hovering: false }
+    this.state = { mode: 'room', zone: 0, piece: null, thumbs: [], hovering: false }
 
-    if (card) {
-      this.shell.group.visible = false
-      this.applyCardZone(zone)
-    } else {
-      this.controls = new OrbitControls(this.camera, canvas)
-      this.controls.enableDamping = true
-      this.controls.dampingFactor = 0.08
-      this.controls.enablePan = false
-      this.controls.rotateSpeed = 0.6
-      this.controls.zoomSpeed = 0.8
-      this.controls.maxPolarAngle = 1.38
-      this.controls.minPolarAngle = 0.15
-      const start = this.roomShot()
-      start.pos.sub(start.target).multiplyScalar(1.35).add(start.target)
-      start.pos.y += 4
-      this.camera.position.copy(start.pos)
-      this.controls.target.copy(start.target)
-      this.setAllOpacity(1, true)
-      canvas.addEventListener('pointerdown', this.onDown)
-      canvas.addEventListener('pointerup', this.onUp)
-      canvas.addEventListener('pointermove', this.onMove)
-    }
+    this.controls = new OrbitControls(this.camera, canvas)
+    this.controls.enableDamping = true
+    this.controls.dampingFactor = 0.08
+    this.controls.enablePan = false
+    this.controls.rotateSpeed = 0.6
+    this.controls.zoomSpeed = 0.8
+    this.controls.minPolarAngle = 0.15
+    this.setLimits()
     this.resize()
+    const start = this.roomShot()
+    start.pos.sub(start.target).multiplyScalar(1.35).add(start.target)
+    start.pos.y += 4
+    this.camera.position.copy(start.pos)
+    this.controls.target.copy(start.target)
+    this.setAllOpacity(1, true)
+    canvas.addEventListener('pointerdown', this.onDown)
+    canvas.addEventListener('pointerup', this.onUp)
+    canvas.addEventListener('pointermove', this.onMove)
     this.loop()
   }
 
@@ -106,20 +243,19 @@ export class RoomView {
     return { pos: center.clone().addScaledVector(dir, dist), target: center.clone() }
   }
 
-  private zoneBounds(zone: number) {
-    const box = new THREE.Box3()
-    for (const p of this.pieces) if (p.zone === zone) box.union(p.box)
-    const sphere = box.getBoundingSphere(new THREE.Sphere())
-    return sphere
-  }
-
   private roomShot(): Shot {
     return this.fit(new THREE.Vector3(-0.2, 0.4, 0.2), 6.6, ROOM_DIR, this.size.w / this.size.h, 1.0)
   }
 
   private zoneShot(zone: number): Shot {
-    const s = this.zoneBounds(zone)
-    return this.fit(s.center, s.radius, ZONE_DIR, this.size.w / this.size.h, 1.22)
+    const focus = ZONE_FOCUS[zone]
+    const box = new THREE.Box3()
+    for (const p of this.pieces) if (p.zone === zone && (!focus || focus.includes(p.id))) box.union(p.box)
+    const s = box.getBoundingSphere(new THREE.Sphere())
+    if (!focus) return this.fit(s.center, s.radius, ZONE_DIR, this.size.w / this.size.h, 1.22)
+    // center between the chest and the waves bowing out in front of it
+    const center = new THREE.Vector3(CHEST.x, 0.72, (CHEST.z + LINK_Z + WAVES[WAVES.length - 1].bow) / 2)
+    return this.fit(center, 1.2, FOCUS_DIR, this.size.w / this.size.h, 1.0)
   }
 
   private objectDir(piece: Piece) {
@@ -132,42 +268,13 @@ export class RoomView {
     return { w: Math.round(w * (w > 760 ? 0.72 : 1)), h: w > 760 ? h : Math.round(h * 0.72) }
   }
 
-  // ---- card ----------------------------------------------------------------
-
-  private applyCardZone(zone: number) {
-    for (const p of this.pieces) {
-      p.group.visible = p.zone === zone
-      p.setOpacity(0)
-      this.targetOpacity.set(p, p.zone === zone ? 1 : 0)
-    }
-    this.state = { ...this.state, zone }
-    this.cardShot = null
-  }
-
-  /** Card: step to the next or previous zone. */
-  step(delta: number) {
-    const next = (this.state.zone + delta + ZONES.length) % ZONES.length
-    if (this.variant === 'card') {
-      this.cardFade = { phase: 'out', next }
-      for (const p of this.pieces) this.targetOpacity.set(p, 0)
-      this.emit({ zone: next })
-      return
-    }
-    if (this.state.mode === 'object') {
-      const list = this.zonePieces(this.state.zone)
-      const i = list.findIndex((p) => p.id === this.state.piece?.id)
-      this.focus(list[(i + delta + list.length) % list.length].id)
-    }
-  }
-
-  // ---- explorer ------------------------------------------------------------
+  // ---- modes ---------------------------------------------------------------
 
   private zonePieces(zone: number) {
     return this.pieces.filter((p) => p.zone === zone && pickable(p))
   }
 
   private flyTo(to: Shot, dur = 1.1) {
-    if (!this.controls) return
     this.tween = { from: { pos: this.camera.position.clone(), target: this.controls.target.clone() }, to, t: 0, dur }
     this.controls.enabled = false
   }
@@ -199,9 +306,10 @@ export class RoomView {
 
   focus(id: string) {
     const piece = this.pieces.find((p) => p.id === id)
-    if (!piece || !this.controls) return
+    if (!piece) return
     this.state = { ...this.state, mode: 'object', zone: piece.zone, piece: { id: piece.id, name: piece.name } }
     this.shell.group.visible = false
+    this.link.group.visible = false
     for (const p of this.pieces) {
       p.group.visible = p === piece
       p.setOpacity(p === piece ? 1 : 0)
@@ -220,21 +328,29 @@ export class RoomView {
     this.emit({})
   }
 
+  /** In a close-up: show the previous or next object of the same corner. */
+  step(delta: number) {
+    if (this.state.mode !== 'object') return
+    const list = this.zonePieces(this.state.zone)
+    const i = list.findIndex((p) => p.id === this.state.piece?.id)
+    this.focus(list[(i + delta + list.length) % list.length].id)
+  }
+
   private leaveObject() {
     if (this.state.mode !== 'object') return
     this.shell.group.visible = true
+    this.link.group.visible = true
     for (const p of this.pieces) {
       p.group.visible = true
       p.setOpacity(p.zone === this.state.zone ? 1 : 0)
     }
-    if (this.controls) this.controls.autoRotate = false
+    this.controls.autoRotate = false
     const zone = this.zoneShot(this.state.zone)
     this.camera.position.copy(zone.pos).sub(zone.target).multiplyScalar(0.7).add(zone.target)
-    this.controls?.target.copy(zone.target)
+    this.controls.target.copy(zone.target)
   }
 
   private setLimits(piece?: Piece) {
-    if (!this.controls) return
     if (piece) {
       this.controls.minDistance = piece.radius * 1.4
       this.controls.maxDistance = piece.radius * 8
@@ -246,22 +362,20 @@ export class RoomView {
     }
   }
 
-  /** Esc: object -> zone -> room -> false (close). */
+  /** Esc: object -> corner -> whole room. */
   back() {
     if (this.state.mode === 'object') this.showZone(this.state.zone, 0.9)
     else if (this.state.mode === 'zone') this.showRoom()
-    else return false
-    return true
   }
 
   setTheme(theme: Theme) {
-    this.theme = theme
     this.renderer.setClearColor(paper(theme))
+    this.link.setTheme(paper(theme))
     for (const p of [...this.pieces, this.shell]) p.setTheme(theme)
   }
 
-  setActive(active: boolean) {
-    this.active = active
+  setBreathing(b: Breathing) {
+    this.breath.target = b
   }
 
   private layoutThumbs() {
@@ -313,8 +427,8 @@ export class RoomView {
     const rect = this.canvas.getBoundingClientRect()
     this.pointer.set(((e.clientX - rect.left) / rect.width) * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1)
     this.ray.setFromCamera(this.pointer, this.camera)
-    const fills = this.pieces.filter((p) => p.fill && pickable(p) && p.group.visible).map((p) => p.fill!)
-    const hit = this.ray.intersectObjects(fills, false)[0]
+    const meshes = this.pieces.filter((p) => pickable(p) && p.group.visible).flatMap((p) => p.pickMeshes())
+    const hit = this.ray.intersectObjects(meshes, false)[0]
     return (hit?.object.userData.piece as Piece) ?? null
   }
 
@@ -328,7 +442,6 @@ export class RoomView {
     if (w === this.size.w && h === this.size.h) return
     this.size = { w, h }
     this.renderer.setSize(w, h, false)
-    this.cardShot = null
     if (this.state.mode === 'object') {
       this.layoutThumbs()
       this.emit({})
@@ -343,11 +456,10 @@ export class RoomView {
   private loop = () => {
     this.raf = requestAnimationFrame(this.loop)
     const dt = Math.min(0.05, this.clock.getDelta())
-    if (!this.active) return
     this.resize()
     this.animateOpacity(dt)
-    if (this.variant === 'card') this.cardFrame()
-    else this.explorerFrame(dt)
+    this.animateBreathing(dt)
+    this.frame(dt)
   }
 
   private animateOpacity(dt: number) {
@@ -359,31 +471,23 @@ export class RoomView {
     }
   }
 
-  private cardFrame() {
-    const f = this.cardFade
-    if (f?.phase === 'out' && this.pieces.every((p) => p.opacity < 0.03)) {
-      this.applyCardZone(f.next)
-      this.cardFade = { phase: 'in', next: f.next }
-    } else if (f?.phase === 'in' && this.pieces.every((p) => Math.abs(p.opacity - (this.targetOpacity.get(p) ?? 0)) < 0.01)) {
-      this.cardFade = null
+  /** Advance the breathing phase at the current rate; during a pause the chest settles, breathed out. */
+  private animateBreathing(dt: number) {
+    const b = this.breath
+    b.rate += (b.target.rate - b.rate) * (1 - Math.exp(-dt * 1.5))
+    b.amp += ((b.target.breathing ? 1 : 0) - b.amp) * (1 - Math.exp(-dt * 2.5))
+    b.phase += dt * Math.PI * 2 * (b.rate / 60)
+    const value = b.amp * Math.sin(b.phase) - (1 - b.amp)
+    this.inhale = (value + 1) / 2
+    for (const p of this.pieces) {
+      if (!p.animate) continue
+      p.animate(value)
+      p.group.updateMatrixWorld(true)
     }
-    if (!this.cardShot) {
-      const s = this.zoneBounds(this.state.zone)
-      s.center.y -= s.radius * 0.1
-      this.cardShot = this.fit(s.center, s.radius, CARD_DIR, this.size.w / this.size.h, 1.22)
-    }
-    const shot = this.cardShot
-    const sway = Math.sin(performance.now() / 2600) * 0.07
-    const offset = shot.pos.clone().sub(shot.target).applyAxisAngle(new THREE.Vector3(0, 1, 0), sway)
-    this.camera.position.copy(shot.target).add(offset)
-    this.camera.lookAt(shot.target)
-    this.camera.aspect = this.size.w / this.size.h
-    this.camera.updateProjectionMatrix()
-    this.renderMain(this.size.w, this.size.h)
   }
 
-  private explorerFrame(dt: number) {
-    const controls = this.controls!
+  private frame(dt: number) {
+    const controls = this.controls
     if (this.tween) {
       const tw = this.tween
       tw.t = Math.min(1, tw.t + dt / tw.dur)
@@ -403,9 +507,12 @@ export class RoomView {
     this.camera.aspect = main.w / main.h
     this.camera.updateProjectionMatrix()
 
+    const tx = this.pieces.find((p) => p.id === 'tx')
+    this.link.update(this.clock.elapsedTime, tx?.opacity ?? 1, this.inhale, main.w, main.h)
+
     this.renderer.setScissorTest(true)
-    this.renderer.setViewport(0, h - main.h, main.w, main.h)
     this.renderer.setScissor(0, 0, w, h)
+    this.renderer.setViewport(0, 0, w, h)
     this.renderer.clear()
     this.renderMain(main.w, main.h, h - main.h)
 
@@ -458,7 +565,7 @@ export class RoomView {
     this.canvas.removeEventListener('pointerdown', this.onDown)
     this.canvas.removeEventListener('pointerup', this.onUp)
     this.canvas.removeEventListener('pointermove', this.onMove)
-    this.controls?.dispose()
+    this.controls.dispose()
     this.scene.traverse((o) => {
       const mesh = o as THREE.Mesh
       mesh.geometry?.dispose()

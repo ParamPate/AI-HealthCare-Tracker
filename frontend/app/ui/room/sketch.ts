@@ -63,6 +63,10 @@ export class Piece {
   fill?: THREE.Mesh
   /** yaw of the object's front, for close-up views */
   front = 0
+  /** Sub-pieces that move on their own (the person's chest); picked, faded and drawn with this piece. */
+  readonly parts: Piece[] = []
+  /** Per-frame motion, given the current breath (-1 exhaled .. 1 inhaled). */
+  animate?: (breath: number) => void
   private rand: () => number
   private mats: { mat: LineMaterial; alpha: number }[] = []
   private colored: { geo: LineSegmentsGeometry; keys: string[] }[] = []
@@ -84,7 +88,23 @@ export class Piece {
     return new Pen(this, key)
   }
 
+  /** A sub-piece whose origin sits at `at` in this piece's coordinates. */
+  part(at: V) {
+    const p = new Piece(this.id, this.name, this.zone, this.color, Math.floor(this.rand() * 1e6))
+    p.group.position.set(...at)
+    this.group.add(p.group)
+    this.parts.push(p)
+    return p
+  }
+
+  /** Meshes to raycast against when picking. */
+  pickMeshes(): THREE.Mesh[] {
+    return [...(this.fill ? [this.fill] : []), ...this.parts.flatMap((p) => p.pickMeshes())]
+  }
+
   build(widths: Widths, theme: Theme) {
+    this.group.updateMatrixWorld(true)
+    for (const part of this.parts) part.build(widths, theme)
     const r = this.rand
     const main: number[] = []
     const mainKeys: string[] = []
@@ -92,7 +112,7 @@ export class Piece {
     const sketchKeys: string[] = []
     const thick: number[] = []
     const thickKeys: string[] = []
-    const scale = Math.max(0.4, Math.min(2.5, this.sizeHint()))
+    const scale = Math.max(0.08, Math.min(2.5, this.sizeHint()))
 
     const add = (src: number[], srcKeys: string[], out: number[], outKeys: string[], doubled: boolean) => {
       for (let i = 0; i < src.length; i += 6) {
@@ -143,9 +163,9 @@ export class Piece {
         polygonOffsetUnits: 3,
       })
       this.fill = new THREE.Mesh(geo, this.fillMat)
-      this.fill.userData.piece = this
       this.group.add(this.fill)
     }
+    for (const mesh of this.pickMeshes()) mesh.userData.piece = this
 
     for (const label of this.labels) {
       const mesh = new THREE.Mesh(
@@ -196,6 +216,7 @@ export class Piece {
       this.fill.geometry.computeBoundingBox()
       this.box.union(this.fill.geometry.boundingBox!.clone().applyMatrix4(m))
     }
+    for (const part of this.parts) this.box.union(part.box)
     this.box.getCenter(this.center)
     this.radius = this.box.getSize(v3).length() / 2
   }
@@ -206,6 +227,7 @@ export class Piece {
   }
 
   setTheme(theme: Theme) {
+    for (const part of this.parts) part.setTheme(theme)
     const c = new THREE.Color()
     for (const { geo, keys } of this.colored) {
       const arr = new Float32Array(keys.length * 6)
@@ -244,16 +266,19 @@ export class Piece {
 
   setOpacity(o: number) {
     this.opacity = o
+    for (const part of this.parts) part.setOpacity(o)
     for (const { mat, alpha } of this.mats) mat.opacity = o * alpha
     for (const { mesh } of this.labelMeshes) (mesh.material as THREE.MeshBasicMaterial).opacity = o
   }
 
   setResolution(w: number, h: number) {
+    for (const part of this.parts) part.setResolution(w, h)
     for (const { mat } of this.mats) mat.resolution.set(w, h)
   }
 
   /** Recompute silhouettes of round shapes for a camera at this world position. */
   updateSilhouettes(camWorld: THREE.Vector3) {
+    for (const part of this.parts) part.updateSilhouettes(camWorld)
     if (!this.sil) return
     const local = this.group.worldToLocal(v4.copy(camWorld))
     for (const s of this.sil) {
@@ -476,6 +501,20 @@ export class Pen {
       g.applyMatrix4(m)
       this.p.fills.push(g)
     }
+  }
+
+  /** A rounded rod from a to b (arms, legs): silhouettes only, no rims. */
+  limb(a: V, b: V, r0: number, r1 = r0) {
+    const A = new THREE.Vector3(...a)
+    const dir = new THREE.Vector3(...b).sub(A)
+    const h = dir.length()
+    const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize())
+    const m = this.m.clone().multiply(new THREE.Matrix4().compose(A, q, new THREE.Vector3(1, 1, 1)))
+    this.p.rounds.push({ kind: 'cyl', m, r0, r1, h, key: this.key })
+    const g = new THREE.CylinderGeometry(r1, r0, h, 16)
+    g.translate(0, h / 2, 0)
+    g.applyMatrix4(m)
+    this.p.fills.push(g)
   }
 
   /** Ellipsoid with radii s, silhouette only. */
