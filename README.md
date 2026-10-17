@@ -1,118 +1,146 @@
 # AI-HealthCare-Tracker
 Hack the Valley
 
-## Read the ESP32 receiver
+Contactless breathing monitor: two ESP32 boards exchange Wi-Fi packets, and the
+receiver reports Channel State Information (CSI) for each one. Breathing changes
+the radio channel slightly, so it shows up as a slow wave in the CSI.
 
-Use Python 3.11 or newer. Close other serial monitors before running the reader.
-From the project root, set up a local environment:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r signal-processing/requirements.txt
-python -m serial.tools.list_ports
-python signal-processing/serial_reader.py --port /dev/cu.usbserial-0001
+```
+ESP32 TX ~~Wi-Fi~~> ESP32 RX --USB serial--> backend/ (Python) --> web app
+csi_send            csi_recv                 read, record,
+                                             process
 ```
 
-On Windows, create the environment with `python -m venv .venv`, activate it with
-`.venv\Scripts\Activate.ps1` in PowerShell, and use the listed port such as `COM3`.
-If using the project's existing uv environment, `uv sync` supplies pyserial too;
-run the reader with `uv run python signal-processing/serial_reader.py --port ...`.
+## Setup
 
-Replace the port with the receiver's port on your laptop. The default baud rate
-is 921600; override it with `--baud`. Press Ctrl-C to close the connection.
+**Boards.** Two classic ESP32 boards flashed with Espressif's
+[esp-csi](https://github.com/espressif/esp-csi) `examples/get-started` firmware:
+`csi_send` on TX, `csi_recv` on RX. Build with ESP-IDF **v5.5.x**; esp-csi does not
+compile on IDF 6.x. TX only needs USB power; RX connects to the computer.
 
-The reader prints only validated `CSI_DATA` lines from the classic ESP32's
-25-column format. Startup logs are ignored; malformed packets are skipped.
-Each rejection reason is warned about once, with totals shown on exit.
-The 15-column C5/C6 layout is reported as unsupported in this version.
-A missing or disconnected device produces an error; reconnect and restart.
-
-Every five seconds, stderr shows the accepted packet rate over that interval,
-total accepted/rejected packets, rejection reasons, missing IDs, sequence
-discontinuities, and time since the last valid sample. Reports continue while
-the serial stream is silent. Missing IDs are an estimate from forward sequence
-gaps, not proof of where data was lost; reordered packets and resets can affect it.
-Sequence tracking is separate per transmitter and resets on timing segment changes.
-
-## Save a raw recording
+**Python.** Install [uv](https://docs.astral.sh/uv/), then from the project root:
 
 ```bash
-python3 signal-processing/serial_reader.py --port /dev/cu.usbserial-0001 \
-  --record recordings/breathing.jsonl
+uv sync
 ```
 
-Parent folders are created automatically, but an existing file is never
-overwritten. Each JSONL row contains `received_at` (Unix seconds),
-`received_monotonic` (host monotonic seconds), and `raw_line`. This includes
-startup logs and malformed packets, so parsing problems can be investigated later.
-Oversized lines and incomplete final fragments are discarded, not recorded.
+Every command below finds the RX board automatically (it listens for `CSI_DATA`
+lines). Pass `--port COM6` or `--port /dev/cu.usbserial-0001` to choose one.
+Only one program can use the RX port at a time, so close `idf.py monitor`, the live
+view, or a running recording before starting another.
 
-To recover the original bytes, use `row["raw_line"].encode("latin-1")` after
-`json.loads`; this also preserves malformed non-ASCII bytes. Accepted packets
-can then be parsed again with `parse_line`. Files flush about once a second and
-close on exit. A recording error stops capture with an error message. Flushing
-does not guarantee recovery after power loss; use Ctrl-C to finish a capture.
-
-## Signal processing handoff
-
-Python callers use `read_samples(connection)` from `serial_reader.py`, passing
-an already-open pyserial connection with a one-second timeout. The caller owns
-closing the connection. Optional `recording=` accepts an open text file that
-the caller must close; `diagnostics=True` enables the five-second reports.
-Each iteration yields a `CSISample` with:
-
-- `packet_id` (unsigned), `mac`, `rssi`, `channel`, and parsed `metadata`.
-- `received_at` (Unix seconds) and `received_monotonic` (host monotonic seconds).
-- `device_timestamp_raw` (as printed), `device_time_us` (unwrapped microseconds),
-  and `time_segment` (starting at zero, tracked separately per transmitter).
-- `raw_iq`, `csi` (complex values), `valid_mask`, and the original `raw_line` bytes.
-
-CSI pairs are imaginary first, real second. When `first_word` is set, the first
-two complex values have a false validity mask; their values and positions remain
-intact. The pipeline must exclude masked entries and restart its processing
-window when the transmitter, timing segment, CSI shape, or radio configuration changes.
-
-Signed device timestamps are reinterpreted as unsigned. Backward jumps greater
-than half the 32-bit range are treated as rollover; smaller backward jumps
-start a new timing segment. Reboots and long outages can be ambiguous without a
-firmware boot identifier. Host arrival times include serial buffering delays.
-
-This generator blocks while reading USB. Run acquisition in a background thread
-when integrating with an async server. Each new iterator starts a fresh capture;
-do not combine its timing state with a previous session. Breathing estimation
-is not implemented here.
-
-Run the transport, parser, recording, and sample checks without hardware:
+## See what RX receives
 
 ```bash
-python3 -m unittest discover -s signal-processing -p 'test_*.py'
+uv run python -m backend.live_view
 ```
 
-On macOS/Linux with pyserial installed, this also exercises the actual CLI and
-serial driver through a virtual port, including recording and disconnection.
-The virtual port uses 115200 baud; it does not verify the physical USB adapter
-at 921600 baud. Other environments skip that one integration test. With the full
-project environment, `uv run pytest` collects both the backend and reader suites.
+A window shows each subcarrier's amplitude over the last 30 s (movement appears
+as vertical streaks) and a smoothed preview where slow breathing should look like
+a slow wave. Use it to place the boards. Close the window to stop.
+
+## Record a session
+
+```bash
+uv run python -m backend.record --label breathing --seconds 70
+```
+
+After a 5 s countdown (`--countdown`), packets are saved to
+`recordings/<date>-<time>_<label>.parquet`, one row per packet: host time,
+continuous device time, `segment`, transmitter MAC, sequence number, RSSI, noise
+floor, channel, and the raw CSI array (int8, imaginary first, then real). Rows are
+written every 10 s, so Ctrl+C or a crash keeps what was recorded. `recordings/` is
+gitignored: raw CSI stays on the machine that recorded it.
+
+Add `--raw-log` to also save every serial line, including boot logs and damaged
+lines, to `<same name>.raw.jsonl`. Each row has `received_at` (Unix seconds),
+`received_monotonic` (host monotonic seconds), and `raw_line`. Recover the exact
+bytes with `row["raw_line"].encode("latin-1")` and re-parse them with
+`backend.csi_format.parse_line`. Lines over 16 KiB are dropped, not logged.
+
+While recording, the status line shows packets/s, the estimated drop rate, the
+number of rejected lines, and RSSI. The summary at the end adds rejection reasons,
+missing IDs, and sequence discontinuities. Missing IDs are estimated from forward
+gaps in the TX sequence numbers, not proof of where data was lost; reordered
+packets and restarts can affect them. They are tracked per transmitter and reset
+when the timing segment changes. If the RX board is unplugged, recording stops
+with a clear error and keeps the packets saved so far.
+
+Expected numbers with the stock firmware: TX sends about 91 packets/s, and RX can
+print about 71/s at 921600 baud (each line carries 192 subcarriers), so about 22%
+of packets are dropped on the board. That is plenty for breathing (0.1 to 0.5 Hz).
+
+## Analyse a recording
+
+```bash
+uv run python signal-processing/explore.py recordings/<file>.parquet
+```
+
+Prints a summary and saves `<file>.png` next to the recording: RSSI, a
+per-subcarrier heatmap, a movement score, the subcarriers with the most
+breathing-band energy, a breathing estimate (first principal component, 0.1 to
+0.5 Hz), and its spectrum in breaths per minute. If the RX board restarted during
+the recording, the longest uninterrupted stretch is analysed.
+
+## Using the reader from code
+
+`backend/serial_io.py` is the one place that reads the RX port:
+
+```python
+from backend.serial_io import CsiStream, find_rx_port, open_port
+
+with open_port(find_rx_port(921600), 921600) as ser:
+    stream = CsiStream(ser)            # optional: CsiStream(ser, raw_log=open_file)
+    while True:
+        for sample in stream.read():   # waits up to 50 ms, returns new samples
+            ...
+        stream.stats.summary()         # accepted, rejected by reason, missing IDs
+```
+
+Each `Sample` has `host_time` (Unix seconds when the chunk arrived, including USB
+buffering delay), `device_time_us` (continuous RX clock), `segment`, and `packet`.
+A `CsiPacket` (`backend/csi_format.py`) has `mac`, `seq`, `rssi`, `noise_floor`,
+`bandwidth`, `channel`, `secondary_channel`, `timestamp_us` (as printed, made
+unsigned), `first_word_invalid`, and `csi` (int8 numpy array `[im0, re0, im1, re1, ...]`).
+`amplitudes(csi, first_word_invalid)` turns it into per-subcarrier amplitudes.
+
+Things the processing pipeline must respect:
+
+- When `first_word_invalid` is set, the first two subcarriers are garbage.
+  `amplitudes()` zeroes them so indices stay aligned.
+- The RX clock is a uint32 that wraps every ~71.6 min. A backward jump of more than
+  half the 32-bit range counts as a wrap; a smaller one means the board restarted
+  and starts a new `segment`. Never compare times across segments. Reboots after
+  long outages can look like wraps, because the firmware prints no boot ID.
+- Restart processing windows when the transmitter, segment, CSI length, or radio
+  configuration changes.
+- `read()` blocks briefly, so run it in a background thread next to an async server.
+
+`parse_line()` returns `None` for non-CSI lines and raises `ValueError` naming the
+problem for damaged ones. Only the classic ESP32 25-column layout is supported; the
+ESP32-C5/C6 15-column layout is rejected with a clear message.
+
+## Tests
+
+```bash
+uv run pytest
+```
+
+Covers parsing and validation (including real captured lines in
+`docs/sample_csi_lines.txt`), clock wraparound and restarts, line splitting,
+statistics, raw logging, and the Parquet format, all without hardware. Physical
+throughput, placement, and breathing detection still need hardware trials.
 
 ## Teammate hardware check
 
-1. Pull the latest `main`, activate the environment above, and keep both ESP32s powered.
-2. Find the receiver's port. Close `idf.py monitor`, the live viewer, and any other
-   serial reader before starting this one.
-3. Run with `--record recordings/empty-chair.jsonl`. Confirm accepted packets and
-   a measured rate appear, then press Ctrl-C after about 60 seconds.
-4. Repeat with new filenames for 60–120 seconds of still, normal breathing and
-   20–30 seconds of deliberate movement. Note board placement and trial activity.
-5. During a separate connection check, unplug the receiver and confirm a clear
-   error and program exit. Reconnect and restart with a new filename.
-6. Send the recordings and diagnostic output back for analysis. `recordings/`
-   is gitignored, so pulling/pushing code does not transfer captures.
-
-The teammate's `backend.record` command saves Parquet for
-`signal-processing/explore.py`. This reader saves raw JSONL; that plotting script
-does not accept JSONL directly. Run one capture program at a time, and choose the
-Parquet recorder when using the existing exploration plots.
-
-Automated checks establish parsing and transport behavior. Physical receiver
-throughput, placement, and reliable breathing detection still need hardware trials.
+1. Pull the latest `main`, run `uv sync`, and keep both ESP32s powered.
+2. Close `idf.py monitor`, the live view, and any other serial tool.
+3. Record an empty chair: `uv run python -m backend.record --label empty-chair --seconds 60 --raw-log`.
+   Confirm the packet rate appears.
+4. Record 60 to 120 seconds of still, normal breathing (`--label breathing`) and
+   20 to 30 seconds of deliberate movement (`--label movement`). Note the board
+   placement and what you did in each trial.
+5. As a connection check, unplug the RX board during a recording and confirm a
+   clear error. Reconnect and start a new recording.
+6. Send the recordings and their printed summaries back for analysis.
+   `recordings/` is gitignored, so pushing code does not transfer captures.

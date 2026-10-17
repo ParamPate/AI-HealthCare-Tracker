@@ -19,8 +19,8 @@ from matplotlib.colors import LinearSegmentedColormap
 from scipy.ndimage import median_filter, uniform_filter1d
 
 from backend import config
-from backend.csi_format import amplitudes, parse_line
-from backend.serial_io import LineBuffer, find_rx_port, open_port
+from backend.csi_format import amplitudes
+from backend.serial_io import CsiStream, find_rx_port, open_port
 
 WINDOW_S = 30
 SURFACE, INK, INK_2, GRID, BLUE = "#fcfcfb", "#0b0b0b", "#52514e", "#e6e5e0", "#2a78d6"
@@ -40,14 +40,14 @@ class Reader(threading.Thread):
     def run(self) -> None:
         try:
             with open_port(self.port, self.baud) as ser:
-                lines = LineBuffer()
+                stream = CsiStream(ser)
                 while True:
-                    chunk = ser.read(max(1, ser.in_waiting))
+                    samples = stream.read()
                     now = time.time()
-                    parsed = [p for p in map(parse_line, lines.feed(chunk)) if p is not None]
                     with self.lock:
-                        for p in parsed:
-                            self.packets.append((now, p.rssi, amplitudes(p.csi, p.first_word_invalid)))
+                        for s in samples:
+                            p = s.packet
+                            self.packets.append((s.host_time, p.rssi, amplitudes(p.csi, p.first_word_invalid)))
                         while self.packets and self.packets[0][0] < now - WINDOW_S:
                             self.packets.popleft()
         except Exception as e:  # noqa: BLE001  (shown in the window title)

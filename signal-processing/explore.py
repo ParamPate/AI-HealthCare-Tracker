@@ -34,6 +34,11 @@ DIVERGING = LinearSegmentedColormap.from_list("blue_gray_red", ["#1c5cab", "#f0e
 
 def load(path: Path):
     df = pd.read_parquet(path)
+    if "segment" in df and df["segment"].nunique() > 1:
+        longest = df["segment"].value_counts().idxmax()
+        print(f"note: the RX board restarted during this recording; analysing its longest stretch "
+              f"(segment {longest}, {(df['segment'] == longest).mean():.0%} of packets)")
+        df = df[df["segment"] == longest]
     lengths = df["csi"].map(len)
     df = df[lengths == lengths.mode().iloc[0]].reset_index(drop=True)
     t = (df["device_time_us"].to_numpy() - df["device_time_us"].iloc[0]) / 1e6
