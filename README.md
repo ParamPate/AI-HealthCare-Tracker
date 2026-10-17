@@ -355,12 +355,58 @@ Overlapping/out-of-range labels are rejected. A range crossing a packet gap over
 2 s cannot be labeled as breathing or a breath hold; mark it `uncertain`. For a
 mistake in an existing label, edit its `.labels.json` sidecar and run `check` again.
 
-The later training step must use windows wholly inside one observed interval,
+Training must use windows wholly inside one observed interval,
 exclude unlabeled/uncertain time, and keep the assigned participant split. Tune on
 `validation`; reserve `test` for final evaluation. Fit normalization/PCA on training
 data only. Do not generate training examples from predicted CSI labels or treat
 the fake source as measured validation data. Missing input remains a signal-quality
 gate; it is not a breath-hold label.
+
+## Trained binary prototype
+
+`backend/classifier.py` trains a breathing-versus-breath-hold logistic regression
+using NumPy/SciPy. It operates on raw CSI packets in trailing 10 s windows, once
+per second. Training windows stay one second inside a single observed label.
+Each window independently uses the shared I/Q conversion, invalid-word handling,
+gain normalization, spike removal, and 20 Hz resampling. Five spectral/variance
+features are standardized using training data only. No full-recording filtering
+or PCA is fitted before extracting windows.
+
+```bash
+uv run python -m backend.classifier train --data recordings --output models/breathing-v1.json
+uv run python -m backend.classifier predict --model models/breathing-v1.json --file recordings/20261017-013311_hold.parquet
+uv run python -m backend.classifier validate --data recordings --model models/breathing-v1.json --output models/validation-v1.json
+```
+
+`train` saves the JSON model and `breathing-v1.training.json`. The bundle includes
+preprocessing settings, feature order, learned means/scales, coefficients, class
+mapping, threshold 0.5, source hashes, dependency versions and dataset provenance.
+The source revision is recorded at training time; preprocessing hashes must match
+the code used to load the bundle. Do not edit the pipeline without regenerating
+the artifact. Loading JSON does not execute serialized Python objects.
+
+`predict` prints chronological JSONL with `end_s`, `label`, `hold_score`, and
+`reason`. `hold_score` is an uncalibrated model score, not a signal-confidence or
+clinical-risk probability. Incomplete windows, invalid CSI, clock changes, packet
+gaps over 2 s and incompatible radio settings return `no_signal` with a null score.
+Old recordings lack bandwidth/secondary-channel columns; their unknown values
+are preserved in provenance rather than inferred.
+
+`validate` uses only `validation` sidecars. It rejects training participants and
+copied training recordings, even when the training files are absent from the new
+computer. It reports window confusion counts, hold precision/recall, false holds
+during breathing, missed hold episodes, detection delay, and separate movement/
+empty-chair challenge results. For episode metrics a run begins at its first
+positive window; invalid or missing updates break the run. Episode starts match
+each observed hold at most once; unmatched starts in known activity are false
+detections. These are model-level results before alarm confirmation/debouncing.
+Missing validation data produces a `pending` report with no accuracy metrics.
+
+The saved prototype is trained on the single P01/S01 recording; training fit is
+reported as `training_fit_only`. Its overlapping windows are not independent
+validation. Motion, empty-chair discrimination and generalization to new people
+remain unmeasured. The model is not connected to the live server or alarm yet;
+the existing server still uses its DSP/rules pipeline.
 
 ## Live server and phone alarm
 
