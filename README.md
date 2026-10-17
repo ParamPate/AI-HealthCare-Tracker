@@ -228,7 +228,13 @@ throughput, placement, and breathing detection still need hardware trials.
 The first training step is collecting observed examples. Labels come from a human
 observer, breath count, or independent reference, rather than the CSI prediction.
 The filename's `--label` is only a session name; it does not label the whole file.
-No real training recordings are included in this repository.
+The shared `20261017-013311_hold` recording now has two observed `breath_hold`
+intervals (60.3–80.3 s and 110.0–130.4 s), totaling 40.4 labeled seconds. Its
+sidecar assigns anonymous participant P01, session S01, and split `train`; retain
+P01 for this participant's later recordings. The remaining time has no independent
+breath-rate reference and stays unlabeled. Separate validation/test recordings
+and examples of the other classes are still needed. This recording was already
+used for detector tuning and must not be treated as held-out evaluation data.
 
 Use anonymous participant IDs (`P01`, `P02`) and session IDs (`S01`, `S02`). Keep
 one participant entirely in one split, including all their sessions and paired
@@ -305,8 +311,9 @@ Only use example time ranges when they match what actually happened in your file
 These rate boundaries match the current prototype rules. The tool saves
 `SESSION.labels.json` beside `SESSION.parquet`, including the source file's SHA-256,
 participant/session/split, time basis, and interval annotations. It leaves raw CSI
-unchanged. Both files stay local under the gitignored `recordings/` directory.
-Transfer them together when sharing the dataset with your teammate.
+unchanged. Raw captures are gitignored except for the shared breath-hold test;
+`recordings/*.labels.json` sidecars can be committed. Transfer each sidecar together
+with its matching recording when sharing the dataset with your teammate.
 
 ### 3. Check before training
 
