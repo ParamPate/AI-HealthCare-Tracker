@@ -1,8 +1,8 @@
 """Offline binary CSI prototype: train, predict, and independently validate.
 
-    python -m backend.classifier train --data recordings --output models/breathing-v1.json
-    python -m backend.classifier predict --model models/breathing-v1.json --file FILE.parquet
-    python -m backend.classifier validate --data recordings --model models/breathing-v1.json --output REPORT.json
+    python -m backend.classifier train --data recordings --output models/breathing-demo-v3.json
+    python -m backend.classifier predict --model models/breathing-demo-v3.json --file FILE.parquet
+    python -m backend.classifier validate --data recordings --model models/breathing-demo-v3.json --output REPORT.json
 """
 import argparse
 from collections import Counter
@@ -28,16 +28,25 @@ from backend.serial_io import Sample
 
 ROOT = Path(__file__).resolve().parent.parent
 CLASSES = ["breathing", "breath_hold"]
-FEATURES = ["log_variance", "log_breathing_power", "log_movement_power",
-            "breathing_power_fraction", "spectral_peak_concentration"]
-CONFIG = {"window_s": 10.0, "step_s": 1.0, "label_margin_s": 1.0, "fs_hz": 20.0,
+SIGNAL_FEATURES = ["log_variance", "log_breathing_power", "log_movement_power",
+                 "breathing_power_fraction", "spectral_peak_concentration",
+                 "log_variance_change", "spectral_entropy", "dominant_frequency_hz",
+                 "fast_breathing_power_fraction", "autocorrelation_peak"]
+BASE_FEATURES = SIGNAL_FEATURES + [f"recent_{name}" for name in SIGNAL_FEATURES]
+FEATURE_PAIRS = list(zip(*np.triu_indices(len(BASE_FEATURES))))
+FEATURES = BASE_FEATURES + [f"{BASE_FEATURES[i]}*{BASE_FEATURES[j]}" for i, j in FEATURE_PAIRS]
+CONFIG = {"window_s": 10.0, "recent_s": 3.0, "step_s": 0.5, "label_margin_s": 0.5,
+          "label_window_s": 3.0, "prediction_votes": 4, "prediction_history": 5, "fs_hz": 20.0,
           "max_packet_gap_s": 2.0, "edge_tolerance_s": 0.1, "min_packets": 200,
           "min_subcarriers": 4, "breathing_band_hz": [0.05, 0.5], "movement_band_hz": [1.0, 5.0],
           "total_band_hz": [0.05, 5.0], "periodogram_nfft": 256, "epsilon": 1e-12,
           "detrend": "linear", "periodogram_window": "hann", "spike_filter_packets": 5,
-          "null_carrier_fraction": 0.1, "gain_normalization": "packet_mean"}
+          "null_carrier_fraction": 0.1, "gain_normalization": "packet_mean",
+          "trend_sections": 3, "fast_breathing_band_hz": [0.5, 2.0],
+          "autocorrelation_lags_s": [0.5, 5.0], "autocorrelation_nfft": 512,
+          "feature_expansion": "quadratic"}
 RATE_LABELS = {"breathing", "normal_breathing", "slow_breathing", "fast_breathing"}
-L2 = 0.1
+L2 = 0.001
 
 
 class InvalidWindow(ValueError):
@@ -52,7 +61,7 @@ def source_hashes():
 class Model(BaseModel):
     model_config = ConfigDict(extra="forbid")
     schema_version: Literal[1] = 1
-    pipeline_version: Literal["csi-window-v1"] = "csi-window-v1"
+    pipeline_version: Literal["csi-window-v3"] = "csi-window-v3"
     status: Literal["prototype; independent validation pending"] = "prototype; independent validation pending"
     classes: list[str]
     feature_order: list[str]
@@ -175,6 +184,17 @@ def extract_features(samples, end_s=None):
             raise InvalidWindow("no usable subcarrier signal") from error
     if len(kept) < CONFIG["min_subcarriers"] or not np.isfinite(x).all():
         raise InvalidWindow("too few usable subcarriers")
+    recent = int(CONFIG["recent_s"] * CONFIG["fs_hz"])
+    features = np.r_[_describe(x), _describe(x[-recent:])]
+    # Interactions let similar amplitudes mean different things for different wave shapes.
+    features = np.r_[features, [features[i] * features[j] for i, j in FEATURE_PAIRS]]
+    if not np.isfinite(features).all():
+        raise InvalidWindow("non-finite features")
+    return features, signature
+
+
+def _describe(x):
+    """Energy and wave-shape descriptors for one causal slice of the CSI window."""
     x = signal.detrend(x, type=CONFIG["detrend"], axis=0)
     f, power = signal.periodogram(x, fs=CONFIG["fs_hz"], window=CONFIG["periodogram_window"],
                                   nfft=CONFIG["periodogram_nfft"], detrend=False, axis=0)
@@ -187,9 +207,21 @@ def extract_features(samples, end_s=None):
     features = np.asarray([np.log10(np.median(x.var(axis=0)) + eps), np.log10(np.median(bp) + eps),
                            np.log10(np.median(mp) + eps), np.median(bp / (total_power + eps)),
                            np.median(power[band].max(axis=0) * df / (bp + eps))])
-    if not np.isfinite(features).all():
-        raise InvalidWindow("non-finite features")
-    return features, signature
+    third = len(x) // CONFIG["trend_sections"]
+    variance_change = np.median(np.log10(x[-third:].var(axis=0) + eps)
+                                - np.log10(x[:third].var(axis=0) + eps))
+    spectrum = power[total]
+    shares = spectrum / (spectrum.sum(axis=0) + eps)
+    entropy = np.median(-(shares * np.log(shares + eps)).sum(axis=0) / np.log(len(spectrum)))
+    peak = np.median(f[total][spectrum.argmax(axis=0)])
+    fast_low, fast_high = CONFIG["fast_breathing_band_hz"]
+    fast_share = np.median(power[(f > fast_low) & (f <= fast_high)].sum(axis=0)
+                           / (spectrum.sum(axis=0) + eps))
+    nfft = CONFIG["autocorrelation_nfft"]
+    correlation = np.fft.irfft(np.abs(np.fft.rfft(x, n=nfft, axis=0)) ** 2, n=nfft, axis=0)
+    lag_start, lag_end = (int(lag * CONFIG["fs_hz"]) for lag in CONFIG["autocorrelation_lags_s"])
+    rhythm = np.median((correlation[lag_start:lag_end + 1] / (correlation[0] + eps)).max(axis=0))
+    return np.r_[features, variance_change, entropy, peak, fast_share, rhythm]
 
 
 def read_recording(path):
@@ -221,7 +253,7 @@ def windows(samples):
 
 
 def interior_annotation(annotations, end):
-    start, margin = end - CONFIG["window_s"], CONFIG["label_margin_s"]
+    start, margin = end - CONFIG["label_window_s"], CONFIG["label_margin_s"]
     return next((a for a in annotations if start >= a.start_s + margin and end <= a.end_s - margin), None)
 
 

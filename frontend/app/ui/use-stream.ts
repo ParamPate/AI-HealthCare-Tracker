@@ -25,6 +25,9 @@ export type StreamFrame = {
   calm_s: number | null
   rssi: number | null
   packets_per_s: number | null
+  ml_label?: 'breathing' | 'breath_hold' | 'checking' | 'motion' | 'no_signal' | null
+  ml_hold_score?: number | null
+  ml_model_version?: string | null
 }
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL ?? 'ws://localhost:8000/ws'

@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "recording_sha256": "007566a2cee0c16d1c4451f0588728efba98587ecc15dc5f1f1a8288b521836c",
+  "participant_id": "P02",
+  "session_id": "S01_20261017-135014",
+  "split": "train",
+  "time_basis": "seconds_from_first_device_packet",
+  "duration_s": 67.83404900000001,
+  "annotations": [
+    {
+      "start_s": 0.0,
+      "end_s": 41.1,
+      "label": "breathing",
+      "reference_rr_bpm": null,
+      "note": "Operator Enter toggle marks hold onset and breathing resumption; normal breathing outside holds. Operator reports substantial movement in this attempt; breathing/hold marks retained."
+    },
+    {
+      "start_s": 41.1,
+      "end_s": 57.9,
+      "label": "breath_hold",
+      "reference_rr_bpm": null,
+      "note": "Operator Enter toggle marks hold onset and breathing resumption; normal breathing outside holds. Operator reports substantial movement in this attempt; breathing/hold marks retained."
+    },
+    {
+      "start_s": 57.9,
+      "end_s": 67.83404900000001,
+      "label": "breathing",
+      "reference_rr_bpm": null,
+      "note": "Breathing after final resume mark."
+    }
+  ]
+}

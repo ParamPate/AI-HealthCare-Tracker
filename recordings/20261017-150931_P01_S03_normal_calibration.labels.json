@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "recording_sha256": "7c23365f8e27748e5c6de8ad4815334fd78648409be7a160b3ba5f97fc2dccfb",
+  "participant_id": "P01",
+  "session_id": "S03_normal_calibration",
+  "split": "train",
+  "time_basis": "seconds_from_first_device_packet",
+  "duration_s": 19.448725999999997,
+  "annotations": [
+    {
+      "start_s": 0.0,
+      "end_s": 19.448725999999997,
+      "label": "breathing",
+      "reference_rr_bpm": null,
+      "note": "Operator confirmed seated normal breathing in chat and was instructed to continue normally for this 20-second demo calibration capture. No independent rate measurement."
+    }
+  ]
+}
