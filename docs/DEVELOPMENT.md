@@ -1,5 +1,6 @@
-# AI-HealthCare-Tracker
-Hack the Valley
+# Breath of Life: developer guide
+
+How to set up the boards, run the tools, and work with the code. For the project overview, see the [main README](../README.md).
 
 Contactless breathing monitor: two ESP32 boards exchange Wi-Fi packets, and the
 receiver reports Channel State Information (CSI) for each one. Breathing changes
