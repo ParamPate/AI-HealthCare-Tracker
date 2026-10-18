@@ -57,7 +57,3 @@ We then want to stream processed results through a FastAPI WebSocket server to a
 ## Running it
 
 Board setup, recording, analysis, the live dashboard, and the phone alarm are covered in the [developer guide](docs/DEVELOPMENT.md).
-
-## Team
-
-Built at Hack the Valley by Ryan Yuan, Param Patel, and Akshat. The original team repository is [ParamPate/AI-HealthCare-Tracker](https://github.com/ParamPate/AI-HealthCare-Tracker).
